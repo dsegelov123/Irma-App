@@ -425,6 +425,30 @@ The chat interface comprises a structured message history feed, message bubbles,
     - **Size**: `48px` x `48px`.
     - **Layout**: Centered, containing curved arrow send icon.
 
+---
+
+## 11. Profile Picture Component
+
+The profile picture component set (`profile-picture`) manages user avatar sizing and editing overlay options:
+
+### Component Set Layout & Styling
+- **Container Radius**: `32px` (Figma container canvas spec).
+- **Padding**: `24px` on all sides.
+- **Border**: `1px` stroke, Sage Green (`#9BB068`).
+- **Layout (Row)**: Gap `24px`.
+
+### Supported Variants
+- **Size Levels**:
+  - `size-2xl` (Largest avatar, e.g. for user settings / profile header)
+  - `size-xl`
+  - `size-lg`
+  - `size-md`
+  - `size-sm` (Smallest avatar, e.g. for top bar chat headers / chat feed list items)
+- **Edit Badge State**:
+  - `edit-button-true` (Displays a camera edit icon overlaid on the bottom right corner of the avatar)
+  - `edit-button-false` (Plain avatar without edit badge overlay)
+
+
 
 
 

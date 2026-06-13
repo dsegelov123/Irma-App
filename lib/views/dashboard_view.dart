@@ -30,95 +30,65 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    final int currentDay = _cycleState['day'] as int;
-    final String currentPhase = _cycleState['phase'] as String;
-    final int daysUntilNext = _cycleState['days_until_next'] as int;
-    final bool isLate = _cycleState['is_late'] as bool;
-    final int avgLength = _cycleState['average_length'] as int;
+    final int currentDay   = _cycleState['day'] as int;
+    final String phase     = _cycleState['phase'] as String;
+    final int daysUntil    = _cycleState['days_until_next'] as int;
+    final bool isLate      = _cycleState['is_late'] as bool;
+    final int avgLength    = _cycleState['average_length'] as int;
 
-    // Pick visual details based on phase
-    Color phaseColor;
-    IconData phaseIcon;
-    switch (currentPhase) {
-      case 'Menstruation':
-        phaseColor = IrmaTheme.empathyOrange;
-        phaseIcon = Icons.water_drop_rounded;
-        break;
-      case 'Follicular Phase':
-        phaseColor = IrmaTheme.sageGreen;
-        phaseIcon = Icons.spa_rounded;
-        break;
-      case 'Ovulation':
-        phaseColor = IrmaTheme.gentlePurple;
-        phaseIcon = Icons.wb_sunny_rounded;
-        break;
-      case 'Luteal Phase':
-        phaseColor = IrmaTheme.mediumBrown;
-        phaseIcon = Icons.nights_stay_rounded;
-        break;
-      default:
-        phaseColor = IrmaTheme.zenYellow;
-        phaseIcon = Icons.hourglass_empty_rounded;
-    }
+    final ({Color color, Color tint, IconData icon}) phaseStyle = switch (phase) {
+      'Menstruation'         => (color: IrmaColors.orange40, tint: IrmaColors.orange10, icon: Icons.water_drop_rounded),
+      'Follicular Phase'     => (color: IrmaColors.green50,  tint: IrmaColors.green10,  icon: Icons.spa_rounded),
+      'Ovulation'            => (color: IrmaColors.purple40, tint: IrmaColors.purple10, icon: Icons.wb_sunny_rounded),
+      'Luteal Phase'         => (color: IrmaColors.brown60,  tint: IrmaColors.brown10,  icon: Icons.nights_stay_rounded),
+      _                      => (color: IrmaColors.yellow40, tint: IrmaColors.yellow10, icon: Icons.hourglass_empty_rounded),
+    };
 
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+          builder: (ctx) => IconButton(
+            icon: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: const Text(
-          'Irma',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 22,
-            color: IrmaTheme.darkEspresso,
-          ),
-        ),
+        title: Text('Irma', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: IrmaTheme.earthyBrown),
+            icon: Icon(Icons.refresh_rounded, color: IrmaColors.brown80),
             onPressed: () {
               _refreshData();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Cycle projections updated.'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Cycle projections updated.'),
+                duration: Duration(seconds: 1),
+              ));
             },
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(IrmaSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Greeting
-            const Text(
-              'Good day.',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: IrmaSpacing.xs),
 
-            // Cycle Status Ring Card
+            // ── Greeting ──────────────────────────────────────────
+            Text('Good day.', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.gray60)),
+            const SizedBox(height: 4),
+            Text('Here\'s your cycle overview.', style: IrmaTextStyles.para2xl.copyWith(color: IrmaColors.brown100)),
+            const SizedBox(height: IrmaSpacing.lg),
+
+            // ── Cycle Status Card ─────────────────────────────────
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24.0),
-              decoration: IrmaTheme.cardDecoration(borderColor: IrmaTheme.lightTan),
+              padding: const EdgeInsets.all(IrmaSpacing.lg),
+              decoration: IrmaCards.large(),
               child: Column(
                 children: [
                   Row(
@@ -127,153 +97,125 @@ class _DashboardViewState extends State<DashboardView> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            currentPhase.toUpperCase(),
-                            style: TextStyle(
-                              fontFamily: 'Urbanist',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: phaseColor,
-                              letterSpacing: 1.2,
+                          // Phase pill label
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: phaseStyle.tint,
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Text(
+                              phase.toUpperCase(),
+                              style: IrmaTextStyles.labelXs.copyWith(
+                                color: phaseStyle.color,
+                                letterSpacing: 1.2,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: IrmaSpacing.sm),
                           Text(
                             'Day $currentDay of $avgLength',
-                            style: const TextStyle(
-                              fontFamily: 'Urbanist',
-                              fontSize: 22,
+                            style: IrmaTextStyles.para2xl.copyWith(
+                              color: IrmaColors.brown100,
                               fontWeight: FontWeight.w700,
-                              color: IrmaTheme.darkEspresso,
                             ),
                           ),
                         ],
                       ),
+                      // Phase icon circle
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        width: 56,
+                        height: 56,
                         decoration: BoxDecoration(
-                          color: phaseColor.withOpacity(0.1),
+                          color: phaseStyle.tint,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(phaseIcon, color: phaseColor, size: 28),
+                        child: Icon(phaseStyle.icon, color: phaseStyle.color, size: 26),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  // Progress line
+                  const SizedBox(height: IrmaSpacing.lg),
+
+                  // Progress bar — §9 mood-daily-status style
                   ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: LinearProgressIndicator(
                       value: (currentDay / avgLength).clamp(0.0, 1.0),
                       minHeight: 8,
-                      backgroundColor: IrmaTheme.lightTan,
-                      valueColor: AlwaysStoppedAnimation<Color>(phaseColor),
+                      backgroundColor: IrmaColors.brown20,
+                      valueColor: AlwaysStoppedAnimation<Color>(phaseStyle.color),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: IrmaSpacing.lg),
+
+                  // Countdown row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        isLate ? 'Cycle is extended' : 'Next period onset',
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: IrmaTheme.gray60,
-                        ),
+                        isLate ? 'Cycle extended past average' : 'Next period onset',
+                        style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60),
                       ),
                       Text(
-                        isLate ? 'Late' : 'in $daysUntilNext days',
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: IrmaTheme.earthyBrown,
-                        ),
+                        isLate ? 'Late' : 'in $daysUntil days',
+                        style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown80),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: IrmaSpacing.lg),
 
-            // Irma's Advice Block
-            const Text(
-              'Irma\'s Advice',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 12),
+            // ── Advice Section Header ─────────────────────────────
+            Text("Irma's Advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+            const SizedBox(height: IrmaSpacing.sm),
+
+            // ── Advice Card ───────────────────────────────────────
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24.0),
-              decoration: IrmaTheme.cardDecoration(
-                color: IrmaTheme.lightSageTint,
-                borderColor: IrmaTheme.lightGreen,
-              ),
+              padding: const EdgeInsets.all(IrmaSpacing.lg),
+              decoration: IrmaCards.advice(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.chat_bubble_outline_rounded, color: IrmaTheme.sageGreen, size: 20),
-                      const SizedBox(width: 8),
+                      Icon(Icons.chat_bubble_outline_rounded, color: IrmaColors.green50, size: 16),
+                      const SizedBox(width: IrmaSpacing.xs),
                       Text(
                         'DAILY INSIGHT',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: IrmaTheme.sageGreen,
+                        style: IrmaTextStyles.labelXs.copyWith(
+                          color: IrmaColors.green50,
                           letterSpacing: 1.0,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: IrmaSpacing.sm),
                   Text(
                     _advice,
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: IrmaTheme.darkEspresso,
-                      height: 1.5,
+                    style: IrmaTextStyles.paraMd.copyWith(
+                      color: IrmaColors.brown100,
+                      height: 1.6,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: IrmaSpacing.xl),
 
-            // Navigation Actions
+            // ── CTA Button ────────────────────────────────────────
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: widget.onLogSymptomsPressed,
                 icon: const Icon(Icons.add_circle_outline_rounded),
                 label: const Text('Log Symptoms & Telemetry'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: IrmaTheme.earthyBrown,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1000),
-                  ),
-                  textStyle: const TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                style: IrmaButtonStyles.primaryLg(),
               ),
             ),
+            const SizedBox(height: IrmaSpacing.lg),
           ],
         ),
       ),

@@ -128,26 +128,17 @@ class _DoctorViewState extends State<DoctorView> {
         await _handleBackAttempt();
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: IrmaColors.gray10,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () async {
-              // Manually handle back button click to trigger the lock
-              await _handleBackAttempt();
-            },
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: IrmaColors.brown80),
+            onPressed: () async => await _handleBackAttempt(),
           ),
-          title: const Text(
-            'Doctor Consultation Mode',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-              color: IrmaTheme.darkEspresso,
-            ),
-          ),
+          title: Text('Doctor Consultation Mode',
+              style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -157,117 +148,64 @@ class _DoctorViewState extends State<DoctorView> {
             children: [
               // Security warning banner
               Container(
-                padding: const EdgeInsets.all(16),
-                decoration: IrmaTheme.cardDecoration(
-                  color: IrmaTheme.lightSageTint,
-                  borderColor: IrmaTheme.sageGreen,
-                  radius: 24,
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.shield_rounded, color: IrmaTheme.sageGreen),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Accidental Resumption Lock Active. Backwards navigation triggers biometric request.',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                          color: IrmaTheme.sageGreen,
-                        ),
-                      ),
+                padding: const EdgeInsets.all(IrmaSpacing.md),
+                decoration: IrmaCards.advice(),
+                child: Row(children: [
+                  Icon(Icons.shield_rounded, color: IrmaColors.green50, size: 20),
+                  const SizedBox(width: IrmaSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      'Accidental Resumption Lock active. Backwards navigation triggers biometric re-authentication.',
+                      style: IrmaTextStyles.labelSm.copyWith(color: IrmaColors.green50),
                     ),
-                  ],
-                ),
+                  ),
+                ]),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: IrmaSpacing.lg),
 
               // Patient Summary Box
-              const Text(
-                'Clinical Summary',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.darkEspresso,
-                ),
-              ),
-              const SizedBox(height: 12),
+              Text('Clinical Summary', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+              const SizedBox(height: IrmaSpacing.sm),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: IrmaTheme.cardDecoration(borderColor: IrmaTheme.lightTan),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Irma Patient Data File',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: IrmaTheme.earthyBrown,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDataRow('Local Cryptographic Status', 'AES-256 Validated & Sealed'),
-                    _buildDataRow('Average Cycle Length', '${_avgCycleLength.toStringAsFixed(1)} days'),
-                    _buildDataRow('Total Logged Periods', '$_cycleCount cycles'),
-                    _buildDataRow('Data Compliance Standard', 'UK Special Category Health Compliance'),
-                  ],
-                ),
+                padding: const EdgeInsets.all(IrmaSpacing.lg),
+                decoration: IrmaCards.large(),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('Irma Patient Data File',
+                      style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80)),
+                  const SizedBox(height: IrmaSpacing.md),
+                  _buildDataRow('Local Cryptographic Status', 'AES-256 Validated & Sealed'),
+                  _buildDataRow('Average Cycle Length', '${_avgCycleLength.toStringAsFixed(1)} days'),
+                  _buildDataRow('Total Logged Periods', '$_cycleCount cycles'),
+                  _buildDataRow('Data Compliance Standard', 'UK Special Category Health Compliance'),
+                ]),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: IrmaSpacing.lg),
 
               // Diagnostics Summary
-              const Text(
-                'Long-Term Telemetry Metrics',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.darkEspresso,
-                ),
-              ),
-              const SizedBox(height: 12),
+              Text('Long-Term Telemetry Metrics', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+              const SizedBox(height: IrmaSpacing.sm),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: IrmaTheme.cardDecoration(borderColor: IrmaTheme.lightTan),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Cycle Variance: Normal\nNo significant cycle onset deviations or long-term drift anomalies detected over the lookback window.\n\nSymptom Correlations:\n• Cramps correlate reliably with lower Body Energy scores on Days 1-3.\n• Restfulness metrics remain stable inside medium equilibrium bounds.',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 14,
-                        color: IrmaTheme.darkEspresso,
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
+                padding: const EdgeInsets.all(IrmaSpacing.lg),
+                decoration: IrmaCards.large(),
+                child: Text(
+                  'Cycle Variance: Normal\nNo significant cycle onset deviations or long-term drift anomalies detected over the lookback window.\n\nSymptom Correlations:\n\u2022 Cramps correlate reliably with lower Body Energy scores on Days 1\u20133.\n\u2022 Restfulness metrics remain stable inside medium equilibrium bounds.',
+                  style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown100, height: 1.6),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: IrmaSpacing.xl),
 
               // Lock confirmation button
-              Center(
+              SizedBox(
+                width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () async {
-                    await _handleBackAttempt();
-                  },
+                  onPressed: () async => await _handleBackAttempt(),
                   icon: const Icon(Icons.lock_open_rounded),
                   label: const Text('Authenticate & Exit Mode'),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: IrmaTheme.earthyBrown,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                  ),
+                  style: IrmaButtonStyles.primaryLg(),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -277,31 +215,13 @@ class _DoctorViewState extends State<DoctorView> {
 
   Widget _buildDataRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.only(bottom: IrmaSpacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: IrmaTheme.gray60,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: IrmaTheme.darkEspresso,
-            ),
-          ),
+          Expanded(child: Text(label, style: IrmaTextStyles.labelSm.copyWith(color: IrmaColors.gray60))),
+          const SizedBox(width: IrmaSpacing.xs),
+          Text(value, style: IrmaTextStyles.labelSm.copyWith(color: IrmaColors.brown100)),
         ],
       ),
     );

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:irma/widgets/theme.dart';
+import 'package:irma/services/storage_service.dart';
 import 'package:irma/views/loading_view.dart';
 import 'package:irma/views/auth_views.dart';
 import 'package:irma/views/onboarding_view.dart';
 import 'package:irma/views/main_shell.dart';
 import 'package:irma/widgets/lock_gate.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageService.init();
   runApp(const MyApp());
 }
 
@@ -18,11 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Irma',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Urbanist',
-        useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white,
-      ),
+      theme: IrmaTheme.themeData,
       home: const MainRouter(),
     );
   }
@@ -37,7 +37,7 @@ class MainRouter extends StatefulWidget {
 }
 
 class _MainRouterState extends State<MainRouter> {
-  String _currentRoute = 'loading';
+  String _currentRoute = 'mainShell'; // DEV: bypass auth for preview
 
   void _navigateTo(String route) {
     setState(() {

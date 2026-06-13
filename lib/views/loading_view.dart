@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:irma/services/storage_service.dart';
+import 'package:irma/widgets/theme.dart';
 
 /// Boot-level isolation view running startup routines and encryption checks.
 class LoadingView extends StatefulWidget {
@@ -41,8 +42,8 @@ class _LoadingViewState extends State<LoadingView> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFF4B3425), // Mindful Brown 80 (Primary Brand)
+    return Scaffold(
+      backgroundColor: IrmaColors.brown80,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -52,19 +53,17 @@ class _LoadingViewState extends State<LoadingView> {
               height: 56,
               child: CircularProgressIndicator(
                 strokeWidth: 4,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9BB068)), // Sage Green
-                backgroundColor: Color(0xFFE8DDD9), // Light Tan
+                valueColor: AlwaysStoppedAnimation<Color>(IrmaColors.green50),
+                backgroundColor: IrmaColors.brown20,
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: IrmaSpacing.lg),
             Text(
               'IRMA',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
+              style: IrmaTextStyles.labelXl.copyWith(
                 color: Colors.white,
                 letterSpacing: 4.0,
+                fontSize: 28,
               ),
             ),
           ],

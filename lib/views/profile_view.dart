@@ -44,67 +44,56 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+          builder: (ctx) => IconButton(
+            icon: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: const Text(
-          'My Profile',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: IrmaTheme.darkEspresso,
-          ),
-        ),
+        title: Text('My Profile', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            // Avatar (Section 11)
+            // Avatar (§11 profile-picture spec — size-2xl, edit-button-true)
             Center(
               child: Stack(
+                clipBehavior: Clip.none,
                 children: [
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: 100,
+                    height: 100,
                     decoration: BoxDecoration(
-                      color: IrmaTheme.lightTan,
+                      color: IrmaColors.brown20,
                       shape: BoxShape.circle,
-                      border: Border.all(color: IrmaTheme.sageGreen, width: 3),
+                      border: Border.all(color: IrmaColors.green50, width: 2),
                     ),
-                    child: const Center(
-                      child: Text(
-                        'IM',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 36,
-                          fontWeight: FontWeight.w700,
-                          color: IrmaTheme.earthyBrown,
-                        ),
-                      ),
+                    child: Center(
+                      child: Text('IM', style: IrmaTextStyles.para2xl.copyWith(
+                        color: IrmaColors.brown80, fontWeight: FontWeight.w700, fontSize: 32)),
                     ),
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: IrmaTheme.sageGreen,
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: IrmaColors.green50,
                         shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
                       ),
-                      child: const Icon(Icons.camera_alt_rounded, size: 18, color: Colors.white),
+                      child: Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -112,88 +101,52 @@ class _ProfileViewState extends State<ProfileView> {
 
             // Profile info Card
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: IrmaTheme.cardDecoration(borderColor: IrmaTheme.lightTan),
-              child: Column(
-                children: [
-                  _buildProfileRow('Account Handle', _userEmail, Icons.email_outlined),
-                  const Divider(height: 32, color: IrmaTheme.gray20),
-                  _buildProfileRow('Security Status', 'AES-256 Sandbox Sealed', Icons.lock_outline_rounded),
-                  const Divider(height: 32, color: IrmaTheme.gray20),
-                  _buildProfileRow('Key Escrow', 'Cloud Escrow Configured', Icons.cloud_done_outlined),
-                ],
-              ),
+              padding: const EdgeInsets.all(IrmaSpacing.lg),
+              decoration: IrmaCards.large(),
+              child: Column(children: [
+                _buildProfileRow('Account Handle', _userEmail, Icons.email_outlined),
+                Divider(height: IrmaSpacing.xl, color: IrmaColors.brown20),
+                _buildProfileRow('Security Status', 'AES-256 Sandbox Sealed', Icons.lock_outline_rounded),
+                Divider(height: IrmaSpacing.xl, color: IrmaColors.brown20),
+                _buildProfileRow('Key Escrow', 'Cloud Escrow Configured', Icons.cloud_done_outlined),
+              ]),
             ),
             const SizedBox(height: 24),
 
             // Subscription details Card
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: IrmaTheme.cardDecoration(
-                borderColor: _isPremium ? IrmaTheme.sageGreen : IrmaTheme.gray20,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Subscription Details',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: IrmaTheme.darkEspresso,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: _isPremium ? IrmaTheme.sageGreen : IrmaTheme.gray30,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Text(
-                          _isPremium ? 'PREMIUM' : 'FREE TIER',
-                          style: const TextStyle(
-                            fontFamily: 'Urbanist',
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _isPremium
-                        ? 'You have full access to lookahead forecasting models, background wearable synchronization loops, and uncapped smart AI transcripts.'
-                        : 'You are on the standard day-only analytics tier. Projections and HealthKit features are locked.',
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 14,
-                      color: IrmaTheme.gray60,
-                      height: 1.4,
+              padding: const EdgeInsets.all(IrmaSpacing.lg),
+              decoration: IrmaCards.large(border: _isPremium ? IrmaColors.green50 : IrmaColors.gray20),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text('Subscription Details', style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: _isPremium ? IrmaColors.green50 : IrmaColors.gray40,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Text(
+                      _isPremium ? 'PREMIUM' : 'FREE',
+                      style: IrmaTextStyles.labelXs.copyWith(color: Colors.white, letterSpacing: 1.0),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Simulation switch
-                  SwitchListTile(
-                    title: const Text(
-                      'Simulate Premium Upgrade',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                    activeColor: IrmaTheme.sageGreen,
-                    value: _isPremium,
-                    onChanged: _togglePremium,
-                  )
-                ],
-              ),
+                ]),
+                const SizedBox(height: IrmaSpacing.sm),
+                Text(
+                  _isPremium
+                      ? 'You have full access to lookahead forecasting, background synchronisation, and uncapped smart AI transcripts.'
+                      : 'You are on the standard day-only analytics tier. Projections and wearable features are locked.',
+                  style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60, height: 1.5),
+                ),
+                const SizedBox(height: IrmaSpacing.lg),
+                SwitchListTile(
+                  title: Text('Simulate Premium Upgrade', style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                  activeColor: IrmaColors.green50,
+                  value: _isPremium,
+                  onChanged: _togglePremium,
+                ),
+              ]),
             ),
           ],
         ),
@@ -202,37 +155,19 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildProfileRow(String label, String value, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: IrmaTheme.earthyBrown, size: 20),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 12,
-                  color: IrmaTheme.gray60,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.darkEspresso,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+    return Row(children: [
+      Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(color: IrmaColors.brown10, borderRadius: BorderRadius.circular(10)),
+        child: Icon(icon, color: IrmaColors.brown80, size: 18),
+      ),
+      const SizedBox(width: IrmaSpacing.md),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(label, style: IrmaTextStyles.labelXs.copyWith(color: IrmaColors.gray60)),
+        const SizedBox(height: 2),
+        Text(value, style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+      ])),
+    ]);
   }
 }

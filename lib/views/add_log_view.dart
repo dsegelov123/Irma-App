@@ -109,25 +109,18 @@ class _AddLogViewState extends State<AddLogView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+          builder: (ctx) => IconButton(
+            icon: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: const Text(
-          'Daily Logging',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: IrmaTheme.darkEspresso,
-          ),
-        ),
+        title: Text('Daily Logging', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -137,26 +130,19 @@ class _AddLogViewState extends State<AddLogView> {
           children: [
             // Date Picker Banner
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: IrmaTheme.cardDecoration(radius: 24),
+              padding: const EdgeInsets.all(IrmaSpacing.md),
+              decoration: IrmaCards.stat(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.calendar_today_rounded, color: IrmaTheme.earthyBrown),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Logging for ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: IrmaTheme.darkEspresso,
-                        ),
-                      ),
-                    ],
-                  ),
+                  Row(children: [
+                    Icon(Icons.calendar_today_rounded, color: IrmaColors.brown80, size: 20),
+                    const SizedBox(width: IrmaSpacing.sm),
+                    Text(
+                      'Logging for ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                      style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100),
+                    ),
+                  ]),
                   TextButton(
                     onPressed: () async {
                       final picked = await showDatePicker(
@@ -166,21 +152,12 @@ class _AddLogViewState extends State<AddLogView> {
                         lastDate: DateTime.now(),
                       );
                       if (picked != null) {
-                        setState(() {
-                          _selectedDate = picked;
-                        });
+                        setState(() => _selectedDate = picked);
                         _loadExistingLog();
                       }
                     },
-                    child: const Text(
-                      'Change',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        color: IrmaTheme.earthyBrown,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  )
+                    child: Text('Change', style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown80)),
+                  ),
                 ],
               ),
             ),
@@ -188,165 +165,60 @@ class _AddLogViewState extends State<AddLogView> {
 
             // Period Start Toggle
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: IrmaTheme.cardDecoration(
-                color: _isPeriodStart ? IrmaTheme.lightOrangeTint : Colors.white,
-                borderColor: _isPeriodStart ? IrmaTheme.empathyOrange : IrmaTheme.gray20,
+              padding: const EdgeInsets.all(IrmaSpacing.md),
+              decoration: IrmaCards.large(
+                fill: _isPeriodStart ? IrmaColors.orange10 : Colors.white,
+                border: _isPeriodStart ? IrmaColors.orange40 : IrmaColors.gray20,
               ),
               child: SwitchListTile(
-                title: const Text(
-                  'Menstruation Onset (Period Start)',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontWeight: FontWeight.w700,
-                    color: IrmaTheme.darkEspresso,
-                  ),
+                title: Text('Menstruation Onset (Period Start)', style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                subtitle: Text(
+                  'Activates the Early Override reset. Forces current day to Day 1.',
+                  style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                 ),
-                subtitle: const Text(
-                  'Activates the Early Override reset. Forces current day to Day 1 and shifts cycle calendar anchors.',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 13,
-                  ),
-                ),
-                activeColor: IrmaTheme.empathyOrange,
+                activeColor: IrmaColors.orange40,
                 value: _isPeriodStart,
-                onChanged: (val) {
-                  setState(() {
-                    _isPeriodStart = val;
-                  });
-                },
+                onChanged: (val) => setState(() => _isPeriodStart = val),
               ),
             ),
             const SizedBox(height: 24),
 
             // Physical Symptoms Category
-            const Text(
-              'Physical States',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
+            Text('Physical States', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
             const SizedBox(height: 12),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _physicalSymptoms.map((symptom) {
-                final selected = _selectedSymptoms.contains(symptom);
-                return FilterChip(
-                  label: Text(symptom),
-                  selected: selected,
-                  selectedColor: IrmaTheme.lightOrangeTint,
-                  checkmarkColor: IrmaTheme.empathyOrange,
-                  labelStyle: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: selected ? IrmaTheme.empathyOrange : IrmaTheme.darkEspresso,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
-                    side: BorderSide(
-                      color: selected ? IrmaTheme.empathyOrange : IrmaTheme.gray30,
-                    ),
-                  ),
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedSymptoms.add(symptom);
-                      } else {
-                        _selectedSymptoms.remove(symptom);
-                      }
-                    });
-                  },
-                );
+              spacing: IrmaSpacing.xs,
+              runSpacing: IrmaSpacing.xs,
+              children: _physicalSymptoms.map((s) {
+                final sel = _selectedSymptoms.contains(s);
+                return _SymptomPill(label: s, selected: sel, activeColor: IrmaColors.orange40, activeTint: IrmaColors.orange10,
+                  onTap: () => setState(() => sel ? _selectedSymptoms.remove(s) : _selectedSymptoms.add(s)));
               }).toList(),
             ),
             const SizedBox(height: 24),
 
             // Emotional Symptoms Category
-            const Text(
-              'Emotional / Mental States',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
+            Text('Emotional / Mental States', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
             const SizedBox(height: 12),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _emotionalSymptoms.map((symptom) {
-                final selected = _selectedSymptoms.contains(symptom);
-                return FilterChip(
-                  label: Text(symptom),
-                  selected: selected,
-                  selectedColor: IrmaTheme.lightPurpleTint,
-                  checkmarkColor: IrmaTheme.gentlePurple,
-                  labelStyle: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: selected ? IrmaTheme.gentlePurple : IrmaTheme.darkEspresso,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
-                    side: BorderSide(
-                      color: selected ? IrmaTheme.gentlePurple : IrmaTheme.gray30,
-                    ),
-                  ),
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedSymptoms.add(symptom);
-                      } else {
-                        _selectedSymptoms.remove(symptom);
-                      }
-                    });
-                  },
-                );
+              spacing: IrmaSpacing.xs,
+              runSpacing: IrmaSpacing.xs,
+              children: _emotionalSymptoms.map((s) {
+                final sel = _selectedSymptoms.contains(s);
+                return _SymptomPill(label: s, selected: sel, activeColor: IrmaColors.purple40, activeTint: IrmaColors.purple10,
+                  onTap: () => setState(() => sel ? _selectedSymptoms.remove(s) : _selectedSymptoms.add(s)));
               }).toList(),
             ),
             const SizedBox(height: 28),
 
             // Notes Text Box
-            const Text(
-              'Daily Note',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 12),
+            Text('Daily Note', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+            const SizedBox(height: IrmaSpacing.sm),
             TextField(
               controller: _noteController,
               maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'Type any physical observation or reflection...',
-                hintStyle: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: IrmaTheme.gray60,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(color: IrmaTheme.gray20),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(color: IrmaTheme.sageGreen, width: 2),
-                ),
-              ),
+              style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown100),
+              decoration: IrmaInputDecoration.standard(hintText: 'Type any physical observation or reflection...'),
             ),
             const SizedBox(height: 32),
 
@@ -355,23 +227,51 @@ class _AddLogViewState extends State<AddLogView> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _saveLog,
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: IrmaTheme.earthyBrown,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1000),
-                  ),
-                  textStyle: const TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                style: IrmaButtonStyles.primaryLg(),
                 child: const Text('Save Daily Log'),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Symptom selection pill (§7 tag spec) ───────────────────────────
+
+class _SymptomPill extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final Color activeColor;
+  final Color activeTint;
+  final VoidCallback onTap;
+
+  const _SymptomPill({
+    required this.label,
+    required this.selected,
+    required this.activeColor,
+    required this.activeTint,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: IrmaSpacing.xs),
+        decoration: BoxDecoration(
+          color: selected ? activeTint : Colors.white,
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: selected ? activeColor : IrmaColors.gray30),
+        ),
+        child: Text(
+          label,
+          style: IrmaTextStyles.labelSm.copyWith(
+            color: selected ? activeColor : IrmaColors.brown100,
+          ),
         ),
       ),
     );

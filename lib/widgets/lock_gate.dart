@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:irma/services/biometric_service.dart';
 
@@ -57,6 +58,11 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
   }
 
   Future<void> _authenticate() async {
+    // Web has no biometric hardware — auto-unlock for browser preview
+    if (kIsWeb) {
+      setState(() => _isLocked = false);
+      return;
+    }
     final success = await BiometricService.authenticate();
     if (success) {
       setState(() {

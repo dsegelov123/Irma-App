@@ -13,9 +13,9 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
   final _textController = TextEditingController();
+  final _scrollController = ScrollController();
   final List<Map<String, dynamic>> _messages = [];
-  final ScrollController _scrollController = ScrollController();
-  
+
   bool _isOffline = false;
   bool _isThinking = false;
 
@@ -25,32 +25,32 @@ class _ChatViewState extends State<ChatView> {
     _loadMessages();
   }
 
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   void _loadMessages() {
     final box = StorageService.settingsBox;
     final List<dynamic>? stored = box.get('chat_transcripts') as List<dynamic>?;
     if (stored != null) {
-      setState(() {
-        _messages.addAll(stored.map((e) => Map<String, dynamic>.from(e as Map)));
-      });
+      setState(() => _messages.addAll(stored.map((e) => Map<String, dynamic>.from(e as Map))));
     } else {
-      // Add welcome message from Irma
-      setState(() {
-        _messages.add({
-          'sender': 'irma',
-          'type': 'type-chatbot-text',
-          'text': 'Good day. I am here to help you understand your cycle patterns. How are you feeling today?',
-          'timestamp': DateTime.now().toIso8601String(),
-        });
-      });
+      setState(() => _messages.add({
+        'sender': 'irma',
+        'type': 'type-chatbot-text',
+        'text': 'Good day. I am here to help you understand your cycle patterns. How are you feeling today?',
+        'timestamp': DateTime.now().toIso8601String(),
+      }));
       _saveMessages();
     }
     _scrollToBottom();
   }
 
-  Future<void> _saveMessages() async {
-    final box = StorageService.settingsBox;
-    await box.put('chat_transcripts', _messages);
-  }
+  Future<void> _saveMessages() async =>
+      StorageService.settingsBox.put('chat_transcripts', _messages);
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -70,73 +70,55 @@ class _ChatViewState extends State<ChatView> {
 
     _textController.clear();
     setState(() {
-      _messages.add({
-        'sender': 'user',
-        'type': 'type-user',
-        'text': text,
-        'timestamp': DateTime.now().toIso8601String(),
-      });
+      _messages.add({'sender': 'user', 'type': 'type-user', 'text': text, 'timestamp': DateTime.now().toIso8601String()});
       _isThinking = true;
     });
     _saveMessages();
     _scrollToBottom();
 
-    // Simulate network delay and chatbot response
     Timer(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
-      
-      setState(() {
-        _isThinking = false;
-      });
+      setState(() => _isThinking = false);
 
-      final query = text.toLowerCase();
-      String replyText = '';
-      String replyType = 'type-chatbot-text';
-      Map<String, dynamic>? recommendation;
+      final q = text.toLowerCase();
+      String reply;
+      String type = 'type-chatbot-text';
+      Map<String, dynamic>? rec;
 
-      // Crisis Escalation check (Section 6.2)
-      if (query.contains('severe') || query.contains('emergency') || query.contains('heavy bleeding') || query.contains('intense pain')) {
-        replyText = AdviceService.generateDailyAdvice(
-          targetDate: DateTime.now().subtract(const Duration(days: 0)), // Ensure trigger matches
-        );
-        // Force crisis trigger
-        if (!replyText.contains('NHS 111')) {
-          replyText = 'I am concerned by the severity of the symptoms you are experiencing. In line with NHS clinical safety guidelines, if you are experiencing severe, sudden pain, or heavy bleeding that requires changing pads hourly, please contact NHS 111 or your general practitioner immediately. Do not delay seeking professional medical attention.';
-        }
-      } else if (query.contains('recommend') || query.contains('therapist') || query.contains('doctor') || query.contains('help')) {
-        replyText = 'Based on our discussions, consulting a practitioner might offer additional clarity. I have compiled a referral below for a verified specialist in gynaecological health.';
-        replyType = 'type-chatbot-therapist-recommendation';
-        recommendation = {
+      if (q.contains('severe') || q.contains('emergency') || q.contains('heavy bleeding') || q.contains('intense pain')) {
+        reply = 'I am concerned by the severity of what you are experiencing. In line with NHS clinical safety guidelines, if you are experiencing severe or sudden pain, or heavy bleeding requiring you to change pads hourly, please contact NHS 111 or your GP immediately. Do not delay seeking professional medical attention.';
+      } else if (q.contains('recommend') || q.contains('therapist') || q.contains('doctor') || q.contains('specialist')) {
+        reply = 'Based on what you have shared, consulting a practitioner could offer additional clarity. I have compiled a referral below.';
+        type = 'type-chatbot-therapist-recommendation';
+        rec = {
           'title': 'Dr. Elizabeth Finch',
           'specialty': 'Gynaecologist & Endocrine Specialist',
           'clinic': 'NHS Chelsea and Westminster Clinic',
           'phone': '+44 20 7352 8121',
         };
-      } else if (query.contains('read') || query.contains('article') || query.contains('exercise') || query.contains('learn')) {
-        replyText = 'Here is an oestrogen-cycle management exercise from our verified NHS clinical reference materials.';
-        replyType = 'type-chatbot-resource-recommendation';
-        recommendation = {
+      } else if (q.contains('article') || q.contains('exercise') || q.contains('read') || q.contains('learn')) {
+        reply = 'Here is an oestrogen-cycle management exercise from our verified NHS clinical reference library.';
+        type = 'type-chatbot-resource-recommendation';
+        rec = {
           'title': 'Managing Cyclic Pain via Light Mobilisation',
-          'duration': '10 min read • Exercise',
+          'duration': '10 min read · Exercise',
           'author': 'NHS Clinical Board Guidelines',
         };
-      } else if (query.contains('cramp') || query.contains('cramps') || query.contains('pain')) {
-        replyText = 'Menstrual cramps are caused by contractions of the uterine wall muscle. Applying heat using a warm water bottle or light stretching o oestrogen support helps. Oestrogen is currently low, which changes your pain tolerance thresholds.';
-      } else if (query.contains('fatigue') || query.contains('tired')) {
-        replyText = 'Feeling tired is normal during active hormone transitions. Oestrogen changes sleep-wake patterns. Prioritise a regular bedtime routine to stabilise your energy levels.';
+      } else if (q.contains('cramp') || q.contains('pain')) {
+        reply = 'Menstrual cramps are caused by contractions of the uterine wall muscle. Applying a warm water bottle or doing light stretching can help. Oestrogen is currently low during this phase, which lowers your pain tolerance thresholds.';
+      } else if (q.contains('fatigue') || q.contains('tired')) {
+        reply = 'Feeling tired is a normal response to hormone transitions. Oestrogen changes your sleep-wake patterns. Prioritising a consistent bedtime routine helps stabilise energy levels through the cycle.';
       } else {
-        replyText = 'I understand. Tuning into these daily oestrogen fluctuations and tracking oestrogen patterns helps you oestrogen-synchronise. Let\'s continue monitoring how these shifts impact oestrogen-linked recovery and focus.';
+        reply = AdviceService.generateDailyAdvice();
       }
 
-      setState(() {
-        _messages.add({
-          'sender': 'irma',
-          'type': replyType,
-          'text': replyText,
-          'recommendation': recommendation,
-          'timestamp': DateTime.now().toIso8601String(),
-        });
-      });
+      setState(() => _messages.add({
+        'sender': 'irma',
+        'type': type,
+        'text': reply,
+        'recommendation': rec,
+        'timestamp': DateTime.now().toIso8601String(),
+      }));
       _saveMessages();
       _scrollToBottom();
     });
@@ -145,389 +127,377 @@ class _ChatViewState extends State<ChatView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
+
+      // ── Chat Header (§10) ─────────────────────────────────────
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        title: const Column(
+        automaticallyImplyLeading: false,
+        titleSpacing: IrmaSpacing.md,
+        title: Row(
           children: [
-            Text(
-              'Smart Chat',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-                color: IrmaTheme.darkEspresso,
+            // Back / menu button — 48×48 Gray 10 circle
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: IrmaColors.gray10,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.chevron_left_rounded, color: IrmaColors.brown100, size: 24),
               ),
             ),
-            Text(
-              'Irma (Wise Aunt)',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 11,
-                color: IrmaTheme.gray60,
+            const SizedBox(width: IrmaSpacing.sm),
+            // Avatar dot
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: IrmaColors.green50,
+                shape: BoxShape.circle,
+                border: Border.all(color: IrmaColors.green20, width: 2),
               ),
+              child: const Icon(Icons.spa_rounded, color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: IrmaSpacing.sm),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Irma', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
+                Text('Wise Companion', style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60)),
+              ],
             ),
           ],
         ),
-        centerTitle: true,
         actions: [
-          // Simulated Offline Toggle
-          IconButton(
-            icon: Icon(
-              _isOffline ? Icons.cloud_off_rounded : Icons.cloud_queue_rounded,
-              color: _isOffline ? IrmaTheme.empathyOrange : IrmaTheme.sageGreen,
+          // Search button — 48×48 with Brown 20 border
+          Container(
+            width: 48,
+            height: 48,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: IrmaColors.brown20),
             ),
-            onPressed: () {
-              setState(() {
-                _isOffline = !_isOffline;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(_isOffline ? 'Offline Mode Active' : 'Network Reconnected'),
-                  backgroundColor: _isOffline ? IrmaTheme.empathyOrange : IrmaTheme.sageGreen,
-                ),
-              );
-            },
-          )
+            child: IconButton(
+              icon: Icon(Icons.search_rounded, color: IrmaColors.brown80, size: 20),
+              onPressed: () {},
+              padding: EdgeInsets.zero,
+            ),
+          ),
+          // Offline toggle
+          Container(
+            width: 48,
+            height: 48,
+            margin: const EdgeInsets.only(right: IrmaSpacing.md),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: IrmaColors.brown20),
+            ),
+            child: IconButton(
+              icon: Icon(
+                _isOffline ? Icons.cloud_off_rounded : Icons.cloud_queue_rounded,
+                color: _isOffline ? IrmaColors.orange40 : IrmaColors.green50,
+                size: 20,
+              ),
+              onPressed: () => setState(() => _isOffline = !_isOffline),
+              padding: EdgeInsets.zero,
+            ),
+          ),
         ],
       ),
+
       body: Column(
         children: [
-          // Connection Warning Banner (Section 11.3)
+          // ── Network Fault Banner (§10 emotion-status spec) ────
           if (_isOffline)
             Container(
               width: double.infinity,
-              color: IrmaTheme.lightOrangeTint,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                children: [
-                  const Icon(Icons.warning_amber_rounded, color: IrmaTheme.empathyOrange),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Text(
-                      'Connection lost. Chat inputs frozen.',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                        color: IrmaTheme.empathyOrange,
-                      ),
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.xs),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 6),
+                decoration: BoxDecoration(
+                  color: IrmaColors.orange40,
+                  borderRadius: BorderRadius.circular(1234),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.warning_amber_rounded, color: Colors.white, size: 16),
+                    const SizedBox(width: IrmaSpacing.xs),
+                    Text(
+                      'Network lost. Chat inputs frozen.',
+                      style: IrmaTextStyles.labelMd.copyWith(color: Colors.white),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-            
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(20),
-              itemCount: _messages.length + (_isThinking ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == _messages.length) {
-                  // Thinking bubble
-                  return _buildThinkingBubble();
-                }
-                
-                final msg = _messages[index];
-                final isUser = msg['sender'] == 'user';
-                final type = msg['type'] as String;
 
-                if (isUser) {
-                  return _buildUserBubble(msg['text'] as String);
-                } else {
-                  if (type == 'type-chatbot-therapist-recommendation') {
-                    return _buildTherapistRecommendation(msg['text'] as String, msg['recommendation'] as Map?);
-                  } else if (type == 'type-chatbot-resource-recommendation') {
-                    return _buildResourceRecommendation(msg['text'] as String, msg['recommendation'] as Map?);
-                  } else {
-                    return _buildIrmaBubble(msg['text'] as String);
-                  }
-                }
-              },
+          // ── Chat Feed (§10 chat-main spec) ───────────────────
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.all(IrmaSpacing.md),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: IrmaColors.green50),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: ListView.separated(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(IrmaSpacing.lg),
+                  itemCount: _messages.length + (_isThinking ? 1 : 0),
+                  separatorBuilder: (_, __) => const SizedBox(height: IrmaSpacing.lg),
+                  itemBuilder: (_, i) {
+                    if (i == _messages.length) return _ThinkingBubble();
+                    final msg = _messages[i];
+                    final isUser = msg['sender'] == 'user';
+                    final type   = msg['type'] as String;
+
+                    if (isUser) return _UserBubble(text: msg['text'] as String);
+                    if (type == 'type-chatbot-therapist-recommendation') {
+                      return _TherapistCard(intro: msg['text'] as String, data: msg['recommendation'] as Map?);
+                    }
+                    if (type == 'type-chatbot-resource-recommendation') {
+                      return _ResourceCard(intro: msg['text'] as String, data: msg['recommendation'] as Map?);
+                    }
+                    return _IrmaBubble(text: msg['text'] as String);
+                  },
+                ),
+              ),
             ),
           ),
-          
-          // Input Box (Section 10.3)
+
+          // ── Input Box (§10 chat-textbox-user-input spec) ─────
           Container(
             color: Colors.white,
             padding: EdgeInsets.only(
-              top: 12,
-              left: 12,
-              right: 12,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              top: IrmaSpacing.sm,
+              left: IrmaSpacing.sm,
+              right: IrmaSpacing.sm,
+              bottom: MediaQuery.of(context).viewInsets.bottom + IrmaSpacing.md,
             ),
             child: Row(
               children: [
+                // Text field — Gray 10 pill
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: IrmaTheme.lightWarmGray,
-                      borderRadius: BorderRadius.circular(1000),
+                      color: IrmaColors.brown10,
+                      borderRadius: BorderRadius.circular(1238),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(IrmaSpacing.xs),
                     child: TextField(
                       controller: _textController,
                       enabled: !_isOffline,
-                      style: const TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 14,
-                        color: IrmaTheme.darkEspresso,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      decoration: const InputDecoration(
+                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown70),
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Type to start chatting...',
-                        hintStyle: TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: IrmaTheme.earthyBrown,
-                        ),
+                        hintStyle: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown50),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.xs),
+                        isDense: true,
                       ),
                       onSubmitted: (_) => _sendMessage(),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                InkWell(
+                const SizedBox(width: IrmaSpacing.xs),
+                // Send button — 48×48 green50 circle
+                GestureDetector(
                   onTap: _isOffline ? null : _sendMessage,
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: _isOffline ? IrmaTheme.gray30 : IrmaTheme.sageGreen,
+                      color: _isOffline ? IrmaColors.gray30 : IrmaColors.green50,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.arrow_upward_rounded, color: Colors.white),
+                    child: Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildUserBubble(String text) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16, left: 48),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: const BoxDecoration(
-          color: IrmaTheme.earthyBrown,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-            bottomLeft: Radius.circular(24),
-            bottomRight: Radius.circular(4),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Urbanist',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
+// ── Message bubble widgets ─────────────────────────────────────────
+
+class _UserBubble extends StatelessWidget {
+  final String text;
+  const _UserBubble({required this.text});
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerRight,
+    child: Container(
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
+      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.sm),
+      decoration: const BoxDecoration(
+        color: IrmaColors.brown80,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(4),
         ),
       ),
-    );
-  }
+      child: Text(text, style: IrmaTextStyles.paraMd.copyWith(color: Colors.white)),
+    ),
+  );
+}
 
-  Widget _buildIrmaBubble(String text) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16, right: 48),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-            bottomLeft: Radius.circular(4),
-            bottomRight: Radius.circular(24),
-          ),
-          border: Border(
-            left: BorderSide(color: IrmaTheme.sageGreen, width: 4),
+class _IrmaBubble extends StatelessWidget {
+  final String text;
+  const _IrmaBubble({required this.text});
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerLeft,
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        // Avatar dot
+        Container(
+          width: 28,
+          height: 28,
+          decoration: const BoxDecoration(color: IrmaColors.green50, shape: BoxShape.circle),
+          child: const Icon(Icons.spa_rounded, color: Colors.white, size: 14),
+        ),
+        const SizedBox(width: IrmaSpacing.xs),
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.sm),
+            decoration: BoxDecoration(
+              color: IrmaColors.green10,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+                bottomLeft: Radius.circular(4),
+                bottomRight: Radius.circular(20),
+              ),
+              border: Border.all(color: IrmaColors.green30),
+            ),
+            child: Text(text, style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown100, height: 1.5)),
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Urbanist',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: IrmaTheme.darkEspresso,
-            height: 1.4,
-          ),
-        ),
+      ],
+    ),
+  );
+}
+
+class _ThinkingBubble extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerLeft,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.sm),
+      decoration: BoxDecoration(
+        color: IrmaColors.green10,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: IrmaColors.green30),
       ),
-    );
-  }
-
-  Widget _buildThinkingBubble() {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: IrmaTheme.cardDecoration(radius: 20),
-        child: const SizedBox(
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        SizedBox(
           width: 20,
           height: 20,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(IrmaTheme.sageGreen),
+            valueColor: AlwaysStoppedAnimation<Color>(IrmaColors.green50),
           ),
         ),
-      ),
-    );
-  }
+        const SizedBox(width: IrmaSpacing.xs),
+        Text('Thinking…', style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60)),
+      ]),
+    ),
+  );
+}
 
-  Widget _buildTherapistRecommendation(String intro, Map? therapist) {
-    if (therapist == null) return Container();
+class _TherapistCard extends StatelessWidget {
+  final String intro;
+  final Map? data;
+  const _TherapistCard({required this.intro, required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    if (data == null) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildIrmaBubble(intro),
+        _IrmaBubble(text: intro),
+        const SizedBox(height: IrmaSpacing.xs),
         Container(
-          margin: const EdgeInsets.only(bottom: 16, right: 48, left: 12),
-          padding: const EdgeInsets.all(20),
-          decoration: IrmaTheme.cardDecoration(
-            color: IrmaTheme.lightSageTint,
-            borderColor: IrmaTheme.sageGreen,
-          ),
+          padding: const EdgeInsets.all(IrmaSpacing.md),
+          decoration: IrmaCards.advice(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.local_hospital_rounded, color: IrmaTheme.sageGreen),
-                  const SizedBox(width: 8),
-                  Text(
-                    therapist['title'] as String,
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      color: IrmaTheme.darkEspresso,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                therapist['specialty'] as String,
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.earthyBrown,
-                ),
-              ),
-              Text(
-                therapist['clinic'] as String,
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 12,
-                  color: IrmaTheme.gray60,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  const Icon(Icons.phone_rounded, size: 14, color: IrmaTheme.gray60),
-                  const SizedBox(width: 6),
-                  Text(
-                    therapist['phone'] as String,
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: IrmaTheme.darkEspresso,
-                    ),
-                  ),
-                ],
-              )
+              Row(children: [
+                Icon(Icons.local_hospital_rounded, color: IrmaColors.green50, size: 18),
+                const SizedBox(width: IrmaSpacing.xs),
+                Text(data!['title'] as String, style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+              ]),
+              const SizedBox(height: 4),
+              Text(data!['specialty'] as String, style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown80)),
+              Text(data!['clinic'] as String, style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60)),
+              const SizedBox(height: IrmaSpacing.xs),
+              Row(children: [
+                Icon(Icons.phone_rounded, size: 13, color: IrmaColors.gray60),
+                const SizedBox(width: 4),
+                Text(data!['phone'] as String, style: IrmaTextStyles.labelSm.copyWith(color: IrmaColors.brown100)),
+              ]),
             ],
           ),
-        )
+        ),
       ],
     );
   }
+}
 
-  Widget _buildResourceRecommendation(String intro, Map? resource) {
-    if (resource == null) return Container();
+class _ResourceCard extends StatelessWidget {
+  final String intro;
+  final Map? data;
+  const _ResourceCard({required this.intro, required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    if (data == null) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildIrmaBubble(intro),
+        _IrmaBubble(text: intro),
+        const SizedBox(height: IrmaSpacing.xs),
         Container(
-          margin: const EdgeInsets.only(bottom: 16, right: 48, left: 12),
-          padding: const EdgeInsets.all(20),
-          decoration: IrmaTheme.cardDecoration(
-            borderColor: IrmaTheme.lightTan,
-          ),
+          padding: const EdgeInsets.all(IrmaSpacing.md),
+          decoration: IrmaCards.large(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.bookmark_added_rounded, color: IrmaTheme.earthyBrown),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      resource['title'] as String,
-                      style: const TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                        color: IrmaTheme.darkEspresso,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    resource['duration'] as String,
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: IrmaTheme.gray60,
-                    ),
-                  ),
-                  Text(
-                    resource['author'] as String,
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: IrmaTheme.sageGreen,
-                    ),
-                  ),
-                ],
-              )
+              Row(children: [
+                Icon(Icons.bookmark_added_rounded, color: IrmaColors.brown80, size: 18),
+                const SizedBox(width: IrmaSpacing.xs),
+                Expanded(child: Text(data!['title'] as String, style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100))),
+              ]),
+              const SizedBox(height: IrmaSpacing.xs),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(data!['duration'] as String, style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60)),
+                Text(data!['author'] as String, style: IrmaTextStyles.labelXs.copyWith(color: IrmaColors.green50)),
+              ]),
             ],
           ),
-        )
+        ),
       ],
     );
   }

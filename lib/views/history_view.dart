@@ -27,80 +27,45 @@ class _HistoryViewState extends State<HistoryView> {
   }
 
   void _compilePdfReport() {
-    // PDF Report compiler pipeline (Section 9.1.1)
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        title: const Row(
-          children: [
-            Icon(Icons.picture_as_pdf_rounded, color: IrmaTheme.empathyOrange),
-            SizedBox(width: 8),
-            Text(
-              'PDF Report Compiled',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
+        title: Row(children: [
+          Icon(Icons.picture_as_pdf_rounded, color: IrmaColors.orange40),
+          const SizedBox(width: IrmaSpacing.xs),
+          Text('PDF Report Compiled', style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100)),
+        ]),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Standard 12-Month Clinical Report has been compiled successfully to transient cache storage.',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 14,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 16),
             Text(
-              'Metrics Summary:\n• Average Cycle Length: ${_avgCycleLength.round()} days\n• Total Recorded Cycles: ${_cycleStarts.length}\n• Encryption Verification: AES-256 Valid',
-              style: const TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 13,
-                color: IrmaTheme.gray60,
-                height: 1.5,
-              ),
-            )
+              'Standard 12-Month Clinical Report compiled to transient cache storage.',
+              style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown100),
+            ),
+            const SizedBox(height: IrmaSpacing.md),
+            Text(
+              'Metrics Summary:\n• Average Cycle Length: ${_avgCycleLength.round()} days\n• Total Recorded Cycles: ${_cycleStarts.length}\n• Encryption: AES-256 Valid',
+              style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60, height: 1.6),
+            ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Close',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                color: IrmaTheme.earthyBrown,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Close', style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown80)),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('PDF dispatched to system print tray.')),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: IrmaTheme.earthyBrown,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-            ),
-            child: const Text(
-              'Share',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          )
+            style: IrmaButtonStyles.primarySm(),
+            child: const Text('Share'),
+          ),
         ],
       ),
     );
@@ -109,31 +74,22 @@ class _HistoryViewState extends State<HistoryView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: IrmaColors.brown80),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Cycle History',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: IrmaTheme.darkEspresso,
-          ),
-        ),
+        title: Text('Cycle History', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf_rounded, color: IrmaTheme.earthyBrown),
+            icon: Icon(Icons.picture_as_pdf_rounded, color: IrmaColors.brown80),
             onPressed: _compilePdfReport,
-          )
+          ),
         ],
       ),
       body: Padding(
@@ -141,68 +97,30 @@ class _HistoryViewState extends State<HistoryView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Analytics Summary Card
-            const SizedBox(height: 12),
+            const SizedBox(height: IrmaSpacing.sm),
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: IrmaTheme.cardDecoration(borderColor: IrmaTheme.lightTan),
+              padding: const EdgeInsets.all(IrmaSpacing.md),
+              decoration: IrmaCards.large(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Historical Average',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: IrmaTheme.gray60,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${_avgCycleLength.toStringAsFixed(1)} days',
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: IrmaTheme.darkEspresso,
-                        ),
-                      ),
-                    ],
-                  ),
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('Historical Average', style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60)),
+                    const SizedBox(height: 4),
+                    Text('${_avgCycleLength.toStringAsFixed(1)} days',
+                        style: IrmaTextStyles.para2xl.copyWith(color: IrmaColors.brown100, fontWeight: FontWeight.w700)),
+                  ]),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: IrmaTheme.lightGreen,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Text(
-                      '${_cycleStarts.length} cycles logged',
-                      style: const TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: IrmaTheme.earthyBrown,
-                      ),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 6),
+                    decoration: BoxDecoration(color: IrmaColors.green10, borderRadius: BorderRadius.circular(100)),
+                    child: Text('${_cycleStarts.length} cycles logged',
+                        style: IrmaTextStyles.labelSm.copyWith(color: IrmaColors.green50)),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-
-            const Text(
-              'Menstruation Starts Chronology',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
+            const SizedBox(height: IrmaSpacing.lg),
+            Text('Menstruation Starts Chronology', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
             const SizedBox(height: 12),
 
             // History List
@@ -216,12 +134,9 @@ class _HistoryViewState extends State<HistoryView> {
                       itemBuilder: (context, index) {
                         final start = _cycleStarts[index];
                         final dateStr = '${start.day}/${start.month}/${start.year}';
-                        
-                        // Calculate length of this cycle if there is a next one
                         String lengthStr = 'Active Loop';
                         bool isAnomaly = false;
                         if (index > 0) {
-                          // Note: starts are reversed, so start[index] is older than start[index-1]
                           final nextStart = _cycleStarts[index - 1];
                           final length = nextStart.difference(start).inDays;
                           lengthStr = '$length days';
@@ -229,72 +144,45 @@ class _HistoryViewState extends State<HistoryView> {
                         }
 
                         return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                          decoration: IrmaTheme.cardDecoration(radius: 24),
+                          margin: const EdgeInsets.only(bottom: IrmaSpacing.xs),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: IrmaSpacing.md, vertical: IrmaSpacing.sm),
+                          decoration: IrmaCards.log(),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.water_drop_rounded, color: IrmaTheme.empathyOrange),
-                                  const SizedBox(width: 16),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        dateStr,
-                                        style: const TextStyle(
-                                          fontFamily: 'Urbanist',
-                                          fontWeight: FontWeight.w700,
-                                          color: IrmaTheme.darkEspresso,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      const Text(
-                                        'Bleeding onset logged',
-                                        style: TextStyle(
-                                          fontFamily: 'Urbanist',
-                                          fontSize: 12,
-                                          color: IrmaTheme.gray60,
-                                        ),
-                                      ),
-                                    ],
+                              Row(children: [
+                                Container(
+                                  width: 36, height: 36,
+                                  decoration: BoxDecoration(
+                                    color: IrmaColors.orange10,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(Icons.water_drop_rounded, color: IrmaColors.orange40, size: 18),
+                                ),
+                                const SizedBox(width: IrmaSpacing.sm),
+                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                  Text(dateStr, style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                                  Text('Bleeding onset', style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60)),
+                                ]),
+                              ]),
+                              Row(children: [
+                                if (isAnomaly) ..[
+                                  Container(
+                                    margin: const EdgeInsets.only(right: IrmaSpacing.xs),
+                                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.xs, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: IrmaColors.yellow10,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: Text('Outlier',
+                                        style: IrmaTextStyles.labelXs.copyWith(color: IrmaColors.yellow40)),
                                   ),
                                 ],
-                              ),
-                              Row(
-                                children: [
-                                  if (isAnomaly)
-                                    Container(
-                                      margin: const EdgeInsets.only(right: 8),
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: IrmaTheme.lightYellowTint,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: const Text(
-                                        'Outlier',
-                                        style: TextStyle(
-                                          fontFamily: 'Urbanist',
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          color: IrmaTheme.mediumBrown,
-                                        ),
-                                      ),
-                                    ),
-                                  Text(
-                                    lengthStr,
-                                    style: TextStyle(
-                                      fontFamily: 'Urbanist',
-                                      fontWeight: FontWeight.w700,
-                                      color: isAnomaly ? IrmaTheme.mediumBrown : IrmaTheme.darkEspresso,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                Text(lengthStr,
+                                    style: IrmaTextStyles.labelMd.copyWith(
+                                      color: isAnomaly ? IrmaColors.yellow40 : IrmaColors.brown100)),
+                              ]),
                             ],
                           ),
                         );

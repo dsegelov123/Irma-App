@@ -24,388 +24,302 @@ class _DailyMetricsViewState extends State<DailyMetricsView> {
   void _refreshData() {
     setState(() {
       _isPremium = StorageService.settingsBox.get('user_is_premium', defaultValue: false) as bool;
-      _metrics = TriMetricEngine.calculateMetricsForDate(DateTime.now());
-      if (_isPremium) {
-        _forecast = TriMetricEngine.calculate7DayForecast();
-      } else {
-        _forecast = [];
-      }
+      _metrics   = TriMetricEngine.calculateMetricsForDate(DateTime.now());
+      _forecast  = _isPremium ? TriMetricEngine.calculate7DayForecast() : [];
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final int body = _metrics['body'] as int;
-    final int mind = _metrics['mind'] as int;
-    final int soul = _metrics['soul'] as int;
-
+    final int body    = _metrics['body'] as int;
+    final int mind    = _metrics['mind'] as int;
+    final int soul    = _metrics['soul'] as int;
     final String bodyTier = _metrics['body_tier'] as String;
     final String mindTier = _metrics['mind_tier'] as String;
     final String soulTier = _metrics['soul_tier'] as String;
-
-    final Map<dynamic, dynamic> sub = _metrics['sub_metrics'] as Map<dynamic, dynamic>;
+    final Map sub = _metrics['sub_metrics'] as Map;
 
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+          builder: (ctx) => IconButton(
+            icon: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: const Text(
-          'Wellness Analytics',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: IrmaTheme.darkEspresso,
-          ),
-        ),
+        title: Text('Wellness Analytics', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: _refreshData,
-          )
+          IconButton(icon: Icon(Icons.refresh_rounded, color: IrmaColors.brown80), onPressed: _refreshData),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(IrmaSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Parent Metric Cards
-            const Text(
-              'Composite Vectors',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildParentMetricCard('Body', body, bodyTier, IrmaTheme.empathyOrange),
-            const SizedBox(height: 12),
-            _buildParentMetricCard('Mind', mind, mindTier, IrmaTheme.sageGreen),
-            const SizedBox(height: 12),
-            _buildParentMetricCard('Soul', soul, soulTier, IrmaTheme.gentlePurple),
-            const SizedBox(height: 28),
+            // ── Section: Composite Vectors ────────────────────────
+            Text('Composite Vectors', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+            const SizedBox(height: IrmaSpacing.sm),
+            _ParentMetricCard(title: 'Body', score: body, tier: bodyTier, color: IrmaColors.orange40, tint: IrmaColors.orange10),
+            const SizedBox(height: IrmaSpacing.sm),
+            _ParentMetricCard(title: 'Mind', score: mind, tier: mindTier, color: IrmaColors.green50,  tint: IrmaColors.green10),
+            const SizedBox(height: IrmaSpacing.sm),
+            _ParentMetricCard(title: 'Soul', score: soul, tier: soulTier, color: IrmaColors.purple40, tint: IrmaColors.purple10),
+            const SizedBox(height: IrmaSpacing.xl),
 
-            // Sub-metrics Grid
-            const Text(
-              'Granular Sub-metrics',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 12),
+            // ── Section: Sub-metrics ──────────────────────────────
+            Text('Granular Sub-metrics', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+            const SizedBox(height: IrmaSpacing.sm),
             GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.9,
+              mainAxisSpacing: IrmaSpacing.sm,
+              crossAxisSpacing: IrmaSpacing.sm,
+              childAspectRatio: 0.88,
               children: [
-                _buildSubMetricCell('Energy', sub['Energy'] as int, IrmaTheme.empathyOrange),
-                _buildSubMetricCell('Wakefulness', sub['Wakefulness'] as int, IrmaTheme.empathyOrange),
-                _buildSubMetricCell('Recovery', sub['Recovery'] as int, IrmaTheme.empathyOrange),
-                
-                _buildSubMetricCell('Focus', sub['Focus'] as int, IrmaTheme.sageGreen),
-                _buildSubMetricCell('Creativity', sub['Creativity'] as int, IrmaTheme.sageGreen),
-                _buildSubMetricCell('Motivation', sub['Motivation'] as int, IrmaTheme.sageGreen),
-                
-                _buildSubMetricCell('Mood', sub['Mood'] as int, IrmaTheme.gentlePurple),
-                _buildSubMetricCell('Social Band', sub['SocialBandwidth'] as int, IrmaTheme.gentlePurple),
-                _buildSubMetricCell('Stability', sub['Stability'] as int, IrmaTheme.gentlePurple),
+                _SubMetricCell(name: 'Energy',       val: sub['Energy']          as int, color: IrmaColors.orange40, tint: IrmaColors.orange10),
+                _SubMetricCell(name: 'Wakefulness',  val: sub['Wakefulness']     as int, color: IrmaColors.orange40, tint: IrmaColors.orange10),
+                _SubMetricCell(name: 'Recovery',     val: sub['Recovery']        as int, color: IrmaColors.orange40, tint: IrmaColors.orange10),
+                _SubMetricCell(name: 'Focus',        val: sub['Focus']           as int, color: IrmaColors.green50,  tint: IrmaColors.green10),
+                _SubMetricCell(name: 'Creativity',   val: sub['Creativity']      as int, color: IrmaColors.green50,  tint: IrmaColors.green10),
+                _SubMetricCell(name: 'Motivation',   val: sub['Motivation']      as int, color: IrmaColors.green50,  tint: IrmaColors.green10),
+                _SubMetricCell(name: 'Mood',         val: sub['Mood']            as int, color: IrmaColors.purple40, tint: IrmaColors.purple10),
+                _SubMetricCell(name: 'Social Band.', val: sub['SocialBandwidth'] as int, color: IrmaColors.purple40, tint: IrmaColors.purple10),
+                _SubMetricCell(name: 'Stability',    val: sub['Stability']       as int, color: IrmaColors.purple40, tint: IrmaColors.purple10),
               ],
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: IrmaSpacing.xl),
 
-            // Forecast Section
+            // ── Section: 7-Day Forecast ───────────────────────────
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '7-Day Projections',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: IrmaTheme.darkEspresso,
-                  ),
-                ),
+                Text('7-Day Projections', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
                 if (!_isPremium)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: IrmaTheme.earthyBrown,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: const Text(
-                      'PREMIUM',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 5),
+                    decoration: BoxDecoration(color: IrmaColors.brown80, borderRadius: BorderRadius.circular(100)),
+                    child: Text('PREMIUM', style: IrmaTextStyles.labelXs.copyWith(color: Colors.white, letterSpacing: 1.0)),
+                  ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: IrmaSpacing.sm),
 
             if (_isPremium)
-              ..._forecast.map((dayData) {
-                final date = dayData['date'] as DateTime;
-                final bScore = dayData['body'] as int;
-                final mScore = dayData['mind'] as int;
-                final sScore = dayData['soul'] as int;
-                
-                final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                final dateStr = '${weekdays[date.weekday - 1]} ${date.day}/${date.month}';
-
+              ..._forecast.map((day) {
+                final date = day['date'] as DateTime;
+                const wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: IrmaTheme.cardDecoration(radius: 20),
+                  margin: const EdgeInsets.only(bottom: IrmaSpacing.xs),
+                  padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.sm),
+                  decoration: IrmaCards.log(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        dateStr,
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontWeight: FontWeight.w700,
-                          color: IrmaTheme.darkEspresso,
-                        ),
+                        '${wd[date.weekday - 1]} ${date.day}/${date.month}',
+                        style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100),
                       ),
-                      Row(
-                        children: [
-                          _buildMiniIndicator('B', bScore, IrmaTheme.empathyOrange),
-                          const SizedBox(width: 8),
-                          _buildMiniIndicator('M', mScore, IrmaTheme.sageGreen),
-                          const SizedBox(width: 8),
-                          _buildMiniIndicator('S', sScore, IrmaTheme.gentlePurple),
-                        ],
-                      )
+                      Row(children: [
+                        _MiniIndicator(label: 'B', val: day['body'] as int, color: IrmaColors.orange40),
+                        const SizedBox(width: IrmaSpacing.xs),
+                        _MiniIndicator(label: 'M', val: day['mind'] as int, color: IrmaColors.green50),
+                        const SizedBox(width: IrmaSpacing.xs),
+                        _MiniIndicator(label: 'S', val: day['soul'] as int, color: IrmaColors.purple40),
+                      ]),
                     ],
                   ),
                 );
-              }).toList()
+              })
             else
-              // Subscription Teaser Card
+              // ── Premium teaser card ───────────────────────────
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24.0),
-                decoration: IrmaTheme.cardDecoration(
-                  color: IrmaTheme.lightPurpleTint,
-                  borderColor: IrmaTheme.lightPurple,
-                ),
+                padding: const EdgeInsets.all(IrmaSpacing.lg),
+                decoration: IrmaCards.large(fill: IrmaColors.purple10, border: IrmaColors.purple20),
                 child: Column(
                   children: [
-                    const Icon(Icons.lock_rounded, color: IrmaTheme.gentlePurple, size: 36),
-                    const SizedBox(height: 12),
-                    const Text(
+                    Icon(Icons.lock_rounded, color: IrmaColors.purple40, size: 36),
+                    const SizedBox(height: IrmaSpacing.sm),
+                    Text(
                       'Unlock Lookahead Projections',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: IrmaTheme.darkEspresso,
-                      ),
+                      style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Free accounts calculate active daily metrics. Upgrade to Premium to forecast emotional and physical patterns over the next 7 days.',
+                    const SizedBox(height: IrmaSpacing.xs),
+                    Text(
+                      'Upgrade to Premium to forecast emotional and physical patterns over the next 7 days.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 14,
-                        color: IrmaTheme.gray60,
-                        height: 1.4,
-                      ),
+                      style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60, height: 1.5),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: IrmaSpacing.lg),
                     ElevatedButton(
                       onPressed: () async {
-                        // Toggle Premium state for simulation testing
                         await StorageService.settingsBox.put('user_is_premium', true);
                         _refreshData();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Premium mode unlocked for testing.')),
-                        );
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Premium mode unlocked for testing.')),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: IrmaColors.purple40,
                         foregroundColor: Colors.white,
-                        backgroundColor: IrmaTheme.gentlePurple,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.sm),
+                        shape: const StadiumBorder(),
+                        textStyle: IrmaTextStyles.labelLg,
                       ),
-                      child: const Text(
-                        'Unlock Premium Forecasts',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    )
+                      child: const Text('Unlock Premium Forecasts'),
+                    ),
                   ],
                 ),
               ),
+            const SizedBox(height: IrmaSpacing.lg),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildParentMetricCard(String title, int score, String tier, Color color) {
+// ── Parent metric card ─────────────────────────────────────────────
+
+class _ParentMetricCard extends StatelessWidget {
+  final String title;
+  final int score;
+  final String tier;
+  final Color color;
+  final Color tint;
+
+  const _ParentMetricCard({
+    required this.title,
+    required this.score,
+    required this.tier,
+    required this.color,
+    required this.tint,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: IrmaTheme.cardDecoration(borderColor: IrmaTheme.lightTan),
+      padding: const EdgeInsets.all(IrmaSpacing.md),
+      decoration: IrmaCards.standard(),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.darkEspresso,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '$tier Tier Status',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 14,
-                  color: IrmaTheme.gray60,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
+          // Score display — large number
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(color: tint, borderRadius: BorderRadius.circular(20)),
+            child: Center(
+              child: Text(
                 '$score',
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.darkEspresso,
-                ),
+                style: IrmaTextStyles.paraXl.copyWith(color: color, fontWeight: FontWeight.w700, fontSize: 28),
               ),
-              const Text(
-                '/100',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: IrmaTheme.gray60,
+            ),
+          ),
+          const SizedBox(width: IrmaSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100)),
+                const SizedBox(height: 2),
+                Text('$tier Tier', style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60)),
+                const SizedBox(height: IrmaSpacing.xs),
+                // Score bar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: LinearProgressIndicator(
+                    value: score / 100,
+                    minHeight: 6,
+                    backgroundColor: tint,
+                    valueColor: AlwaysStoppedAnimation<Color>(color),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              // Ring dot indicator
-              Container(
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
-              )
-            ],
-          )
+              ],
+            ),
+          ),
+          // Tier pill tag
+          const SizedBox(width: IrmaSpacing.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 5),
+            decoration: BoxDecoration(color: tint, borderRadius: BorderRadius.circular(100)),
+            child: Text(
+              tier.toUpperCase(),
+              style: IrmaTextStyles.labelXs.copyWith(color: color, letterSpacing: 0.8),
+            ),
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildSubMetricCell(String name, int val, Color accentColor) {
+// ── Sub-metric grid cell ───────────────────────────────────────────
+
+class _SubMetricCell extends StatelessWidget {
+  final String name;
+  final int val;
+  final Color color;
+  final Color tint;
+
+  const _SubMetricCell({required this.name, required this.val, required this.color, required this.tint});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: IrmaTheme.cardDecoration(radius: 20),
+      padding: const EdgeInsets.all(IrmaSpacing.sm),
+      decoration: IrmaCards.log(),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            name,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: IrmaTheme.darkEspresso,
+          Text(name, textAlign: TextAlign.center, style: IrmaTextStyles.labelSm.copyWith(color: IrmaColors.brown100)),
+          const SizedBox(height: IrmaSpacing.xs),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 4),
+            decoration: BoxDecoration(color: tint, borderRadius: BorderRadius.circular(100)),
+            child: Text('$val', style: IrmaTextStyles.labelMd.copyWith(color: color)),
+          ),
+          const SizedBox(height: IrmaSpacing.xs),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: LinearProgressIndicator(
+              value: val / 100,
+              minHeight: 4,
+              backgroundColor: IrmaColors.gray20,
+              valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: Text(
-              '$val',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: accentColor,
-              ),
-            ),
-          )
         ],
       ),
     );
   }
+}
 
-  Widget _buildMiniIndicator(String label, int val, Color color) {
+// ── Forecast mini indicator ────────────────────────────────────────
+
+class _MiniIndicator extends StatelessWidget {
+  final String label;
+  final int val;
+  final Color color;
+
+  const _MiniIndicator({required this.label, required this.val, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        children: [
-          Text(
-            '$label:',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
-          const SizedBox(width: 2),
-          Text(
-            '$val',
-            style: const TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: IrmaTheme.darkEspresso,
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+      child: Text(
+        '$label:$val',
+        style: IrmaTextStyles.labelXs.copyWith(color: color),
       ),
     );
   }

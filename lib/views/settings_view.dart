@@ -94,25 +94,18 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+          builder: (ctx) => IconButton(
+            icon: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: const Text(
-          'Security Settings',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: IrmaTheme.darkEspresso,
-          ),
-        ),
+        title: Text('Security Settings', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -120,159 +113,87 @@ class _SettingsViewState extends State<SettingsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Biometrics settings
-            const Text(
-              'Hardware Protection',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 12),
+            Text('Hardware Protection', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+            const SizedBox(height: IrmaSpacing.sm),
             Container(
-              padding: const EdgeInsets.all(12),
-              decoration: IrmaTheme.cardDecoration(radius: 24),
+              padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: IrmaSpacing.xs),
+              decoration: IrmaCards.standard(),
               child: SwitchListTile(
-                title: const Text(
-                  'Biometric Authentication',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: IrmaTheme.darkEspresso,
-                  ),
+                title: Text('Biometric Authentication',
+                    style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                subtitle: Text(
+                  'Enforces native TouchID / FaceID gates on boot and resumption lifecycle triggers.',
+                  style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                 ),
-                subtitle: const Text(
-                  'Enforces native TouchID / FaceID gates check on app boot and resumption lifecycle triggers.',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 12,
-                    color: IrmaTheme.gray60,
-                  ),
-                ),
-                activeColor: IrmaTheme.sageGreen,
+                activeThumbColor: IrmaColors.green50,
+                activeTrackColor: IrmaColors.green20,
                 value: _biometricsEnabled,
                 onChanged: _toggleBiometrics,
               ),
             ),
-            const SizedBox(height: 28),
-
-            // Notification Privacy States settings
-            const Text(
-              'Notification Privacy Filters',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.darkEspresso,
-              ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: IrmaSpacing.xl),
+            Text('Notification Privacy Filters', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+            const SizedBox(height: IrmaSpacing.sm),
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: IrmaTheme.cardDecoration(radius: 24),
-              child: Column(
-                children: [
-                  RadioListTile<String>(
-                    title: const Text(
-                      'State A (Conversational & Vague)',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Engaging and supportive notices without revealing explicit clinical variables.',
-                      style: TextStyle(fontFamily: 'Urbanist', fontSize: 12),
-                    ),
-                    value: 'State A',
-                    groupValue: _privacyState,
-                    activeColor: IrmaTheme.sageGreen,
-                    onChanged: _updatePrivacyState,
+              padding: const EdgeInsets.all(IrmaSpacing.md),
+              decoration: IrmaCards.standard(),
+              child: Column(children: [
+                RadioListTile<String>(
+                  title: Text('State A (Conversational & Vague)',
+                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                  subtitle: Text(
+                    'Engaging and supportive notices without revealing explicit clinical variables.',
+                    style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                   ),
-                  const Divider(height: 24),
-                  RadioListTile<String>(
-                    title: const Text(
-                      'State B (Discreet / Masked)',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Sterilised system-style notices for absolute lock screen privacy.',
-                      style: TextStyle(fontFamily: 'Urbanist', fontSize: 12),
-                    ),
-                    value: 'State B',
-                    groupValue: _privacyState,
-                    activeColor: IrmaTheme.sageGreen,
-                    onChanged: _updatePrivacyState,
+                  value: 'State A',
+                  groupValue: _privacyState,
+                  activeColor: IrmaColors.green50,
+                  onChanged: _updatePrivacyState,
+                ),
+                Divider(height: IrmaSpacing.lg, color: IrmaColors.brown20),
+                RadioListTile<String>(
+                  title: Text('State B (Discreet / Masked)',
+                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                  subtitle: Text(
+                    'Sterilised system-style notices for absolute lock screen privacy.',
+                    style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                   ),
-                ],
-              ),
+                  value: 'State B',
+                  groupValue: _privacyState,
+                  activeColor: IrmaColors.green50,
+                  onChanged: _updatePrivacyState,
+                ),
+              ]),
             ),
-            const SizedBox(height: 40),
-
-            // Danger Zone
-            const Text(
-              'Danger Zone',
-              style: TextStyle(
-                fontFamily: 'Urbanist',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: IrmaTheme.empathyOrange,
-              ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: IrmaSpacing.xl),
+            Text('Danger Zone', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.orange40)),
+            const SizedBox(height: IrmaSpacing.sm),
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: IrmaTheme.cardDecoration(
-                borderColor: IrmaTheme.empathyOrange.withOpacity(0.3),
-                radius: 24,
-              ),
-              child: Column(
-                children: [
-                  ListTile(
-                    title: const Text(
-                      'Explicit Logout',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: IrmaTheme.darkEspresso,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Destroys transient o oestrogen-supporting decryption keys in memory. Requires full credentials re-authentication to enter.',
-                      style: TextStyle(fontFamily: 'Urbanist', fontSize: 12),
-                    ),
-                    trailing: const Icon(Icons.exit_to_app_rounded, color: IrmaTheme.earthyBrown),
-                    onTap: _triggerLogout,
+              padding: const EdgeInsets.all(IrmaSpacing.lg),
+              decoration: IrmaCards.standard(border: IrmaColors.orange30),
+              child: Column(children: [
+                ListTile(
+                  title: Text('Explicit Logout',
+                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                  subtitle: Text(
+                    'Destroys transient decryption keys in memory. Requires full credential re-authentication.',
+                    style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                   ),
-                  const Divider(height: 24),
-                  ListTile(
-                    title: const Text(
-                      'Purge Cryptographic Sandbox',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: IrmaTheme.empathyOrange,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Permanently deletes local database files, cycle starts arrays, and E2EE keys. Resets app to clean state.',
-                      style: TextStyle(fontFamily: 'Urbanist', fontSize: 12),
-                    ),
-                    trailing: const Icon(Icons.delete_forever_rounded, color: IrmaTheme.empathyOrange),
-                    onTap: _triggerPurge,
+                  trailing: Icon(Icons.exit_to_app_rounded, color: IrmaColors.brown80),
+                  onTap: _triggerLogout,
+                ),
+                Divider(height: IrmaSpacing.lg, color: IrmaColors.brown20),
+                ListTile(
+                  title: Text('Purge Cryptographic Sandbox',
+                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.orange40)),
+                  subtitle: Text(
+                    'Permanently deletes local database files, cycle start arrays, and E2EE keys. Resets to clean state.',
+                    style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                   ),
-                ],
-              ),
+                  trailing: Icon(Icons.delete_forever_rounded, color: IrmaColors.orange40),
+                  onTap: _triggerPurge,
+                ),
+              ]),
             ),
           ],
         ),

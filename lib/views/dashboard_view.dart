@@ -282,10 +282,10 @@ class _DashboardViewState extends State<DashboardView> {
         ],
       ),
       padding: EdgeInsets.fromLTRB(
-        IrmaSpacing.lg,
-        topPadding + IrmaSpacing.md,
-        IrmaSpacing.lg,
-        IrmaSpacing.lg,
+        16.0, // EXACT Figma padding-left-16
+        topPadding + 16.0, // topPadding + Figma padding-top-16
+        16.0, // EXACT Figma padding-right-16
+        16.0, // EXACT Figma padding-bottom-16
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,16 +296,20 @@ class _DashboardViewState extends State<DashboardView> {
             children: [
               Row(
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  GestureDetector(
+                    onTap: () => Scaffold.of(context).openDrawer(),
+                    child: Icon(Icons.menu_rounded, color: IrmaColors.brown80, size: 20),
                   ),
-                  const SizedBox(width: 4),
-                  Icon(Icons.calendar_today_rounded, size: 16, color: IrmaColors.brown60),
                   const SizedBox(width: 8),
+                  Icon(Icons.calendar_today_rounded, size: 16, color: IrmaColors.brown60),
+                  const SizedBox(width: 4), // EXACT Figma gap-4
                   Text(
                     formattedDate,
-                    style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100),
+                    style: IrmaTextStyles.labelMd.copyWith(
+                      color: IrmaColors.brown100,
+                      fontSize: 12, // EXACT Figma size-12
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
@@ -345,7 +349,7 @@ class _DashboardViewState extends State<DashboardView> {
               ),
             ],
           ),
-          const SizedBox(height: IrmaSpacing.lg),
+          const SizedBox(height: 12.0), // EXACT Figma gap-12
           
           // Row 2: Profile Picture & Name/Tags
           Row(
@@ -371,7 +375,7 @@ class _DashboardViewState extends State<DashboardView> {
                   ),
                 ),
               ),
-              const SizedBox(width: IrmaSpacing.md),
+              const SizedBox(width: 12.0), // EXACT Figma gap-12
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,16 +385,16 @@ class _DashboardViewState extends State<DashboardView> {
                       style: IrmaTextStyles.labelXl.copyWith(
                         color: IrmaColors.brown100,
                         fontWeight: FontWeight.w700,
-                        fontSize: 28,
+                        fontSize: 30, // EXACT Figma size-30
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4.0), // EXACT Figma gap-4
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // EXACT Figma padding-top-4, padding-right-8...
                             decoration: BoxDecoration(
                               color: _isPremium ? IrmaColors.green10 : IrmaColors.gray20,
                               borderRadius: BorderRadius.circular(100),
@@ -403,18 +407,19 @@ class _DashboardViewState extends State<DashboardView> {
                                   size: 14,
                                   color: _isPremium ? IrmaColors.green50 : IrmaColors.gray60,
                                 ),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: 4), // EXACT Figma gap-4
                                 Text(
                                   _isPremium ? 'Pro Member' : 'Free Member',
                                   style: IrmaTextStyles.labelXs.copyWith(
                                     color: _isPremium ? IrmaColors.green50 : IrmaColors.gray60,
                                     fontWeight: FontWeight.w700,
+                                    fontSize: 12, // EXACT Figma size-12
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 12.0), // EXACT Figma gap-12
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
@@ -425,18 +430,19 @@ class _DashboardViewState extends State<DashboardView> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.analytics_rounded, size: 14, color: IrmaColors.brown80),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: 4), // EXACT Figma gap-4
                                 Text(
                                   '$compositeScore%',
                                   style: IrmaTextStyles.labelXs.copyWith(
                                     color: IrmaColors.brown80,
                                     fontWeight: FontWeight.w700,
+                                    fontSize: 12, // EXACT Figma size-12
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 12.0), // EXACT Figma gap-12
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
@@ -447,12 +453,13 @@ class _DashboardViewState extends State<DashboardView> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(moodIcon, size: 14, color: moodColor),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: 4), // EXACT Figma gap-4
                                 Text(
                                   moodText,
                                   style: IrmaTextStyles.labelXs.copyWith(
                                     color: moodColor,
                                     fontWeight: FontWeight.w700,
+                                    fontSize: 12, // EXACT Figma size-12
                                   ),
                                 ),
                               ],
@@ -466,13 +473,13 @@ class _DashboardViewState extends State<DashboardView> {
               ),
             ],
           ),
-          const SizedBox(height: IrmaSpacing.lg),
+          const SizedBox(height: 16.0), // EXACT Figma gap-16
           
           // Row 3: Search Bar
           Container(
             height: 48,
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // EXACT Figma padding-top-16... (offset for input box)
             decoration: BoxDecoration(
               color: IrmaColors.brown10.withOpacity(0.5),
               borderRadius: BorderRadius.circular(32),
@@ -495,6 +502,7 @@ class _DashboardViewState extends State<DashboardView> {
                     },
                   ),
                 ),
+                const SizedBox(width: 24.0), // EXACT Figma gap-24
                 Icon(Icons.search_rounded, color: IrmaColors.brown50, size: 20),
               ],
             ),

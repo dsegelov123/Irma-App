@@ -448,6 +448,26 @@ The profile picture component set (`profile-picture`) manages user avatar sizing
   - `edit-button-true` (Displays a camera edit icon overlaid on the bottom right corner of the avatar)
   - `edit-button-false` (Plain avatar without edit badge overlay)
 
+---
+
+## 12. Bottom Tab Bar Component
+
+The application shell uses a bottom tab bar component set (`tab-bar`) for navigation between main feature categories:
+
+### Component Set Layout & Styling
+- **Container Radius**: `32px` (Figma container canvas spec).
+- **Padding**: Top/Bottom `48px`, Left/Right `24px`.
+- **Border**: `1px` stroke, Sage Green (`#9BB068`).
+- **Layout (Column)**: Gap `48px`.
+
+### Supported Navigation Tabs (Variants)
+The tab bar manages activation states for the four primary routing paths:
+- `type-home` (Home Dashboard route)
+- `type-chat` (Irma Chat Engine route)
+- `type-insight` (Mindful Metrics & Trends route)
+- `type-profile` (User Settings & Profile route)
+
+
 
 
 

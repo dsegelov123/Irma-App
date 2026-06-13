@@ -18,7 +18,7 @@ class PrivacyPolicyView extends StatelessWidget {
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        title: const Text(
+        title: Text(
           'Privacy Policy',
           style: IrmaTextStyles.label2xl,
         ),

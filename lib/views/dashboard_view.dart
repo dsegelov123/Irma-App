@@ -242,19 +242,15 @@ class _DashboardViewState extends State<DashboardView> {
     final int moodVal = _metrics['sub_metrics']?['Mood'] as int? ?? 80;
     final String moodText;
     final IconData moodIcon;
-    final Color moodColor;
     if (moodVal >= 80) {
       moodText = 'Happy';
       moodIcon = Icons.sentiment_very_satisfied_rounded;
-      moodColor = IrmaColors.green50;
     } else if (moodVal >= 50) {
       moodText = 'Calm';
       moodIcon = Icons.sentiment_satisfied_rounded;
-      moodColor = IrmaColors.purple40;
     } else {
       moodText = 'Tired';
       moodIcon = Icons.sentiment_neutral_rounded;
-      moodColor = IrmaColors.orange40;
     }
 
     final double rawTopPadding = MediaQuery.of(context).padding.top;
@@ -296,14 +292,12 @@ class _DashboardViewState extends State<DashboardView> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.calendar_today_rounded, size: 16, color: IrmaColors.brown60),
+                  Icon(Icons.calendar_today_rounded, size: 16, color: IrmaColors.brown80),
                   const SizedBox(width: 4), // EXACT Figma gap-4
                   Text(
                     formattedDate,
-                    style: IrmaTextStyles.labelMd.copyWith(
+                    style: IrmaTextStyles.labelSm.copyWith(
                       color: IrmaColors.brown100,
-                      fontSize: 12, // EXACT Figma size-12
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
@@ -315,7 +309,7 @@ class _DashboardViewState extends State<DashboardView> {
                   height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: IrmaColors.brown20),
+                    border: Border.all(color: IrmaColors.brown80),
                   ),
                   child: const Center(
                     child: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
@@ -357,9 +351,8 @@ class _DashboardViewState extends State<DashboardView> {
                   children: [
                     Text(
                       'Hi, Shinomiya!',
-                      style: IrmaTextStyles.labelXl.copyWith(
-                        color: IrmaColors.brown100,
-                        fontWeight: FontWeight.w700,
+                      style: IrmaTextStyles.displayLg.copyWith(
+                        color: IrmaColors.brown80,
                         fontSize: 30, // EXACT Figma size-30
                       ),
                     ),
@@ -385,60 +378,40 @@ class _DashboardViewState extends State<DashboardView> {
                                 const SizedBox(width: 4), // EXACT Figma gap-4
                                 Text(
                                   _isPremium ? 'Pro Member' : 'Free Member',
-                                  style: IrmaTextStyles.labelXs.copyWith(
+                                  style: IrmaTextStyles.labelSm.copyWith(
                                     color: _isPremium ? IrmaColors.green50 : IrmaColors.gray60,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12, // EXACT Figma size-12
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(width: 12.0), // EXACT Figma gap-12
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: IrmaColors.brown10,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.analytics_rounded, size: 14, color: IrmaColors.brown80),
-                                const SizedBox(width: 4), // EXACT Figma gap-4
-                                Text(
-                                  '$compositeScore%',
-                                  style: IrmaTextStyles.labelXs.copyWith(
-                                    color: IrmaColors.brown80,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12, // EXACT Figma size-12
-                                  ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.analytics_rounded, size: 14, color: IrmaColors.brown80),
+                              const SizedBox(width: 4), // EXACT Figma gap-4
+                              Text(
+                                '$compositeScore%',
+                                style: IrmaTextStyles.labelSm.copyWith(
+                                  color: IrmaColors.brown80,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           const SizedBox(width: 12.0), // EXACT Figma gap-12
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: moodColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(moodIcon, size: 14, color: moodColor),
-                                const SizedBox(width: 4), // EXACT Figma gap-4
-                                Text(
-                                  moodText,
-                                  style: IrmaTextStyles.labelXs.copyWith(
-                                    color: moodColor,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12, // EXACT Figma size-12
-                                  ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(moodIcon, size: 14, color: IrmaColors.brown80),
+                              const SizedBox(width: 4), // EXACT Figma gap-4
+                              Text(
+                                moodText,
+                                style: IrmaTextStyles.labelSm.copyWith(
+                                  color: IrmaColors.brown80,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

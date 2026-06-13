@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // § 3 — Complete Brand Color Palette (10 shades per group)
@@ -83,31 +84,29 @@ class IrmaColors {
 // ─────────────────────────────────────────────────────────────────
 
 class IrmaTextStyles {
-  static const String _font = 'Urbanist';
-
   // Display (700)
-  static const TextStyle displayLg = TextStyle(fontFamily: _font, fontSize: 180, fontWeight: FontWeight.w700);
-  static const TextStyle displayMd = TextStyle(fontFamily: _font, fontSize: 128, fontWeight: FontWeight.w700);
-  static const TextStyle displaySm = TextStyle(fontFamily: _font, fontSize: 96,  fontWeight: FontWeight.w700);
+  static TextStyle get displayLg => GoogleFonts.urbanist(fontSize: 180, fontWeight: FontWeight.w700);
+  static TextStyle get displayMd => GoogleFonts.urbanist(fontSize: 128, fontWeight: FontWeight.w700);
+  static TextStyle get displaySm => GoogleFonts.urbanist(fontSize: 96,  fontWeight: FontWeight.w700);
 
   // Heading (700)
-  static const TextStyle heading2xl = TextStyle(fontFamily: _font, fontSize: 72, fontWeight: FontWeight.w700);
+  static TextStyle get heading2xl => GoogleFonts.urbanist(fontSize: 72, fontWeight: FontWeight.w700);
 
   // Paragraph (500)
-  static const TextStyle para2xl = TextStyle(fontFamily: _font, fontSize: 24, fontWeight: FontWeight.w500);
-  static const TextStyle paraXl  = TextStyle(fontFamily: _font, fontSize: 20, fontWeight: FontWeight.w500);
-  static const TextStyle paraLg  = TextStyle(fontFamily: _font, fontSize: 18, fontWeight: FontWeight.w500);
-  static const TextStyle paraMd  = TextStyle(fontFamily: _font, fontSize: 16, fontWeight: FontWeight.w500);
-  static const TextStyle paraSm  = TextStyle(fontFamily: _font, fontSize: 14, fontWeight: FontWeight.w500);
-  static const TextStyle paraXs  = TextStyle(fontFamily: _font, fontSize: 12, fontWeight: FontWeight.w500);
+  static TextStyle get para2xl => GoogleFonts.urbanist(fontSize: 24, fontWeight: FontWeight.w500);
+  static TextStyle get paraXl  => GoogleFonts.urbanist(fontSize: 20, fontWeight: FontWeight.w500);
+  static TextStyle get paraLg  => GoogleFonts.urbanist(fontSize: 18, fontWeight: FontWeight.w500);
+  static TextStyle get paraMd  => GoogleFonts.urbanist(fontSize: 16, fontWeight: FontWeight.w500);
+  static TextStyle get paraSm  => GoogleFonts.urbanist(fontSize: 14, fontWeight: FontWeight.w500);
+  static TextStyle get paraXs  => GoogleFonts.urbanist(fontSize: 12, fontWeight: FontWeight.w500);
 
   // Label (700)
-  static const TextStyle label2xl = TextStyle(fontFamily: _font, fontSize: 20, fontWeight: FontWeight.w700);
-  static const TextStyle labelXl  = TextStyle(fontFamily: _font, fontSize: 18, fontWeight: FontWeight.w700);
-  static const TextStyle labelLg  = TextStyle(fontFamily: _font, fontSize: 16, fontWeight: FontWeight.w700);
-  static const TextStyle labelMd  = TextStyle(fontFamily: _font, fontSize: 14, fontWeight: FontWeight.w700);
-  static const TextStyle labelSm  = TextStyle(fontFamily: _font, fontSize: 12, fontWeight: FontWeight.w700);
-  static const TextStyle labelXs  = TextStyle(fontFamily: _font, fontSize: 10, fontWeight: FontWeight.w700);
+  static TextStyle get label2xl => GoogleFonts.urbanist(fontSize: 20, fontWeight: FontWeight.w700);
+  static TextStyle get labelXl  => GoogleFonts.urbanist(fontSize: 18, fontWeight: FontWeight.w700);
+  static TextStyle get labelLg  => GoogleFonts.urbanist(fontSize: 16, fontWeight: FontWeight.w700);
+  static TextStyle get labelMd  => GoogleFonts.urbanist(fontSize: 14, fontWeight: FontWeight.w700);
+  static TextStyle get labelSm  => GoogleFonts.urbanist(fontSize: 12, fontWeight: FontWeight.w700);
+  static TextStyle get labelXs  => GoogleFonts.urbanist(fontSize: 10, fontWeight: FontWeight.w700);
 }
 
 // ─────────────────────────────────────────────────────────────────

@@ -61,7 +61,7 @@ class _NotificationsViewState extends State<NotificationsView> {
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        title: const Text(
+        title: Text(
           'Notifications & Logs',
           style: IrmaTextStyles.label2xl,
         ),

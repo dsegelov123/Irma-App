@@ -290,5 +290,86 @@ Form inputs in the Irma design system are built around a flexible, padded compon
     - `icon-start---end` (both prefix and suffix icons present)
     - `icon-none` (text-only field)
 
+---
+
+## 9. Miscellaneous Helpers & Indicators
+
+The design system includes helper elements for device mocking, data visualizations, onboarding pagination, and status indicators:
+
+### Brand Logo Sizes (`psyche`)
+- **Corner Radius**: `32px`
+- **Padding**: `16px` on all sides.
+- **Border**: `1px` stroke, colored in **Brown 60** (`#926247`).
+- **Layout (Row)**: Gap `16px`, Align main axis `start`, cross axis `start`.
+- **Supported Size Variants**: `size-2xs`, `size-xs`, `size-sm`, `size-md`, `size-lg`, `size-xl`.
+
+### Onboarding Pagination Indicators
+- **Screen Indicator Group (`welcome-screen-indicator-group`)**:
+  - **Corner Radius**: `32px`
+  - **Padding**: `24px` on all sides.
+  - **Border**: `1px` stroke, Sage Green (`#9BB068`).
+  - **Layout (Column)**: Gap `24px`.
+  - **Children**: `progress-1-4` to `progress-4-4`.
+- **Screen Indicator Dot (`welcome-screen-indicator`)**:
+  - **Corner Radius**: `32px`
+  - **Padding**: `24px` on all sides.
+  - **Border**: `1px` stroke, Sage Green (`#9BB068`).
+  - **Layout (Column)**: Gap `24px`.
+  - **Children**: `state-fill` and `state-outline`.
+
+### Charts & Heatmap Indicators
+- **Mood Daily Status Column (`mood-daily-status`)**:
+  - **Corner Radius**: Pill shape (circular / `1234px`).
+  - **Padding**: Top/Bottom `8px`, Left/Right `7px`.
+  - **Background**: Light Warm Gray (`#F7F4F2`).
+  - **Size**: Width `16px`, Height `62px`.
+- **Mood Level Dot (`mood-level-indicator`)**:
+  - **Corner Radius**: Circular.
+  - **Border**: `8px` width stroke, colored in Green 20 (`#E5EAD7`).
+  - **Background**: Sage Green (`#9BB068`).
+  - **Size**: `36px` x `36px`.
+- **Journal Heatmap Cell (`mindful-journal-heatmap-cell`)**:
+  - **Corner Radius**: Circular.
+  - **Border**: `1px` stroke, colored in Brown 30 (`#D5C2B9`).
+  - **Size**: `42px` x `42px`.
+- **Chart Heatmap Cell (`chart-heatmap-cell`)**:
+  - **Corner Radius**: `6px`.
+  - **Background**: Gentle Purple 20 (`#CBC2FF`).
+  - **Size**: `16px` x `16px`.
+- **Chart Dotty Line (`chart-dotty-line`)**:
+  - **Border**: `2px` stroke, colored in Brown 20 (`#E8DDD9`).
+  - **Size**: Width `375px`, Height `0px`.
+- **Mood Chart Bar (`mood-chart`)**:
+  - **Background**: Orange 40 (`#FE814B`).
+  - **Size**: `36px` x `56px`.
+
+### Specialized Interactive & Help Bubbles
+- **Stress Level Assessment Button (`assessment-stress-level-button`)**:
+  - **Corner Radius**: Pill shape.
+  - **Border**: `1px` stroke, Gentle Purple 20 (`#CBC2FF`).
+  - **Layout (Row)**: Gap `10px`, Align `center` / `center`.
+  - **Size**: `56px` x `56px`.
+- **Unlock Article Pill (`unlock-article-circle`)**:
+  - **Corner Radius**: Circular.
+  - **Background**: Sage Green (`#9BB068`).
+  - **Size**: `24px` x `24px`.
+- **Chart Tooltip Bubble (`chart-text-bubble`)**:
+  - **Corner Radius**: `32px`.
+  - **Padding**: `24px` on all sides.
+  - **Border**: `1px` stroke, Sage Green (`#9BB068`).
+  - **Layout (Column)**: Gap `11px`.
+  - **Supported Pointer Directions**: `type-bottom`, `type-top`, `type-left`, `type-right`.
+
+### Device Helper Elements (iOS Integration)
+- **Home Indicator Bar (`home-indicator`)**:
+  - **Corner Radius**: `100px`.
+  - **Background**: Mindful Brown 80 (`#4B3425`).
+  - **Size**: `134px` x `5px`.
+- **Onscreen Keyboard Mock (`keyboard`)**:
+  - **Background**: Gray 20 (`#DDE1E6`).
+  - **Size**: `375px` x `291px`.
+  - **Layout (Row)**: Gap `0px`.
+
+
 
 

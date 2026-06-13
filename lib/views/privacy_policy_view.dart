@@ -7,132 +7,93 @@ class PrivacyPolicyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
+            icon: const Icon(Icons.menu_rounded, color: IrmaColors.brown80),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
         title: const Text(
           'Privacy Policy',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: IrmaTheme.darkEspresso,
-          ),
+          style: IrmaTextStyles.label2xl,
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(IrmaSpacing.lg),
         child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: IrmaTheme.cardDecoration(radius: 32),
-          child: const Column(
+          padding: const EdgeInsets.all(IrmaSpacing.lg),
+          decoration: IrmaCards.large(fill: Colors.white),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'UK Data Privacy & Compliance Notice',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.darkEspresso,
-                ),
+                style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: IrmaSpacing.md),
               Text(
                 'This application is built in strict alignment with special category health data protections under the UK General Data Protection Regulation (UK GDPR). Your data integrity is preserved using advanced cryptographic isolation pipelines.',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 14,
+                style: IrmaTextStyles.paraSm.copyWith(
                   height: 1.5,
-                  color: IrmaTheme.darkEspresso,
+                  color: IrmaColors.brown100,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: IrmaSpacing.lg),
               Text(
                 '1. The Zero-Telemetry Rule',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.earthyBrown,
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: IrmaSpacing.xs),
               Text(
                 'Under no circumstances is your personal health telemetry (including cycle lengths, logged symptoms, physiological phase states, daily notes, or conversational chat transcripts) shared with third-party analytical SDKs or crash-reporting frameworks. Non-health lifecycle tracking is strictly confined to UI navigation counters (e.g. screen views).',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 13,
+                style: IrmaTextStyles.paraSm.copyWith(
                   height: 1.4,
-                  color: IrmaTheme.gray60,
+                  color: IrmaColors.gray60,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: IrmaSpacing.lg),
               Text(
                 '2. Server-Blind Encryption (E2EE)',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.earthyBrown,
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: IrmaSpacing.xs),
               Text(
                 'All tracking coordinates and text conversations are encrypted locally on your mobile device using AES-256 before synchronization occurs. The remote database stores only unreadable, encrypted cryptographic blobs. The service provider has zero visibility into your data contents.',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 13,
+                style: IrmaTextStyles.paraSm.copyWith(
                   height: 1.4,
-                  color: IrmaTheme.gray60,
+                  color: IrmaColors.gray60,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: IrmaSpacing.lg),
               Text(
                 '3. Key Escrow & Recovery',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.earthyBrown,
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: IrmaSpacing.xs),
               Text(
                 'Your unique decryption key is generated locally upon account setup and backed up to a secure cloud Key Management Service (KMS) linked to your verified authentication token. Logging into a new device retrieves your key securely to execute local decryption.',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 13,
+                style: IrmaTextStyles.paraSm.copyWith(
                   height: 1.4,
-                  color: IrmaTheme.gray60,
+                  color: IrmaColors.gray60,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: IrmaSpacing.lg),
               Text(
                 '4. Patient Control & Erasure Rights',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: IrmaTheme.earthyBrown,
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: IrmaSpacing.xs),
               Text(
                 'You retain absolute ownership of your data history. Triggering the "Purge Cryptographic Sandbox" command in Settings permanently destroys your keys and locally cached databases, ensuring absolute, non-recoverable erasure.',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 13,
+                style: IrmaTextStyles.paraSm.copyWith(
                   height: 1.4,
-                  color: IrmaTheme.gray60,
+                  color: IrmaColors.gray60,
                 ),
               ),
             ],

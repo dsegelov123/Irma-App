@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:irma/services/auth_service.dart';
+import 'package:irma/widgets/theme.dart';
 
 /// -------------------------------------------------------------
 /// SIGN-UP VIEW
@@ -40,53 +41,44 @@ class _SignUpViewState extends State<SignUpView> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(IrmaSpacing.lg),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 48),
-                const Text(
+                const SizedBox(height: IrmaSpacing.xxl),
+                Text(
                   'Create Account',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1F160F), // Mindful Brown 100
-                  ),
+                  style: IrmaTextStyles.label2xl.copyWith(fontSize: 32, color: IrmaColors.brown100),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                const SizedBox(height: IrmaSpacing.xs),
+                Text(
                   'Join Irma to secure your tracking baseline.',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 16,
-                    color: Color(0xFF697077), // Optimistic Gray 60
-                  ),
+                  style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.gray60),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: IrmaSpacing.xxl),
                 // Email Field
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: _inputDecoration('Email Address'),
+                  decoration: IrmaInputDecoration.standard(labelText: 'Email Address'),
                   validator: (val) => val == null || !val.contains('@') ? 'Invalid email' : null,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: IrmaSpacing.lg),
                 // Password Field
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: _inputDecoration('Password'),
+                  decoration: IrmaInputDecoration.standard(labelText: 'Password'),
                   validator: (val) => val == null || val.length < 6 ? 'Password too short' : null,
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: IrmaSpacing.xxl),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _submit,
-                    style: _buttonStyle(),
+                    style: IrmaButtonStyles.primaryLg(),
                     child: _isLoading 
                       ? const SizedBox(
                           width: 20,
@@ -96,17 +88,13 @@ class _SignUpViewState extends State<SignUpView> {
                       : const Text('Create Profile'),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: IrmaSpacing.lg),
                 Center(
                   child: TextButton(
                     onPressed: () => widget.onNavigation('signIn'),
-                    child: const Text(
+                    child: Text(
                       'Already have an account? Sign In',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        color: Color(0xFF4B3425),
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
                     ),
                   ),
                 ),
@@ -157,53 +145,44 @@ class _SignInViewState extends State<SignInView> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(IrmaSpacing.lg),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 48),
-                const Text(
+                const SizedBox(height: IrmaSpacing.xxl),
+                Text(
                   'Welcome Back',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1F160F),
-                  ),
+                  style: IrmaTextStyles.label2xl.copyWith(fontSize: 32, color: IrmaColors.brown100),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                const SizedBox(height: IrmaSpacing.xs),
+                Text(
                   'Access your secure, E2EE wellness data.',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 16,
-                    color: Color(0xFF697077),
-                  ),
+                  style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.gray60),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: IrmaSpacing.xxl),
                 // Email Field
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: _inputDecoration('Email Address'),
+                  decoration: IrmaInputDecoration.standard(labelText: 'Email Address'),
                   validator: (val) => val == null || !val.contains('@') ? 'Invalid email' : null,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: IrmaSpacing.lg),
                 // Password Field
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: _inputDecoration('Password'),
+                  decoration: IrmaInputDecoration.standard(labelText: 'Password'),
                   validator: (val) => val == null || val.isEmpty ? 'Password required' : null,
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: IrmaSpacing.xxl),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _submit,
-                    style: _buttonStyle(),
+                    style: IrmaButtonStyles.primaryLg(),
                     child: _isLoading 
                       ? const SizedBox(
                           width: 20,
@@ -213,17 +192,13 @@ class _SignInViewState extends State<SignInView> {
                       : const Text('Sign In'),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: IrmaSpacing.lg),
                 Center(
                   child: TextButton(
                     onPressed: () => widget.onNavigation('signUp'),
-                    child: const Text(
+                    child: Text(
                       "Don't have an account? Sign Up",
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        color: Color(0xFF4B3425),
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
                     ),
                   ),
                 ),
@@ -347,52 +322,35 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(IrmaSpacing.lg),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 48),
-                const Text(
+                const SizedBox(height: IrmaSpacing.xxl),
+                Text(
                   'Verification Code',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1F160F),
-                  ),
+                  style: IrmaTextStyles.label2xl.copyWith(fontSize: 32, color: IrmaColors.brown100),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                const SizedBox(height: IrmaSpacing.xs),
+                Text(
                   'We have dispatched a 6-digit passcode. Please input it below to unlock access.',
-                  style: TextStyle(
-                    fontFamily: 'Urbanist',
-                    fontSize: 16,
-                    color: Color(0xFF697077),
-                  ),
+                  style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.gray60),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: IrmaSpacing.xxl),
                 if (_errorMessage != null) ...[
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFD2C2), // Empathy Orange 20
-                      borderRadius: BorderRadius.circular(1000), // Pill Shape
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.sm),
+                    decoration: IrmaCards.error(),
                     child: Text(
                       _errorMessage!,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFDF4B01), // Orange 60
-                      ),
+                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.orange60),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: IrmaSpacing.lg),
                 ],
                 // OTP Text Field
                 TextFormField(
@@ -400,20 +358,19 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                   enabled: !locked,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: IrmaTextStyles.label2xl.copyWith(
                     fontSize: 24,
-                    fontWeight: FontWeight.w700,
                     letterSpacing: 8.0,
                   ),
-                  decoration: _inputDecoration('Verification Code (123456)'),
+                  decoration: IrmaInputDecoration.standard(labelText: 'Verification Code (123456)'),
                   validator: (val) => val == null || val.length != 6 ? 'Enter 6-digit code' : null,
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: IrmaSpacing.xxl),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: (locked || _isLoading) ? null : _submit,
-                    style: _buttonStyle(),
+                    style: IrmaButtonStyles.primaryLg(),
                     child: _isLoading 
                       ? const SizedBox(
                           width: 20,
@@ -423,26 +380,18 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                       : const Text('Verify Code'),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: IrmaSpacing.lg),
                 Center(
                   child: _resendSecondsRemaining > 0
                     ? Text(
                         'Resend code in $_resendSecondsRemaining seconds',
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          color: Color(0xFF697077),
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.gray60),
                       )
                     : TextButton(
                         onPressed: locked ? null : _startResendTimer,
-                        child: const Text(
+                        child: Text(
                           'Resend Verification Code',
-                          style: TextStyle(
-                            fontFamily: 'Urbanist',
-                            color: Color(0xFF4B3425),
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
                         ),
                       ),
                 ),
@@ -453,55 +402,4 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
       ),
     );
   }
-}
-
-/// -------------------------------------------------------------
-/// DECORATION HELPERS
-/// -------------------------------------------------------------
-InputDecoration _inputDecoration(String label) {
-  return InputDecoration(
-    labelText: label,
-    labelStyle: const TextStyle(
-      fontFamily: 'Urbanist',
-      fontWeight: FontWeight.w500,
-      color: Color(0xFF697077),
-    ),
-    contentPadding: const EdgeInsets.all(24),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(32),
-      borderSide: const BorderSide(color: Color(0xFF9BB068), width: 1), // Sage Green 1px
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(32),
-      borderSide: const BorderSide(color: Color(0xFF9BB068), width: 2), // Sage Green 2px
-    ),
-    disabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(32),
-      borderSide: const BorderSide(color: Color(0xFFC1C6CD), width: 1), // Disabled Gray
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(32),
-      borderSide: const BorderSide(color: Color(0xFFFE814B), width: 1), // Orange 40 Error
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(32),
-      borderSide: const BorderSide(color: Color(0xFFFE814B), width: 2),
-    ),
-  );
-}
-
-ButtonStyle _buttonStyle() {
-  return ElevatedButton.styleFrom(
-    foregroundColor: Colors.white,
-    backgroundColor: const Color(0xFF4B3425), // Warm Earthy Brown
-    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(1000), // Pill Shape
-    ),
-    textStyle: const TextStyle(
-      fontFamily: 'Urbanist',
-      fontSize: 16,
-      fontWeight: FontWeight.w700,
-    ),
-  );
 }

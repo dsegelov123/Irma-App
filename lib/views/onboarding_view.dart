@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:irma/services/storage_service.dart';
+import 'package:irma/widgets/theme.dart';
 
 /// Step-by-step onboarding wizard capturing physiological baselines.
 class OnboardingWizardView extends StatefulWidget {
@@ -66,21 +67,17 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: _currentStep > 0
             ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF4B3425)),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: IrmaColors.brown80),
                 onPressed: _previousStep,
               )
             : null,
         title: Text(
           'Step ${_currentStep + 1} of 3',
-          style: const TextStyle(
-            fontFamily: 'Urbanist',
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF4B3425),
-          ),
+          style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
         ),
         centerTitle: true,
       ),
@@ -89,7 +86,7 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
           children: [
             // Progress dot indicator
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.sm),
               child: Row(
                 children: List.generate(3, (index) {
                   final active = index == _currentStep;
@@ -98,7 +95,7 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
                       height: 4,
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
-                        color: active ? const Color(0xFF9BB068) : const Color(0xFFE8DDD9),
+                        color: active ? IrmaColors.green50 : IrmaColors.brown20,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -119,24 +116,12 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
             ),
             // Bottom Action buttons
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(IrmaSpacing.lg),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _nextStep,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color(0xFF4B3425), // Warm Earthy Brown
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(1000), // Pill Shape
-                    ),
-                    textStyle: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  style: IrmaButtonStyles.primaryLg(),
                   child: Text(_currentStep == 2 ? 'Finalize Setup' : 'Continue'),
                 ),
               ),
@@ -149,29 +134,20 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
 
   Widget _buildStep1() {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(IrmaSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Cycle Regularity',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1F160F),
-            ),
+            style: IrmaTextStyles.label2xl.copyWith(fontSize: 28, color: IrmaColors.brown100),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          const SizedBox(height: IrmaSpacing.xs),
+          Text(
             'Does your biological cycle typically arrive at consistent intervals?',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 16,
-              color: Color(0xFF697077),
-            ),
+            style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.gray60),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: IrmaSpacing.xxl),
           // Option Cards
           _buildChoiceCard(
             title: 'Regular Cycle',
@@ -179,7 +155,7 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
             selected: _isCycleRegular,
             onTap: () => setState(() => _isCycleRegular = true),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: IrmaSpacing.lg),
           _buildChoiceCard(
             title: 'Irregular Cycle',
             subtitle: 'Fluctuates dynamically, varying significantly from month to month.',
@@ -201,12 +177,12 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(32),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(IrmaSpacing.lg),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFF2F5EB) : Colors.white, // Green 10 selection
+          color: selected ? IrmaColors.green10 : Colors.white, // Green 10 selection
           borderRadius: BorderRadius.circular(32), // Standard Card Radius
           border: Border.all(
-            color: selected ? const Color(0xFF9BB068) : const Color(0xFFDDE1E6), // Sage Green vs Light Gray
+            color: selected ? IrmaColors.green50 : IrmaColors.gray20, // Sage Green vs Light Gray
             width: selected ? 2 : 1,
           ),
         ),
@@ -218,29 +194,20 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1F160F),
-                    ),
+                    style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: IrmaSpacing.xs),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontFamily: 'Urbanist',
-                      fontSize: 14,
-                      color: Color(0xFF697077),
-                    ),
+                    style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: IrmaSpacing.md),
             Icon(
               selected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
-              color: selected ? const Color(0xFF4B3425) : const Color(0xFFC1C6CD),
+              color: selected ? IrmaColors.brown80 : IrmaColors.gray30,
             ),
           ],
         ),
@@ -250,50 +217,31 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
 
   Widget _buildStep2() {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(IrmaSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Cycle Length & Duration',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1F160F),
-            ),
+            style: IrmaTextStyles.label2xl.copyWith(fontSize: 28, color: IrmaColors.brown100),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          const SizedBox(height: IrmaSpacing.xs),
+          Text(
             'Establishes the initial baseline day-count interval and bleeding window.',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 16,
-              color: Color(0xFF697077),
-            ),
+            style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.gray60),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: IrmaSpacing.xxl),
           // Average Cycle Length Slider
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Average Cycle Length',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1F160F),
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100),
               ),
               Text(
                 '${_avgCycleLength.toInt()} days',
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF4B3425),
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
               ),
             ],
           ),
@@ -301,32 +249,22 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
             value: _avgCycleLength,
             min: 15.0,
             max: 45.0,
-            activeColor: const Color(0xFF4B3425),
-            inactiveColor: const Color(0xFFE8DDD9),
+            activeColor: IrmaColors.brown80,
+            inactiveColor: IrmaColors.brown20,
             onChanged: (val) => setState(() => _avgCycleLength = val),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: IrmaSpacing.xl),
           // Average Period Duration Slider
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Expected Period Duration',
-                style: TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1F160F),
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100),
               ),
               Text(
                 '${_avgPeriodDuration.toInt()} days',
-                style: const TextStyle(
-                  fontFamily: 'Urbanist',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF4B3425),
-                ),
+                style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown80),
               ),
             ],
           ),
@@ -334,8 +272,8 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
             value: _avgPeriodDuration,
             min: 1.0,
             max: 10.0,
-            activeColor: const Color(0xFF4B3425),
-            inactiveColor: const Color(0xFFE8DDD9),
+            activeColor: IrmaColors.brown80,
+            inactiveColor: IrmaColors.brown20,
             onChanged: (val) => setState(() => _avgPeriodDuration = val),
           ),
         ],
@@ -345,36 +283,27 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
 
   Widget _buildStep3() {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(IrmaSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Last Period Start Date',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1F160F),
-            ),
+            style: IrmaTextStyles.label2xl.copyWith(fontSize: 28, color: IrmaColors.brown100),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          const SizedBox(height: IrmaSpacing.xs),
+          Text(
             'Anchors the absolute timeline matrix, allowing Irma to compute active cycle phases.',
-            style: TextStyle(
-              fontFamily: 'Urbanist',
-              fontSize: 16,
-              color: Color(0xFF697077),
-            ),
+            style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.gray60),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: IrmaSpacing.xxl),
           // Selected Date Card
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(IrmaSpacing.lg),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F4F2), // Brown 10
+              color: IrmaColors.brown10,
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: const Color(0xFFE8DDD9), width: 1),
+              border: Border.all(color: IrmaColors.brown20, width: 1),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -382,24 +311,14 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Menstruation Onset Date',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 14,
-                        color: Color(0xFF697077),
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: IrmaTextStyles.labelSm.copyWith(color: IrmaColors.gray60),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: IrmaSpacing.xs),
                     Text(
                       '${_lastPeriodStartDate.day}/${_lastPeriodStartDate.month}/${_lastPeriodStartDate.year}',
-                      style: const TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1F160F),
-                      ),
+                      style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100),
                     ),
                   ],
                 ),
@@ -416,11 +335,14 @@ class _OnboardingWizardViewState extends State<OnboardingWizardView> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: const Color(0xFF4B3425),
+                    foregroundColor: IrmaColors.brown80,
                     backgroundColor: Colors.white,
+                    elevation: 0,
+                    side: const BorderSide(color: IrmaColors.brown20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(1000),
                     ),
+                    textStyle: IrmaTextStyles.labelMd,
                   ),
                   child: const Text('Change Date'),
                 ),

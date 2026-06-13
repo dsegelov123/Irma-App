@@ -50,30 +50,26 @@ class _NotificationsViewState extends State<NotificationsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaTheme.lightWarmGray,
+      backgroundColor: IrmaColors.gray10,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaTheme.earthyBrown),
+            icon: const Icon(Icons.menu_rounded, color: IrmaColors.brown80),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
         title: const Text(
           'Notifications & Logs',
-          style: TextStyle(
-            fontFamily: 'Urbanist',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: IrmaTheme.darkEspresso,
-          ),
+          style: IrmaTextStyles.label2xl,
         ),
         centerTitle: true,
         actions: [
           if (_logs.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.delete_sweep_rounded, color: IrmaTheme.earthyBrown),
+              icon: const Icon(Icons.delete_sweep_rounded, color: IrmaColors.brown80),
               onPressed: _clearLogs,
             )
         ],
@@ -81,47 +77,39 @@ class _NotificationsViewState extends State<NotificationsView> {
       body: _logs.isEmpty
           ? Center(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(IrmaSpacing.lg),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.notifications_none_rounded, size: 48, color: IrmaTheme.gray30),
-                    const SizedBox(height: 16),
-                    const Text(
+                    const Icon(Icons.notifications_none_rounded, size: 48, color: IrmaColors.gray30),
+                    const SizedBox(height: IrmaSpacing.md),
+                    Text(
                       'No Notifications Yet',
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: IrmaTheme.darkEspresso,
-                      ),
+                      style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
+                    const SizedBox(height: IrmaSpacing.xs),
+                    Text(
                       'Any daily notes and cycle phase warnings Irma dispatches will be displayed here.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Urbanist',
-                        fontSize: 14,
-                        color: IrmaTheme.gray60,
-                      ),
+                      style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60),
                     ),
                   ],
                 ),
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(IrmaSpacing.md),
               itemCount: _logs.length,
               itemBuilder: (context, index) {
                 final log = _logs[index];
                 final date = DateTime.parse(log['timestamp'] as String);
                 final dateStr = '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+                final isClinical = log['content'].toString().contains('NHS');
 
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(20),
-                  decoration: IrmaTheme.cardDecoration(radius: 24),
+                  margin: const EdgeInsets.only(bottom: IrmaSpacing.md),
+                  padding: const EdgeInsets.all(IrmaSpacing.lg),
+                  decoration: IrmaCards.large(fill: Colors.white),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -131,48 +119,34 @@ class _NotificationsViewState extends State<NotificationsView> {
                           Row(
                             children: [
                               Icon(
-                                log['content'].toString().contains('NHS')
+                                isClinical
                                     ? Icons.health_and_safety_rounded
                                     : Icons.spa_rounded,
-                                color: log['content'].toString().contains('NHS')
-                                    ? IrmaTheme.empathyOrange
-                                    : IrmaTheme.sageGreen,
+                                color: isClinical
+                                    ? IrmaColors.orange50
+                                    : IrmaColors.green50,
                                 size: 18,
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: IrmaSpacing.xs),
                               Text(
-                                log['content'].toString().contains('NHS')
-                                    ? 'CLINICAL ALERT'
-                                    : 'DAILY REFLECTION',
-                                style: TextStyle(
-                                  fontFamily: 'Urbanist',
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: log['content'].toString().contains('NHS')
-                                      ? IrmaTheme.empathyOrange
-                                      : IrmaTheme.sageGreen,
+                                isClinical ? 'CLINICAL ALERT' : 'DAILY REFLECTION',
+                                style: IrmaTextStyles.labelXs.copyWith(
+                                  color: isClinical ? IrmaColors.orange50 : IrmaColors.green50,
                                 ),
                               ),
                             ],
                           ),
                           Text(
                             dateStr,
-                            style: const TextStyle(
-                              fontFamily: 'Urbanist',
-                              fontSize: 11,
-                              color: IrmaTheme.gray60,
-                            ),
+                            style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: IrmaSpacing.sm),
                       Text(
                         log['content'] as String,
-                        style: const TextStyle(
-                          fontFamily: 'Urbanist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: IrmaTheme.darkEspresso,
+                        style: IrmaTextStyles.paraSm.copyWith(
+                          color: IrmaColors.brown100,
                           height: 1.4,
                         ),
                       ),

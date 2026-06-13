@@ -3,7 +3,6 @@ import 'package:irma/services/cycle_engine.dart';
 import 'package:irma/services/advice_service.dart';
 import 'package:irma/services/storage_service.dart';
 import 'package:irma/services/tri_metric_engine.dart';
-import 'package:irma/views/notifications_view.dart';
 import 'package:irma/widgets/theme.dart';
 
 class DashboardView extends StatefulWidget {
@@ -291,17 +290,12 @@ class _DashboardViewState extends State<DashboardView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Row 1: Calendar Date & Notifications
+          // Row 1: Calendar Date & Hamburger Icon (Menu Trigger)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => Scaffold.of(context).openDrawer(),
-                    child: Icon(Icons.menu_rounded, color: IrmaColors.brown80, size: 20),
-                  ),
-                  const SizedBox(width: 8),
                   Icon(Icons.calendar_today_rounded, size: 16, color: IrmaColors.brown60),
                   const SizedBox(width: 4), // EXACT Figma gap-4
                   Text(
@@ -315,12 +309,7 @@ class _DashboardViewState extends State<DashboardView> {
                 ],
               ),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const NotificationsView()),
-                  );
-                },
+                onTap: () => Scaffold.of(context).openDrawer(),
                 child: Container(
                   width: 48,
                   height: 48,
@@ -328,23 +317,8 @@ class _DashboardViewState extends State<DashboardView> {
                     shape: BoxShape.circle,
                     border: Border.all(color: IrmaColors.brown20),
                   ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(Icons.notifications_none_rounded, color: IrmaColors.brown80),
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: IrmaColors.orange40,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: const Center(
+                    child: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
                   ),
                 ),
               ),
@@ -473,40 +447,6 @@ class _DashboardViewState extends State<DashboardView> {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 16.0), // EXACT Figma gap-16
-          
-          // Row 3: Search Bar
-          Container(
-            height: 48,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // EXACT Figma padding-top-16... (offset for input box)
-            decoration: BoxDecoration(
-              color: IrmaColors.brown10.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown100),
-                    decoration: InputDecoration(
-                      hintText: 'Search anything...',
-                      hintStyle: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown50),
-                      border: InputBorder.none,
-                      isDense: true,
-                    ),
-                    onSubmitted: (value) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Searching for "$value"...')),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 24.0), // EXACT Figma gap-24
-                Icon(Icons.search_rounded, color: IrmaColors.brown50, size: 20),
-              ],
-            ),
           ),
         ],
       ),

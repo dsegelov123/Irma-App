@@ -349,9 +349,7 @@ class _DashboardViewState extends State<DashboardView> {
                   children: [
                     Text(
                       'Hi, Shinomiya!',
-                      style: IrmaTextStyles.label2xl.copyWith(
-                        color: IrmaColors.brown80,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 4.0), // EXACT Figma gap-4
                     SingleChildScrollView(

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:irma/services/storage_service.dart';
 import 'package:irma/views/doctor_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -25,6 +26,7 @@ void main() {
   bool mockAuthResult = false;
 
   setUpAll(() async {
+    GoogleFonts.config.allowRuntimeFetching = false;
     PathProviderPlatform.instance = MockPathProviderPlatform();
     
     // Mock FlutterSecureStorage method channel

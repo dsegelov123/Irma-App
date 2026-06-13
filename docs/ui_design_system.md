@@ -17,31 +17,39 @@ The application uses the **Urbanist** font family, a simple, geometric, and eleg
 
 ## 2. Text Style Hierarchy
 
-The design system maps text sizes into specific layout components:
+The design system contains 48 unique text styles mapped across display, heading, label, and paragraph configurations:
 
-### Display & Hero Text (Weight: `700`)
-- **Display lg**: `180px`
-- **Display md**: `128px`
-- **Display sm**: `96px`
+### Display Styles (Weight: `700` / `800`)
+- **Display lg Bold**: `180px` (Weight: `700`)
+- **Display lg ExtraBold**: `180px` (Weight: `800`)
+- **Display md Bold**: `128px` (Weight: `700`)
+- **Display md ExtraBold**: `128px` (Weight: `800`)
+- **Display sm Bold**: `96px` (Weight: `700`)
+- **Display sm ExtraBold**: `96px` (Weight: `800`)
 
-### Headings (Weight: `700` / `600`)
-- **Heading 2xl**: `72px`
+### Heading Styles (Weight: `700` / `600` / `500`)
+- **Heading 2xl**: `72px` (Variants: `Bold` (700), `Semibold` (600), `Medium` (500))
+- **Heading xl**: `48px` (Variants: `Bold` (700), `Semibold` (600), `Medium` (500))
+- **Heading lg**: `30px` (Variants: `Bold` (700), `Semibold` (600), `Medium` (500))
+- **Heading md**: `24px` (Variants: `Bold` (700), `Semibold` (600), `Medium` (500))
+- **Heading sm**: `20px` (Variants: `Bold` (700), `Semibold` (600), `Medium` (500))
+- **Heading xs**: `18px` (Variants: `Bold` (700), `Semibold` (600), `Medium` (500))
 
-### Body Paragraphs (Weight: `500`)
-- **Paragraph 2xl**: `24px`
-- **Paragraph xl**: `20px`
-- **Paragraph lg**: `18px`
-- **Paragraph md**: `16px` (Standard Body Text)
-- **Paragraph sm**: `14px`
-- **Paragraph xs**: `12px`
+### Label Styles (Weight: `700` / Bold)
+- **Label 2xl**: `20px` (Weight: `700`)
+- **Label xl**: `18px` (Weight: `700`)
+- **Label lg**: `16px` (Weight: `700`)
+- **Label md**: `14px` (Weight: `700`)
+- **Label sm**: `12px` (Weight: `700`)
+- **Label xs**: `10px` (Weight: `700`)
 
-### Labels & Action Text (Weight: `700`)
-- **Label 2xl**: `20px`
-- **Label xl**: `18px`
-- **Label lg**: `16px`
-- **Label md**: `14px` (Buttons, Secondary Actions)
-- **Label sm**: `12px`
-- **Label xs**: `10px`
+### Paragraph Styles (Weight: `600` / `500` / `400`)
+- **Paragraph 2xl**: `24px` (Variants: `Semibold` (600), `Medium` (500), `Regular` (400))
+- **Paragraph xl**: `20px` (Variants: `Semibold` (600), `Medium` (500), `Regular` (400))
+- **Paragraph lg**: `18px` (Variants: `Semibold` (600), `Medium` (500), `Regular` (400))
+- **Paragraph md**: `16px` (Variants: `Semibold` (600), `Medium` (500), `Regular` (400))
+- **Paragraph sm**: `14px` (Variants: `Semibold` (600), `Medium` (500), `Regular` (400))
+- **Paragraph xs**: `12px` (Variants: `Semibold` (600), `Medium` (500), `Regular` (400))
 
 ---
 

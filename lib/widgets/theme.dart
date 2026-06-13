@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -84,29 +86,122 @@ class IrmaColors {
 // ─────────────────────────────────────────────────────────────────
 
 class IrmaTextStyles {
-  // Display (700)
-  static TextStyle get displayLg => GoogleFonts.urbanist(fontSize: 180, fontWeight: FontWeight.w700);
-  static TextStyle get displayMd => GoogleFonts.urbanist(fontSize: 128, fontWeight: FontWeight.w700);
-  static TextStyle get displaySm => GoogleFonts.urbanist(fontSize: 96,  fontWeight: FontWeight.w700);
+  static bool get _isTestEnv => !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
 
-  // Heading (700)
-  static TextStyle get heading2xl => GoogleFonts.urbanist(fontSize: 72, fontWeight: FontWeight.w700);
+  static TextStyle _urbanist({required double fontSize, required FontWeight fontWeight}) {
+    if (_isTestEnv) {
+      return TextStyle(fontFamily: 'Roboto', fontSize: fontSize, fontWeight: fontWeight);
+    }
+    return GoogleFonts.urbanist(fontSize: fontSize, fontWeight: fontWeight);
+  }
 
-  // Paragraph (500)
-  static TextStyle get para2xl => GoogleFonts.urbanist(fontSize: 24, fontWeight: FontWeight.w500);
-  static TextStyle get paraXl  => GoogleFonts.urbanist(fontSize: 20, fontWeight: FontWeight.w500);
-  static TextStyle get paraLg  => GoogleFonts.urbanist(fontSize: 18, fontWeight: FontWeight.w500);
-  static TextStyle get paraMd  => GoogleFonts.urbanist(fontSize: 16, fontWeight: FontWeight.w500);
-  static TextStyle get paraSm  => GoogleFonts.urbanist(fontSize: 14, fontWeight: FontWeight.w500);
-  static TextStyle get paraXs  => GoogleFonts.urbanist(fontSize: 12, fontWeight: FontWeight.w500);
+  // Display LG (180)
+  static TextStyle get displayLgBold => _urbanist(fontSize: 180, fontWeight: FontWeight.w700);
+  static TextStyle get displayLgExtraBold => _urbanist(fontSize: 180, fontWeight: FontWeight.w800);
 
-  // Label (700)
-  static TextStyle get label2xl => GoogleFonts.urbanist(fontSize: 20, fontWeight: FontWeight.w700);
-  static TextStyle get labelXl  => GoogleFonts.urbanist(fontSize: 18, fontWeight: FontWeight.w700);
-  static TextStyle get labelLg  => GoogleFonts.urbanist(fontSize: 16, fontWeight: FontWeight.w700);
-  static TextStyle get labelMd  => GoogleFonts.urbanist(fontSize: 14, fontWeight: FontWeight.w700);
-  static TextStyle get labelSm  => GoogleFonts.urbanist(fontSize: 12, fontWeight: FontWeight.w700);
-  static TextStyle get labelXs  => GoogleFonts.urbanist(fontSize: 10, fontWeight: FontWeight.w700);
+  // Display MD (128)
+  static TextStyle get displayMdBold => _urbanist(fontSize: 128, fontWeight: FontWeight.w700);
+  static TextStyle get displayMdExtraBold => _urbanist(fontSize: 128, fontWeight: FontWeight.w800);
+
+  // Display SM (96)
+  static TextStyle get displaySmBold => _urbanist(fontSize: 96, fontWeight: FontWeight.w700);
+  static TextStyle get displaySmExtraBold => _urbanist(fontSize: 96, fontWeight: FontWeight.w800);
+
+  // Heading 2XL (72)
+  static TextStyle get heading2xlBold => _urbanist(fontSize: 72, fontWeight: FontWeight.w700);
+  static TextStyle get heading2xlSemibold => _urbanist(fontSize: 72, fontWeight: FontWeight.w600);
+  static TextStyle get heading2xlMedium => _urbanist(fontSize: 72, fontWeight: FontWeight.w500);
+
+  // Heading XL (48)
+  static TextStyle get headingXlBold => _urbanist(fontSize: 48, fontWeight: FontWeight.w700);
+  static TextStyle get headingXlSemibold => _urbanist(fontSize: 48, fontWeight: FontWeight.w600);
+  static TextStyle get headingXlMedium => _urbanist(fontSize: 48, fontWeight: FontWeight.w500);
+
+  // Heading LG (30)
+  static TextStyle get headingLgBold => _urbanist(fontSize: 30, fontWeight: FontWeight.w700);
+  static TextStyle get headingLgSemibold => _urbanist(fontSize: 30, fontWeight: FontWeight.w600);
+  static TextStyle get headingLgMedium => _urbanist(fontSize: 30, fontWeight: FontWeight.w500);
+
+  // Heading MD (24)
+  static TextStyle get headingMdBold => _urbanist(fontSize: 24, fontWeight: FontWeight.w700);
+  static TextStyle get headingMdSemibold => _urbanist(fontSize: 24, fontWeight: FontWeight.w600);
+  static TextStyle get headingMdMedium => _urbanist(fontSize: 24, fontWeight: FontWeight.w500);
+
+  // Heading SM (20)
+  static TextStyle get headingSmBold => _urbanist(fontSize: 20, fontWeight: FontWeight.w700);
+  static TextStyle get headingSmSemibold => _urbanist(fontSize: 20, fontWeight: FontWeight.w600);
+  static TextStyle get headingSmMedium => _urbanist(fontSize: 20, fontWeight: FontWeight.w500);
+
+  // Heading XS (18)
+  static TextStyle get headingXsBold => _urbanist(fontSize: 18, fontWeight: FontWeight.w700);
+  static TextStyle get headingXsSemibold => _urbanist(fontSize: 18, fontWeight: FontWeight.w600);
+  static TextStyle get headingXsMedium => _urbanist(fontSize: 18, fontWeight: FontWeight.w500);
+
+  // Label 2XL (20)
+  static TextStyle get label2xlBold => _urbanist(fontSize: 20, fontWeight: FontWeight.w700);
+
+  // Label XL (18)
+  static TextStyle get labelXlBold => _urbanist(fontSize: 18, fontWeight: FontWeight.w700);
+
+  // Label LG (16)
+  static TextStyle get labelLgBold => _urbanist(fontSize: 16, fontWeight: FontWeight.w700);
+
+  // Label MD (14)
+  static TextStyle get labelMdBold => _urbanist(fontSize: 14, fontWeight: FontWeight.w700);
+
+  // Label SM (12)
+  static TextStyle get labelSmBold => _urbanist(fontSize: 12, fontWeight: FontWeight.w700);
+
+  // Label XS (10)
+  static TextStyle get labelXsBold => _urbanist(fontSize: 10, fontWeight: FontWeight.w700);
+
+  // Paragraph 2XL (24)
+  static TextStyle get paragraph2xlSemibold => _urbanist(fontSize: 24, fontWeight: FontWeight.w600);
+  static TextStyle get paragraph2xlMedium => _urbanist(fontSize: 24, fontWeight: FontWeight.w500);
+  static TextStyle get paragraph2xlRegular => _urbanist(fontSize: 24, fontWeight: FontWeight.w400);
+
+  // Paragraph XL (20)
+  static TextStyle get paragraphXlSemibold => _urbanist(fontSize: 20, fontWeight: FontWeight.w600);
+  static TextStyle get paragraphXlMedium => _urbanist(fontSize: 20, fontWeight: FontWeight.w500);
+  static TextStyle get paragraphXlRegular => _urbanist(fontSize: 20, fontWeight: FontWeight.w400);
+
+  // Paragraph LG (18)
+  static TextStyle get paragraphLgSemibold => _urbanist(fontSize: 18, fontWeight: FontWeight.w600);
+  static TextStyle get paragraphLgMedium => _urbanist(fontSize: 18, fontWeight: FontWeight.w500);
+  static TextStyle get paragraphLgRegular => _urbanist(fontSize: 18, fontWeight: FontWeight.w400);
+
+  // Paragraph MD (16)
+  static TextStyle get paragraphMdSemibold => _urbanist(fontSize: 16, fontWeight: FontWeight.w600);
+  static TextStyle get paragraphMdMedium => _urbanist(fontSize: 16, fontWeight: FontWeight.w500);
+  static TextStyle get paragraphMdRegular => _urbanist(fontSize: 16, fontWeight: FontWeight.w400);
+
+  // Paragraph SM (14)
+  static TextStyle get paragraphSmSemibold => _urbanist(fontSize: 14, fontWeight: FontWeight.w600);
+  static TextStyle get paragraphSmMedium => _urbanist(fontSize: 14, fontWeight: FontWeight.w500);
+  static TextStyle get paragraphSmRegular => _urbanist(fontSize: 14, fontWeight: FontWeight.w400);
+
+  // Paragraph XS (12)
+  static TextStyle get paragraphXsSemibold => _urbanist(fontSize: 12, fontWeight: FontWeight.w600);
+  static TextStyle get paragraphXsMedium => _urbanist(fontSize: 12, fontWeight: FontWeight.w500);
+  static TextStyle get paragraphXsRegular => _urbanist(fontSize: 12, fontWeight: FontWeight.w400);
+
+  // Legacy aliases for backwards compatibility
+  static TextStyle get displayLg => displayLgBold;
+  static TextStyle get displayMd => displayMdBold;
+  static TextStyle get displaySm => displaySmBold;
+  static TextStyle get heading2xl => heading2xlBold;
+  static TextStyle get para2xl => paragraph2xlMedium;
+  static TextStyle get paraXl => paragraphXlMedium;
+  static TextStyle get paraLg => paragraphLgMedium;
+  static TextStyle get paraMd => paragraphMdMedium;
+  static TextStyle get paraSm => paragraphSmRegular;
+  static TextStyle get paraXs => paragraphXsMedium;
+  static TextStyle get label2xl => label2xlBold;
+  static TextStyle get labelXl => labelXlBold;
+  static TextStyle get labelLg => labelLgBold;
+  static TextStyle get labelMd => labelMdBold;
+  static TextStyle get labelSm => labelSmBold;
+  static TextStyle get labelXs => labelXsBold;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -409,14 +504,15 @@ class IrmaTheme {
       error: IrmaColors.orange40,
     ),
     textTheme: TextTheme(
-      displayLarge:  IrmaTextStyles.displaySm.copyWith(color: IrmaColors.brown80),
-      headlineLarge: IrmaTextStyles.heading2xl.copyWith(color: IrmaColors.brown80),
-      titleLarge:    IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100),
-      bodyLarge:     IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown100),
-      bodyMedium:    IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60),
-      labelLarge:    IrmaTextStyles.labelLg.copyWith(color: Colors.white),
-      labelMedium:   IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100),
-      labelSmall:    IrmaTextStyles.labelSm.copyWith(color: IrmaColors.gray60),
+      displayLarge:  IrmaTextStyles.displaySmBold.copyWith(color: IrmaColors.brown80),
+      headlineLarge: IrmaTextStyles.heading2xlBold.copyWith(color: IrmaColors.brown80),
+      headlineMedium: IrmaTextStyles.headingLgBold.copyWith(color: IrmaColors.brown80), // size 30
+      titleLarge:    IrmaTextStyles.label2xlBold.copyWith(color: IrmaColors.brown100),
+      bodyLarge:     IrmaTextStyles.paragraphMdMedium.copyWith(color: IrmaColors.brown100),
+      bodyMedium:    IrmaTextStyles.paragraphSmRegular.copyWith(color: IrmaColors.gray60),
+      labelLarge:    IrmaTextStyles.labelLgBold.copyWith(color: Colors.white),
+      labelMedium:   IrmaTextStyles.labelMdBold.copyWith(color: IrmaColors.brown100),
+      labelSmall:    IrmaTextStyles.labelSmBold.copyWith(color: IrmaColors.gray60),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(style: IrmaButtonStyles.primaryLg()),
     outlinedButtonTheme: OutlinedButtonThemeData(style: IrmaButtonStyles.outlinedLg()),

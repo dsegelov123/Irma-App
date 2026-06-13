@@ -167,7 +167,7 @@ class _HistoryViewState extends State<HistoryView> {
                                 ]),
                               ]),
                               Row(children: [
-                                if (isAnomaly) ..[
+                                if (isAnomaly)
                                   Container(
                                     margin: const EdgeInsets.only(right: IrmaSpacing.xs),
                                     padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.xs, vertical: 4),
@@ -178,7 +178,6 @@ class _HistoryViewState extends State<HistoryView> {
                                     child: Text('Outlier',
                                         style: IrmaTextStyles.labelXs.copyWith(color: IrmaColors.yellow40)),
                                   ),
-                                ],
                                 Text(lengthStr,
                                     style: IrmaTextStyles.labelMd.copyWith(
                                       color: isAnomaly ? IrmaColors.yellow40 : IrmaColors.brown100)),

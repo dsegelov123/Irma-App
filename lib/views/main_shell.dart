@@ -237,84 +237,52 @@ class _MainShellState extends State<MainShell> {
 // ── Custom Notched Tab Bar Painter ────────────────────────────────────
 
 class _NotchedTabBarPainter extends CustomPainter {
+  final Rect barRect;
+
+  _NotchedTabBarPainter({required this.barRect});
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
+    final double scaleX = barRect.width / 375.0;
+    final double scaleY = barRect.height / 80.0;
+    final double dx = barRect.left;
+    final double dy = barRect.top;
 
-    final path = Path();
-    final centerX = size.width / 2;
-    const barHeight = 80.0;
-    
-    path.moveTo(40, 0);
-    
-    // Notch start
-    path.lineTo(centerX - 72, 0);
-    
-    // First curve of notch
-    path.cubicTo(
-      centerX - 54.327, 0,
-      centerX - 40.546, 16.3789,
-      centerX - 27.869, 28.6934,
-    );
-    
-    // Second curve of notch
-    path.cubicTo(
-      centerX - 20.666, 35.6912,
-      centerX - 10.836, 40,
-      centerX, 40,
-    );
-    
-    // Third curve of notch
-    path.cubicTo(
-      centerX + 10.836, 40,
-      centerX + 20.666, 35.6912,
-      centerX + 27.869, 28.6934,
-    );
-    
-    // Fourth curve of notch
-    path.cubicTo(
-      centerX + 40.546, 16.3789,
-      centerX + 54.327, 0,
-      centerX + 72, 0,
-    );
-    
-    // Top right line
-    path.lineTo(size.width - 40, 0);
-    
-    // Right semi-circle cap (radius 40, height 80)
-    path.arcToPoint(
-      Offset(size.width - 40, barHeight),
-      radius: const Radius.circular(40),
-      clockwise: true,
-    );
-    
-    // Bottom line
-    path.lineTo(40, barHeight);
-    
-    // Left semi-circle cap
-    path.arcToPoint(
-      const Offset(40, 0),
-      radius: const Radius.circular(40),
-      clockwise: true,
-    );
-    
-    path.close();
+    double rx(double val) => dx + val * scaleX;
+    double ry(double val) => dy + val * scaleY;
 
-    // Draw shadow (5% opacity of Brown 80, stdDev 16)
+    final path = Path()
+      ..moveTo(rx(160.131), ry(28.6934))
+      ..cubicTo(rx(147.454), ry(16.3789), rx(133.673), ry(0), rx(116), ry(0))
+      ..lineTo(rx(40), ry(0))
+      ..cubicTo(rx(17.9086), ry(0), rx(0), ry(17.9086), rx(0), ry(40))
+      ..cubicTo(rx(0), ry(62.091), rx(17.9086), ry(80), rx(40), ry(80))
+      ..lineTo(rx(335), ry(80))
+      ..cubicTo(rx(357.091), ry(80), rx(375), ry(62.091), rx(375), ry(40))
+      ..cubicTo(rx(375), ry(17.9086), rx(357.091), ry(0), rx(335), ry(0))
+      ..lineTo(rx(260), ry(0))
+      ..cubicTo(rx(242.327), ry(0), rx(228.546), ry(16.3789), rx(215.869), ry(28.6934))
+      ..cubicTo(rx(208.666), ry(35.6912), rx(198.836), ry(40), rx(188), ry(40))
+      ..cubicTo(rx(177.164), ry(40), rx(167.334), ry(35.6912), rx(160.131), ry(28.6934))
+      ..close();
+
+    // Draw shadow (5% opacity of Brown 80, stdDev 16, shifted dy=-16)
     final shadowPaint = Paint()
       ..color = IrmaColors.brown80.withOpacity(0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16);
-    
-    canvas.drawPath(path.shift(const Offset(0, -8)), shadowPaint);
+    canvas.drawPath(path.shift(const Offset(0, -16)), shadowPaint);
 
     // Draw main background path
-    canvas.drawPath(path, paint);
+    final fillPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, fillPaint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _NotchedTabBarPainter oldDelegate) {
+    return oldDelegate.barRect != barRect;
+  }
 }
 
 // ── Custom bottom tab bar widget ────────────────────────────────────
@@ -332,10 +300,23 @@ class _BottomTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
     
+    // Determine bar size (default Figma scale is W=375, centered on screen)
+    final double barWidth = (screenWidth > 399) ? 375.0 : screenWidth - 24.0;
+    final double startX = (screenWidth - barWidth) / 2;
+    const double barHeight = 80.0;
+    
+    final Rect barRect = Rect.fromLTWH(startX, 0, barWidth, barHeight);
+    final double scale = barWidth / 375.0;
+
+    double getX(double relativeX) {
+      return startX + (relativeX - 24.0) * scale;
+    }
+
     return Container(
-      height: 80 + bottomPadding,
+      height: barHeight + bottomPadding,
       color: Colors.transparent,
       child: Stack(
         clipBehavior: Clip.none,
@@ -347,79 +328,65 @@ class _BottomTabBar extends StatelessWidget {
             top: 0,
             bottom: bottomPadding,
             child: CustomPaint(
-              painter: _NotchedTabBarPainter(),
+              painter: _NotchedTabBarPainter(barRect: barRect),
             ),
           ),
           
-          // Content Row
+          // Tab Item: Home (0)
           Positioned(
-            left: 24,
-            right: 24,
-            top: 0,
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Left Side (Home & Chat)
-                SizedBox(
-                  width: 130,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildTabItem(0, Icons.home_rounded),
-                      _buildTabItem(1, Icons.chat_bubble_rounded),
-                    ],
-                  ),
-                ),
-                
-                // Center Spacer for FAB
-                const SizedBox(width: 72),
-                
-                // Right Side (Metrics & Profile)
-                SizedBox(
-                  width: 130,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildTabItem(2, Icons.bar_chart_rounded),
-                      _buildTabItem(3, Icons.person_rounded),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            left: getX(40),
+            top: 16,
+            child: _buildTabItem(0, Icons.home_rounded),
+          ),
+          
+          // Tab Item: Chat (1)
+          Positioned(
+            left: getX(108),
+            top: 16,
+            child: _buildTabItem(1, Icons.chat_bubble_rounded),
           ),
           
           // Floating Action Button (FAB)
           Positioned(
-            top: -24,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: GestureDetector(
-                onTap: onLogSymptomsPressed,
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: IrmaColors.green50,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: IrmaColors.green50.withOpacity(0.3),
-                        blurRadius: 16,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: Colors.white,
-                    size: 32,
-                  ),
+            left: getX(180),
+            top: -16, // Protrude upward exactly matching Figma y=16 vs bar top y=48
+            child: GestureDetector(
+              onTap: onLogSymptomsPressed,
+              child: Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: IrmaColors.green50,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: IrmaColors.green50.withOpacity(0.5),
+                      blurRadius: 32,
+                      offset: const Offset(0, 16),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: Colors.white,
+                  size: 32,
                 ),
               ),
             ),
+          ),
+          
+          // Tab Item: Metrics (2)
+          Positioned(
+            left: getX(267),
+            top: 16,
+            child: _buildTabItem(2, Icons.bar_chart_rounded),
+          ),
+          
+          // Tab Item: Profile (3)
+          Positioned(
+            left: getX(335),
+            top: 16,
+            child: _buildTabItem(3, Icons.person_rounded),
           ),
         ],
       ),

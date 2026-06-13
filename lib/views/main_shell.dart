@@ -205,6 +205,7 @@ class _MainShellState extends State<MainShell> {
           _showLogView = false;
           _activeTab = i;
         }),
+        onLogSymptomsPressed: () => setState(() => _showLogView = true),
       ),
     );
   }
@@ -233,82 +234,217 @@ class _MainShellState extends State<MainShell> {
   }
 }
 
+// ── Custom Notched Tab Bar Painter ────────────────────────────────────
+
+class _NotchedTabBarPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    final centerX = size.width / 2;
+    const barHeight = 80.0;
+    
+    path.moveTo(40, 0);
+    
+    // Notch start
+    path.lineTo(centerX - 72, 0);
+    
+    // First curve of notch
+    path.cubicTo(
+      centerX - 54.327, 0,
+      centerX - 40.546, 16.3789,
+      centerX - 27.869, 28.6934,
+    );
+    
+    // Second curve of notch
+    path.cubicTo(
+      centerX - 20.666, 35.6912,
+      centerX - 10.836, 40,
+      centerX, 40,
+    );
+    
+    // Third curve of notch
+    path.cubicTo(
+      centerX + 10.836, 40,
+      centerX + 20.666, 35.6912,
+      centerX + 27.869, 28.6934,
+    );
+    
+    // Fourth curve of notch
+    path.cubicTo(
+      centerX + 40.546, 16.3789,
+      centerX + 54.327, 0,
+      centerX + 72, 0,
+    );
+    
+    // Top right line
+    path.lineTo(size.width - 40, 0);
+    
+    // Right semi-circle cap (radius 40, height 80)
+    path.arcToPoint(
+      Offset(size.width - 40, barHeight),
+      radius: const Radius.circular(40),
+      clockwise: true,
+    );
+    
+    // Bottom line
+    path.lineTo(40, barHeight);
+    
+    // Left semi-circle cap
+    path.arcToPoint(
+      const Offset(40, 0),
+      radius: const Radius.circular(40),
+      clockwise: true,
+    );
+    
+    path.close();
+
+    // Draw shadow (5% opacity of Brown 80, stdDev 16)
+    final shadowPaint = Paint()
+      ..color = IrmaColors.brown80.withOpacity(0.05)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16);
+    
+    canvas.drawPath(path.shift(const Offset(0, -8)), shadowPaint);
+
+    // Draw main background path
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 // ── Custom bottom tab bar widget ────────────────────────────────────
 
 class _BottomTabBar extends StatelessWidget {
   final int activeTab;
   final ValueChanged<int> onTap;
+  final VoidCallback onLogSymptomsPressed;
 
-  const _BottomTabBar({required this.activeTab, required this.onTap});
-
-  static const List<({IconData icon, String label})> _tabs = [
-    (icon: Icons.home_rounded,            label: 'Home'),
-    (icon: Icons.chat_bubble_rounded,     label: 'Chat'),
-    (icon: Icons.bar_chart_rounded,       label: 'Metrics'),
-    (icon: Icons.person_rounded,          label: 'Profile'),
-  ];
+  const _BottomTabBar({
+    required this.activeTab,
+    required this.onTap,
+    required this.onLogSymptomsPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
+    
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: const Border(top: BorderSide(color: IrmaColors.green50, width: 1)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 16, offset: const Offset(0, -4)),
+      height: 80 + bottomPadding,
+      color: Colors.transparent,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Background Painter
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: bottomPadding,
+            child: CustomPaint(
+              painter: _NotchedTabBarPainter(),
+            ),
+          ),
+          
+          // Content Row
+          Positioned(
+            left: 24,
+            right: 24,
+            top: 0,
+            height: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Left Side (Home & Chat)
+                SizedBox(
+                  width: 130,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildTabItem(0, Icons.home_rounded),
+                      _buildTabItem(1, Icons.chat_bubble_rounded),
+                    ],
+                  ),
+                ),
+                
+                // Center Spacer for FAB
+                const SizedBox(width: 72),
+                
+                // Right Side (Metrics & Profile)
+                SizedBox(
+                  width: 130,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildTabItem(2, Icons.bar_chart_rounded),
+                      _buildTabItem(3, Icons.person_rounded),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Floating Action Button (FAB)
+          Positioned(
+            top: -24,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: onLogSymptomsPressed,
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: IrmaColors.green50,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: IrmaColors.green50.withOpacity(0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: IrmaSpacing.lg,
-            vertical: IrmaSpacing.sm,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(_tabs.length, (i) => _buildItem(i)),
-          ),
-        ),
       ),
     );
   }
 
-  Widget _buildItem(int index) {
-    final active = activeTab == index;
-    final tab = _tabs[index];
-
+  Widget _buildTabItem(int index, IconData icon) {
+    final bool active = activeTab == index;
+    
     return GestureDetector(
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: active
-            ? const EdgeInsets.symmetric(horizontal: IrmaSpacing.md, vertical: IrmaSpacing.xs)
-            : const EdgeInsets.symmetric(horizontal: IrmaSpacing.xs, vertical: IrmaSpacing.xs),
+      child: Container(
+        width: 48,
+        height: 48,
         decoration: active
-            ? BoxDecoration(
-                color: IrmaColors.brown80,
-                borderRadius: BorderRadius.circular(1000),
+            ? const BoxDecoration(
+                color: IrmaColors.brown10,
+                shape: BoxShape.circle,
               )
             : null,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              tab.icon,
-              size: 22,
-              color: active ? Colors.white : IrmaColors.gray40,
-            ),
-            if (active) ...[
-              const SizedBox(width: 6),
-              Text(
-                tab.label,
-                style: IrmaTextStyles.labelSm.copyWith(color: Colors.white),
-              ),
-            ],
-          ],
+        child: Icon(
+          icon,
+          size: 24,
+          color: active ? IrmaColors.brown80 : IrmaColors.brown30,
         ),
       ),
     );

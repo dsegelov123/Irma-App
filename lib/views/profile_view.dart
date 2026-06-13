@@ -81,8 +81,8 @@ class _ProfileViewState extends State<ProfileView> {
                       border: Border.all(color: IrmaColors.green50, width: 2),
                     ),
                     child: Center(
-                      child: Text('IM', style: IrmaTextStyles.para2xl.copyWith(
-                        color: IrmaColors.brown80, fontWeight: FontWeight.w700, fontSize: 32)),
+                      child: Text('IM', style: IrmaTextStyles.label2xl.copyWith(
+                        color: IrmaColors.brown80)),
                     ),
                   ),
                   Positioned(
@@ -96,7 +96,7 @@ class _ProfileViewState extends State<ProfileView> {
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 2),
                       ),
-                      child: Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
+                      child: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
                     ),
                   ),
                 ],
@@ -106,7 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
 
             // Profile info Card
             Container(
-              padding: const EdgeInsets.all(IrmaSpacing.lg),
+              padding: IrmaPadding.cardLarge,
               decoration: IrmaCards.large(),
               child: Column(children: [
                 _buildProfileRow('Account Handle', _userEmail, Icons.email_outlined),
@@ -120,20 +120,20 @@ class _ProfileViewState extends State<ProfileView> {
 
             // Subscription details Card
             Container(
-              padding: const EdgeInsets.all(IrmaSpacing.lg),
+              padding: IrmaPadding.cardLarge,
               decoration: IrmaCards.large(border: _isPremium ? IrmaColors.green50 : IrmaColors.gray20),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   Text('Subscription Details', style: IrmaTextStyles.labelLg.copyWith(color: IrmaColors.brown100)),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 5),
+                    padding: IrmaPadding.tagXs,
                     decoration: BoxDecoration(
                       color: _isPremium ? IrmaColors.green50 : IrmaColors.gray40,
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(IrmaRadius.pill),
                     ),
                     child: Text(
                       _isPremium ? 'PREMIUM' : 'FREE',
-                      style: IrmaTextStyles.labelXs.copyWith(color: Colors.white, letterSpacing: 1.0),
+                      style: IrmaTextStyles.labelXs.copyWith(color: Colors.white),
                     ),
                   ),
                 ]),
@@ -142,7 +142,7 @@ class _ProfileViewState extends State<ProfileView> {
                   _isPremium
                       ? 'You have full access to lookahead forecasting, background synchronisation, and uncapped smart AI transcripts.'
                       : 'You are on the standard day-only analytics tier. Projections and wearable features are locked.',
-                  style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60, height: 1.5),
+                  style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60),
                 ),
                 const SizedBox(height: IrmaSpacing.lg),
                 SwitchListTile(
@@ -164,7 +164,7 @@ class _ProfileViewState extends State<ProfileView> {
       Container(
         width: 36,
         height: 36,
-        decoration: BoxDecoration(color: IrmaColors.brown10, borderRadius: BorderRadius.circular(10)),
+        decoration: const BoxDecoration(color: IrmaColors.brown10, shape: BoxShape.circle),
         child: Icon(icon, color: IrmaColors.brown80, size: 18),
       ),
       const SizedBox(width: IrmaSpacing.md),

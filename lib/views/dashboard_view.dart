@@ -71,23 +71,23 @@ class _DashboardViewState extends State<DashboardView> {
                 left: IrmaSpacing.lg,
                 right: IrmaSpacing.lg,
                 top: IrmaSpacing.lg,
-                bottom: IrmaSpacing.lg + 80.0 + 16.0,
+                bottom: IrmaSpacing.lg + 80.0 + IrmaSpacing.md,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: IrmaSpacing.xs),
-
+ 
                   // ── Greeting ──────────────────────────────────────────
                   Text('Good day.', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.gray60)),
                   const SizedBox(height: 4),
                   Text('Here\'s your cycle overview.', style: IrmaTextStyles.para2xl.copyWith(color: IrmaColors.brown100)),
                   const SizedBox(height: IrmaSpacing.lg),
-
+ 
                   // ── Cycle Status Card ─────────────────────────────────
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(IrmaSpacing.lg),
+                    padding: IrmaPadding.cardLarge,
                     decoration: IrmaCards.large(),
                     child: Column(
                       children: [
@@ -99,16 +99,15 @@ class _DashboardViewState extends State<DashboardView> {
                               children: [
                                 // Phase pill label
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: 6),
+                                  padding: IrmaPadding.tagXs,
                                   decoration: BoxDecoration(
                                     color: phaseStyle.tint,
-                                    borderRadius: BorderRadius.circular(100),
+                                    borderRadius: BorderRadius.circular(IrmaRadius.pill),
                                   ),
                                   child: Text(
                                     phase.toUpperCase(),
                                     style: IrmaTextStyles.labelXs.copyWith(
                                       color: phaseStyle.color,
-                                      letterSpacing: 1.2,
                                     ),
                                   ),
                                 ),
@@ -135,10 +134,10 @@ class _DashboardViewState extends State<DashboardView> {
                           ],
                         ),
                         const SizedBox(height: IrmaSpacing.lg),
-
+ 
                         // Progress bar — §9 mood-daily-status style
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: BorderRadius.circular(IrmaRadius.pill),
                           child: LinearProgressIndicator(
                             value: (currentDay / avgLength).clamp(0.0, 1.0),
                             minHeight: 8,
@@ -147,7 +146,7 @@ class _DashboardViewState extends State<DashboardView> {
                           ),
                         ),
                         const SizedBox(height: IrmaSpacing.lg),
-
+ 
                         // Countdown row
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,15 +165,15 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ),
                   const SizedBox(height: IrmaSpacing.lg),
-
+ 
                   // ── Advice Section Header ─────────────────────────────
                   Text("Irma's Advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
                   const SizedBox(height: IrmaSpacing.sm),
-
+ 
                   // ── Advice Card ───────────────────────────────────────
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(IrmaSpacing.lg),
+                    padding: IrmaPadding.cardLarge,
                     decoration: IrmaCards.advice(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,8 +260,8 @@ class _DashboardViewState extends State<DashboardView> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
+          bottomLeft: Radius.circular(IrmaRadius.large),
+          bottomRight: Radius.circular(IrmaRadius.large),
         ),
         boxShadow: [
           BoxShadow(
@@ -278,10 +277,10 @@ class _DashboardViewState extends State<DashboardView> {
         ],
       ),
       padding: EdgeInsets.fromLTRB(
-        16.0, // EXACT Figma padding-left-16
+        IrmaSpacing.md, // EXACT Figma padding-left-16
         topPadding, // EXACT Figma padding-top-60 (including safe area if on mobile)
-        16.0, // EXACT Figma padding-right-16
-        16.0, // EXACT Figma padding-bottom-16
+        IrmaSpacing.md, // EXACT Figma padding-right-16
+        IrmaSpacing.md, // EXACT Figma padding-bottom-16
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,7 +337,6 @@ class _DashboardViewState extends State<DashboardView> {
                       'IM',
                       style: IrmaTextStyles.labelXl.copyWith(
                         color: IrmaColors.brown80,
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -351,9 +349,8 @@ class _DashboardViewState extends State<DashboardView> {
                   children: [
                     Text(
                       'Hi, Shinomiya!',
-                      style: IrmaTextStyles.displayLg.copyWith(
+                      style: IrmaTextStyles.label2xl.copyWith(
                         color: IrmaColors.brown80,
-                        fontSize: 30, // EXACT Figma size-30
                       ),
                     ),
                     const SizedBox(height: 4.0), // EXACT Figma gap-4
@@ -362,10 +359,10 @@ class _DashboardViewState extends State<DashboardView> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // EXACT Figma padding-top-4, padding-right-8...
+                            padding: IrmaPadding.tagXs, // EXACT Figma padding-top-4, padding-right-8 mapped to Tag Xs from ui_design_system
                             decoration: BoxDecoration(
                               color: _isPremium ? IrmaColors.green10 : IrmaColors.gray20,
-                              borderRadius: BorderRadius.circular(100),
+                              borderRadius: BorderRadius.circular(IrmaRadius.pill),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

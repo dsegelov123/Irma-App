@@ -123,6 +123,79 @@ class IrmaSpacing {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// Radius tokens (copied strictly from ui_design_system.md)
+// ─────────────────────────────────────────────────────────────────
+
+class IrmaRadius {
+  static const double large = 32.0;       // Large Layout Cards, Standard Action Cards, Brand Logo, Onboarding Indicators, Chat Feed Container, Profile Picture, Tab Bar Container
+  static const double standard = 32.0;    // Standard Action Cards
+  static const double stat = 24.0;        // Statistic & Content Cards, Score History
+  static const double log = 24.0;         // Score History & Log List Cards
+  static const double picker = 48.0;      // Sleep Hour Picker
+  static const double pill = 1000.0;      // Pill shape / fully rounded (e.g. tag, button, chat text bubble)
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Padding tokens (copied strictly from ui_design_system.md)
+// ─────────────────────────────────────────────────────────────────
+
+class IrmaPadding {
+  // Cards
+  static const EdgeInsets cardLarge = EdgeInsets.all(24.0);
+  static const EdgeInsets cardStandard = EdgeInsets.all(16.0);
+  static const EdgeInsets cardStat = EdgeInsets.all(16.0);
+  static const EdgeInsets cardLog = EdgeInsets.all(12.0);
+  
+  // Tags
+  static const EdgeInsets tagXs = EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0);
+  static const EdgeInsets tagSm = EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0);
+  static const EdgeInsets tagMd = EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
+  static const EdgeInsets tagLg = EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0);
+  static const EdgeInsets tagXl = EdgeInsets.symmetric(horizontal: 32.0, vertical: 20.0);
+
+  // Component containers
+  static const EdgeInsets inputForm = EdgeInsets.all(24.0);
+  static const EdgeInsets logo = EdgeInsets.all(16.0);
+  static const EdgeInsets welcomeIndicator = EdgeInsets.all(24.0);
+  static const EdgeInsets chatHeader = EdgeInsets.all(16.0);
+  static const EdgeInsets chatFeed = EdgeInsets.all(24.0);
+  static const EdgeInsets chatInput = EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 16.0);
+  static const EdgeInsets profilePicture = EdgeInsets.all(24.0);
+  static const EdgeInsets tabBar = EdgeInsets.symmetric(horizontal: 24.0, vertical: 48.0);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Specialized decorations (copied strictly from ui_design_system.md)
+// ─────────────────────────────────────────────────────────────────
+
+class IrmaDecorations {
+  static BoxDecoration dateRange({required bool selected}) => BoxDecoration(
+    color: selected ? IrmaColors.brown80 : IrmaColors.brown10,
+    borderRadius: BorderRadius.circular(IrmaRadius.pill),
+  );
+
+  static BoxDecoration aiModelRadio({required bool selected}) => BoxDecoration(
+    color: selected ? IrmaColors.green50 : Colors.white,
+    borderRadius: BorderRadius.circular(IrmaRadius.pill),
+  );
+
+  static BoxDecoration toggle({required bool value}) => BoxDecoration(
+    color: value ? IrmaColors.green50 : IrmaColors.brown20,
+    borderRadius: BorderRadius.circular(IrmaRadius.pill),
+  );
+
+  static BoxDecoration iconButton() => BoxDecoration(
+    color: IrmaColors.orange40,
+    borderRadius: BorderRadius.circular(IrmaRadius.pill),
+  );
+
+  static BoxDecoration conversationStylePill({required bool selected}) => BoxDecoration(
+    color: selected ? IrmaColors.green10 : Colors.white,
+    borderRadius: BorderRadius.circular(IrmaRadius.pill),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
 // § 4 — Button Style Factories
 // ─────────────────────────────────────────────────────────────────
 

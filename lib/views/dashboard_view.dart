@@ -258,7 +258,8 @@ class _DashboardViewState extends State<DashboardView> {
       moodColor = IrmaColors.orange40;
     }
 
-    final double topPadding = MediaQuery.of(context).padding.top;
+    final double rawTopPadding = MediaQuery.of(context).padding.top;
+    final double topPadding = rawTopPadding > 0 ? rawTopPadding + 16.0 : 60.0;
 
     return Container(
       width: double.infinity,
@@ -283,7 +284,7 @@ class _DashboardViewState extends State<DashboardView> {
       ),
       padding: EdgeInsets.fromLTRB(
         16.0, // EXACT Figma padding-left-16
-        topPadding + 16.0, // topPadding + Figma padding-top-16
+        topPadding, // EXACT Figma padding-top-60 (including safe area if on mobile)
         16.0, // EXACT Figma padding-right-16
         16.0, // EXACT Figma padding-bottom-16
       ),

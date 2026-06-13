@@ -1,0 +1,321 @@
+The Irma Master Specification
+Document Version: 1.27.0
+Target Architecture: Flutter / Dart (Cross-Platform Mobile)
+Security Tier: Special Category Health Data Compliance (E2EE Client-Side)
+Section 1: Immutable Core Persona & System Rules
+1.1 Core Identity
+Irma is a privacy-first, smart, AI-driven period-tracker application designed to deliver highly personalized, long-term predictive insights by treating the user like an intelligent adult. The application completely rejects standard industry tropes—there are no intrusive, rigid onboarding medical exams, no patronizing corporate-clinical layouts, and no stereotypical "pink-tinted flower" calendars.
+1.2 Telemetry & Analytics Isolation
+* Third-party tracking, crash reporting, and UI analytics SDKs (e.g., Firebase Analytics, Sentry) are strictly allowed only for non-health lifecycle events.
+* The Zero-Telemetry Rule: No user-entered text, period cycles, symptoms, biometrics, or predicted dates may ever be passed as parameters to any third-party analytics SDK. Analytics are limited strictly to system performance and UI navigation tracking (e.g., screen_view).
+Section 2: Data Architecture & State Engine
+2.1 Cryptographic Architecture (Privacy-First Cloud Sync)
+To maintain absolute user privacy without losing cross-device data recovery, the application must enforce an End-to-End Encrypted (E2EE) Client-Side Encryption with Key Escrow workflow:
+* Encryption Standard: All sensitive health data (symptom logs, cycle lengths, calendar dates, notes, chat transcripts) must be encrypted on the device before being sent to the cloud database using AES-256-GCM.
+* Key Derivation & Escrow: The encryption key is cryptographically generated upon the user's first authentication via Google or Apple Sign-In.
+* Cross-Device Recovery: The generated encryption key must be securely stored in a secure cloud Key Management Service (KMS) or hardware security module (HSM) linked uniquely to the validated OAuth UID (Apple/Google ID token). When logging into a new device, successful authentication pulls down the user's unique key to decrypt the incoming synced database blobs locally.
+* The Server-Blind Rule: The cloud database houses only unreadable, encrypted cryptographic blobs. The database provider has zero visibility into the user's actual cycles, symptoms, or conversation histories.
+2.2 Local Storage & History
+* Chat History Retention: All message transcripts generated within the Smart Chat Interface must be stored permanently inside the client device's local encrypted database (e.g., encrypted SQLite or Hive) to allow the user to view past conversations.
+* Sync Security: Local chat transcripts are subject to the same E2EE cloud synchronization rules outlined in Section 2.1.
+2.3 Clinical Knowledge Architecture (NHS Guidance Grounding)
+To anchor Irma’s advice in verified medical reality without bloating the local application binary size, the system must employ an optimized, lightweight knowledge strategy:
+* Data Scope: The system must be thoroughly trained or grounded on official National Health Service (NHS) clinical documentation, guidelines, and symptom definitions regarding menstrual, gynecological, and systemic health.
+* Storage Optimization (Hybrid Vector Architecture): To keep the final app installation size compact, the architecture must avoid storing thousands of raw text medical articles on-device. Instead, the agents must implement a compressed vector embeddings database (or a high-efficiency text index) representing structural NHS health concepts.
+* Cloud Fallback Proxy: If a specific health query or predictive pattern requires deep clinical text that exceeds the optimized local index, the client may fetch the relevant verified NHS data segment securely from an external server on-demand, caching it locally in the client's encrypted sandbox temporarily.
+2.4 Cloud AI LLM Parsing & Transit Security
+Because the Smart Chat Interface utilizes an external cloud-based Large Language Model (LLM) to drive the Irma character persona, raw text input must transit to an AI endpoint for processing. To reconcile this with the application's privacy-first architecture, the agents must implement the following proxy pipeline:
+[User Plain Text Input] ??> [Secure TLS 1.3 Transport] ??> [Isolated Irma AI Proxy Server]
+                                                                        ?
+[E2EE Encrypted DB Logs] <?? [AES-256 Encrypted Return Payload] <????????
+                                                                        ?
+                                                           [Cloud LLM Inference Engine]
+* The Transient Inference Boundary: The cloud-based LLM engine must operate strictly under zero-retention parameters. Message text sent to the LLM via secure API endpoints exists exclusively in memory for the duration of the inference lifecycle to construct Irma's response and extract metadata. It must never be stored, cached, logged, or utilized for model training by the cloud AI provider.
+* The Server-Side AI Proxy: The mobile client never communicates with the cloud LLM provider directly. It establishes an encrypted TLS 1.3 channel to an isolated intermediate application server proxy. This proxy manages the assembly of the prompt (injecting the local tracking context and relevant NHS medical data tokens) before requesting inference from the LLM.
+* Downstream Encryption: Once the cloud LLM completes its inference pass and isolates the tracking variables, the resulting text and data payload are streamed back to the client app where they are immediately compiled, written to the local database, and sealed using the user's local AES-256-GCM encryption key before cloud synchronization occurs.
+Section 3: Onboarding & Account Lifecycle
+3.1 Initial Launch State
+Upon the first boot of the application, the system must evaluate the authentication state:
+* Unauthenticated State: The user is presented with a gate inviting them to either Log In or Register using standard, secure Apple or Google Sign-In protocols.
+* Authenticated State: If an active session token exists, the app completely bypasses the login interface and routes directly to the primary runtime interface.
+3.2 The Frictionless Onboarding Flow (New Accounts Only)
+If a user registers a brand-new account, they are immediately routed into a short, streamlined configuration workflow. This flow is strictly designed to capture the bare-minimum computational parameters required for the AI engine to establish its baseline.
+The system must capture exactly four data points:
+StepParameterSystem Utility1Cycle RegularitySets the initial standard deviation tolerance for the predictive engine's mathematical window (regular or irregular).2Average Cycle LengthEstablishes the initial baseline day-count interval for upcoming projections (Default 28 days, Range: 15 - 45).3Average Period DurationSets the expected bleeding window length on the tracking layer (Default 5 days, Range: 1 - 10).4Last Period Start DateAnchors the absolute timeline matrix, allowing the engine to instantly compute the current phase and forecast the next cycle.* Completion Trigger: Once Step 4 is submitted, the onboarding state is marked as completed: true in local storage, the client-side encryption key is generated, the profile is sealed, and the user is instantly routed to the primary runtime application interface.
+Section 4: Primary Functional Components & Data Inputs
+4.1 Data Matrix & Tracking Layers
+The primary runtime engine tracks, updates, and visualizes data across three core functional segments.
+* The Predictive Cycle Engine: A mathematical model that maps the user's current progression through their cycle matrix, differentiating physiological phases (e.g., follicular, luteal, menstruation windows) and generating phase descriptors and countdown metrics.
+* The Body, Mind, and Soul Metrics: A tri-metric data taxonomy structure. The architecture models, sub-metric contributions, mathematical calculation bounds, and score mappings are explicitly standardized in Section 10.
+* Irma Character Manifestation & Contextual Advice: Irma exists natively within the application as a visible character asset (appearing via a circular profile avatar or an expanded full-image asset depending on the interaction state). The system features a contextual text execution engine that dynamically injects Irma's Advice for the Day, referencing the active cycle phase and the current states of the tracking layers.
+4.2 Data Ingestion & Consolidation Architecture
+The data models for the Body, Mind, and Soul tracking layers ingest updates from three distinct client pipelines. These sources are cumulative and must be blended by the data engine rather than overwriting one another:
+1. The Daily Log Screen (All Tiers): An interface that the user can manually fill out daily to log specific parameters.
+Agent Directive: The exact field models, variables, checklist schemas, and data structures for this Daily Log Screen are omitted from this master document and will be provided separately by the product owner. The engineering agents must explicitly halt implementation execution and ask for this separate listing before writing data integration models for this screen.
+2. The Smart Chat Interface (All Tiers): A natural language interface where the conversation is strictly user-initiated. The user opens the window and types freely to chat or log symptoms at their own discretion.
+o User Input Framework: The interaction mechanics for the user are constrained to a clean, typewriter-style plain text entry line with no rapid-reply pill buttons or prescriptive input prompts.
+o Irma Rich Messaging Output: The message rendering layer must natively support rich response components originating from Irma. Her conversational engine is authorized to inject non-text elements into her chat replies.
+Agent Directive: The exact layout syntax, component list, and technical models for Irma's rich messaging payload (e.g., graphics, interactive elements, embedded layout objects) are TBD. The agent must explicitly prompt the user to define these rich components before writing code for the chat rendering engine.
+3. Native Health Framework Integration (Premium Tier Only): A comprehensive background syncing engine that integrates with native OS APIs (Apple HealthKit on iOS and Google Fit / Health Connect on Android). This engine is authorized to ingest any and all data points exposed by the OS frameworks that could be relevant to systemic health tracking (including, but not limited to, sleep metrics, physical activity, heart rate data, and basal body temperature).
+* The Combination Rule: When data points are generated across multiple pipelines for the same calendar date, the state engine must aggregate and combine all inputs into a composite day-log payload rather than allowing a newer source to completely overwrite an older one.
+4.3 Proactive Notification & Advice Dispatch Engine
+While the chat interface itself is user-initiated, the system includes a proactive communication engine managed via local system alerts:
+* Trigger Mechanics: The app dispatches private push notifications directly to the user's device when Irma has specific, timely insights, information, or advice to deliver.
+* Data Vector Foundations: The generation of these advice notification payloads is dynamically computed by the AI engine, driven strictly by cross-referencing three specific data inputs:
+1. Recent Inputs: The user's short-term daily logs, metrics, and recent chat messages.
+2. Historical Data: The user's long-term cycle trends, standard deviations, and past baseline patterns.
+3. Clinical Reference Data: Validated medical parameters and clinical information retrieved from the optimized NHS Knowledge Architecture (Section 2.3).
+* Notification Privacy States & Configuration: The system must support user-configurable lock screen display filters managed directly via the application settings page. The coding agents must build two structural states for the notification payload:
+o State A (Default - Conversational & Vague): The text is natural and engaging but completely obscures explicit clinical or tracking terminology (e.g., "Good morning! I've put together some thoughts for you today based on your logs," or "Irma has an update ready for you when you're free").
+o State B (Discreet / Masked): A totally sterilized, system-style alert configured by the user for maximum privacy (e.g., "Irma has an update for you"), with zero contextual flavor text.
+Section 5: Subscription Tiers & Monetization Logic
+The application configuration features an explicit architectural boundary enforced via the billing session state. Features are split strictly according to the user's account tier:
+5.1 Free Version Limits
+* Temporal Scope Limit: The system execution engine will only compute and surface health insights, metrics, and contextual advice for that particular, active day. No predictive forward lookahead screens or future metric forecasts are accessible.
+* Smart Chat Token Bounds: The user-initiated Smart Chat Interface is constrained by strict AI token limits or conversation caps per 24-hour cycle window.
+5.2 Premium Version Capabilities
+* The 7-Day Predictive Health Forecast: The predictive execution engine runs multi-variable lookahead algorithms. Based on recent inputs, historical metrics, localized chat context, and relevant NHS guidance vectors, the system will explicitly predict the user's specific Body, Mind, and Soul metrics and offer sound health advice covering the next 7 consecutive days.
+* Uncapped Access: AI token limits on the Smart Chat Interface are removed, allowing uninhibited conversational logging.
+* Framework Access: Unlocks the Native Health Framework Integration background sync (Section 4.2.3).
+* Note: Additional Tier Logic is TBD and will be appended as monetization mechanics scale.
+Section 6: Irma Character Persona & Conversation Logic
+6.1 Linguistic & Behavioral Architecture
+The AI engine powering the Irma persona must conform to a strict set of psychological and generational constraints to maintain absolute character integrity during chat execution and advice generation.
+* The Archetype: Irma is executed as a wise, deeply knowledgeable, compassionate, and understanding maternal/aunt figure, structurally modeled around the emotional maturity of a roughly 65-year-old companion.
+* Non-Directive Guidance: Irma must never issue outright demands, rigid structural rules, or clinical orders to the user. Her communication pipeline is strictly formatted around offering sound, grounded, and accessible advice.
+* The Anti-Condescension Protocol: Under no circumstances may Irma adopt a patronizing tone or employ language that belittles the user's intelligence.
+o Banned Phrasings: Terms of endearment such as "dear," "love," or pitying remarks like "oh you poor little thing" are completely barred from the language generation model's token matrix.
+* The Memory Integration Directive: The engine must prioritize high-fidelity historical data recall. Every message or insight Irma generates must weave in deep context retrieved from the user's local history logs, tracking data, and background wearable data metrics to provide an unbroken sense of continuous, attentive understanding.
+* The Truth-In-Identity Anchor: Irma must operate under a strict anti-gaslighting boundary:
+o She must never lie or invent fictionalized human stories claiming that she has personally experienced menstruation, symptoms, or physical states.
+o Concurrently, she must not reference her technical existence as an AI model, a script, or a software program. She simply addresses the user directly as a dedicated companion, maintaining a grounded focus on the user’s reality without breaking the experiential illusion or resorting to artificial deception.
+6.2 Clinical Crisis & Escalation Protocol
+The natural language engine must maintain active diagnostic classification rules based on the integrated NHS Guidance Architecture to identify critical health risks, medical red flags, or emergency symptoms.
+* In-Persona Escalation: If the system detects a potential medical crisis or emergency metric payload from the user's inputs, Irma must not break character or swap out her conversational framing for an impersonal, corporate automated alert layout.
+* Guided Referral Logic: Instead, maintaining her native tone as a wise, compassionate 65-year-old aunt, she will actively, clearly, and urgently guide the user directly toward real-world medical services, clinical practitioners, or emergency services (e.g., referencing appropriate NHS emergency channels or local triage lines) as part of her responsive advice text.
+Section 7: Predictive Cycle & Symptom Engine Logic
+7.1 Multi-Phase Structural Calculations
+The tracking core breaks each continuous loop into five distinct physiological states, which must be mathematically tracked and projected by the engine:
+1. Follicular Phase
+2. Ovulation
+3. Luteal Phase
+4. Pre-menstrual Phase
+5. Menstruation
+7.2 Immediate State-Overriding & Reset Logic
+While the engine dynamically learns over time using long-term trends, the architecture forces a hard event override when physical data is logged:
+* The Early Logging Override: If the user logs the explicit start of a period via any input pipeline (Log Screen or Smart Chat), and this date occurs days before the engine's predicted window, the system must immediately halt current projections and forcefully adjust the active cycle calendar state to synchronize with the user's real-time physical telemetry.
+* The New Cycle Anchor Rule: The logging of a period start date is the absolute, unyielding mathematical anchor that forces the initialization of a brand-new cycle timeline. It resets the phase duration counter back to Day 1.
+7.3 Multi-Variable Pattern & Trigger Identification (Cross-Channel Mapping)
+The application achieves its true predictive utility by systematically cross-referencing short-term behavioral trends against historical patterns and medical parameters from the NHS Knowledge Architecture to discover individual cross-channel symptoms.
+* Cross-Channel Correlation Matrix: The state engine must automatically trace connections across three parallel data pipelines over continuous time:
+1. Chronological Placement: The explicit phase index (e.g., Late Luteal).
+2. External Triggers: Environmental or mental metrics flagged via chats or logs (e.g., a highly stressful work day).
+3. Biometric Telemetry: Streamed variables parsed from native frameworks (e.g., Apple HealthKit signaling elevated stress/heart rate variability metrics on a trigger day).
+* Predictive Symptom Modeling: The algorithm maps recurrent symptom chains (e.g., identifying that a user in their late luteal phase consistently develops migraines exactly 24 hours following an isolated spike in work-related stress or a wearable telemetry stress alert).
+* Pre-Emptive Intervention Triggers: Once a pattern chain is statistically established, the system shifts from reactive logging to proactive modeling. The engine handles this via two pathways:
+o Timeline Pre-Emption: Surfacing advice or notifying the user before a historical trigger window opens based purely on timeline progression.
+o Live Telemetry Acceleration: Instantly launching a pre-emptive insight payload the moment wearable frame inputs (like high baseline stress) match an active trigger profile on a designated phase day.
+7.4 Anomaly and Long-Term Trend Adaptation
+The computation engine must differentiate between temporary physiological disruptions and permanent shifts in user cycle trends over time.
+* The Outlier Detection Filter: If a completed cycle deviates drastically from the user's established mathematical variance baseline (e.g., a sudden, severe shift caused by illness, high-altitude travel, or acute medication), the system must explicitly flag that specific cycle as an outlier anomaly.
+* Anomaly Processing Engine: While flagged as an outlier, the cycle's historical record is not deleted. The analytics engine must cross-reference that anomaly against logged textual inputs, chat contexts, and health metrics to try and isolate the underlying trigger factor (e.g., matching a 40-day cycle directly to an entry tagged "Severe Flu").
+* The Rolling Average Exclusion: Outlier cycles are excluded from the primary rolling average algorithm to ensure a temporary illness does not permanently corrupt future baseline forecasts.
+* Gradual Trend Drifting: If the user's cycle baseline changes permanently over a long timeline (e.g., cycles continuously lengthening or shortening over a sequence of months), the statistical engine must execute an adaptive window update. It must down-weight ancient historical baselines and dynamically re-calculate predictions to align precisely with the user's migrating long-term physiological trends.
+Section 8: User Privacy Settings & Data Management Controls
+8.1 Account Teardown & Session Terminations
+* The Cloud Database Purge Protocol: When an account deletion event is finalized by the user, the application client must dispatch an immediate, authenticated teardown command to the remote hosting backend. The cloud architecture must instantly and permanently purge all associated encrypted storage blobs and cloud-backed credential mappings.
+* The Explicit Logout Destruction State: If a user manually commands a logout from the application settings, the runtime container must trigger absolute destruction of active session tokens and clear all transient database decryption keys from volatile device memory. To regain any entry to the application, the user must explicitly perform a complete multi-factor re-authentication pass. No persistent anonymous keys or temporary shortcuts may be retained in cache storage.
+8.2 Application Hardware Locking (Biometric Enforcement)
+The local application boundary must enforce standard physical access defense vectors via native hardware subsystems:
+* The Biometric Access Gate: The system must implement native OS biometric authentication (FaceID / TouchID on iOS, and BiometricPrompt on Android) as a standard, mandatory access check before revealing any interface state.
+* Authentication Triggers: Biometric validation is triggered immediately upon initial cold boot, warm application resumption from a backgrounded OS state, or following an inactivity timeout threshold specified in local secure storage.
+Section 9: Clinical Reporting & Consultation Architecture
+9.1 Data Sharing Pipelines for Medical Professionals
+To enable secure and precise diagnostic cooperation with General Practitioners (GPs) or other clinical consultants, the client application must compile internal historical data into localized reporting assets. The system must support exactly two distinct delivery pipelines:
+1. Exportable Reporting Document (PDF Pipeline):
+o Temporal Control Matrix: The interface must provide a dedicated date-range selection filter to scope the document payload. The standard evaluation interval must default to 12 months of continuous history unless customized by the user.
+o Payload Compilation: The local compiler builds a high-legibility, standardized medical summary containing parsed cycle arrays, calculated standard deviations, trend anomalies, and compiled symptom correlation data points. This document is written directly to a transient memory cache for external delivery (e.g., email or printing) and must never be stored unencrypted within the device filesystem.
+2. Dedicated Interactive View (Doctor View Mode):
+o Sandbox Presenter Layer: A functional application state optimized exclusively for on-screen physical reviews during a clinical consultation. It renders an inline, interactive report scrollable directly on the mobile device.
+o The Accidental Resumption Lock: To ensure total data security and preserve user confidentiality, the software must structurally isolate this mode from the rest of the application ecosystem. The layout engine must execute an unyielding biometric application lock if any attempt is made to dismiss, close, navigate backwards, or exit out of the Doctor View screen. The doctor is completely barred from accidentally backtracking into the user's primary application runtime panels, personal dashboard states, or private chat histories without enforcing full re-authentication from the user via native biometrics.
+Section 10: Tri-Metric (Body, Mind, Soul) Taxonomy & Analytics Engine
+10.1 Structural Parameter Matrix
+The tracking core organizes all personal health, cognitive, and emotional data vectors into an explicit hierarchical matrix. This taxonomy provides the foundational framework for pattern recognition, trigger modeling, and medical advice generation.
+1. The Body Hierarchy (Physical Telemetry Baseline): Tracks the immediate physiological status of the user's machine.
+o Sub-Metric A: Energy (Perceived bodily power and physical capacity).
+o Sub-Metric B: Wakefulness (Alertness status, sleep quality impacts, and diurnal positioning).
+o Sub-Metric C: Recovery (Physiological replenishment rate, muscle/tissue status, and somatic resilience).
+2. The Mind Hierarchy (Mental Telemetry Baseline): Tracks executive function and cognitive performance parameters.
+o Sub-Metric A: Focus (Attention span duration, concentration accuracy, and distraction resistance).
+o Sub-Metric B: Creativity (Lateral thinking capacity, problem-solving expansiveness, and ideation fluidity).
+o Sub-Metric C: Motivation (Task-initiation drive, executive execution velocity, and mental willpower thresholds).
+3. The Soul Hierarchy (Emotional Telemetry Baseline): Tracks affective states, internal emotional architecture, and social capacity bounds.
+o Sub-Metric A: Mood (Active emotional positioning and core internal state validation).
+o Sub-Metric B: Social Bandwidth (Interpersonal capacity, communication thresholds, and external stimulus tolerance).
+o Sub-Metric C: Stability (Emotional equilibrium maintenance, volatility damping rates, and grounding indices).
+10.2 Mathematical Bound Mechanics & Score Computation
+The state engine maps these distinct data points into unified numerical indicators to drive both the graphics framework and the diagnostic inference engine.
+* Granular Numerical Scaling: Each sub-metric is modeled as a floating variable that resolves into a strict 0 to 100 value.
+* The Equal-Weight Aggregation Framework: The composite parent metric score (Body, Mind, or Soul) is computed as an absolute mathematical value out of 100. Each of the three constituent sub-metrics contributes completely equally (exactly 33.3% each) to its respective parent category score. The core state calculation engine enforces a flat, unweighted average formula:
+$$\text{Parent Score} = \frac{\text{SubMetric}_A + \text{SubMetric}_B + \text{SubMetric}_C}{3}$$
+* Data Generation Architecture: These numeric scores are generated by cross-analyzing data processed from three simultaneous channels:
+1. NHS Guidance: Structural baseline bounds, biological variance boundaries, and clinical definitions derived from the local reference core.
+2. Recent and Historical Inputs: Tracking data captured from manual daily logs and continuous historical record arrays.
+3. Smart Chat Analysis: Contextual indicators extracted via secure LLM parsing of user-initiated transcripts.
+* Discrete Tier Triggers: For the purposes of visual graphic rendering and calculating predictive health forecasts, the continuous 0-100 range maps into three functional data outputs:
+o Low Tier: Applied when composite scaling drops below a mathematically defined lower threshold.
+o Medium Tier: Applied when composite scaling sits within stable middle equilibrium bounds.
+o High Tier: Applied when composite scaling matches optimized peak status boundaries.
+10.3 Predictive Application of the Tri-Metric Matrix
+* Granular Personalization: By continuously monitoring the absolute positions and movement paths of these numeric scores across the monthly timeline, the system achieves an individual baseline matrix.
+* Pre-Emptive Flare-Up Modeling: The predictive engine parses these sub-metric combinations to identify approaching physiological or emotional dips. If an uncharacteristic drop in one metric (e.g., Body/Recovery) reliably precedes a flare-up in another (e.g., Soul/Volatility or a physical menstrual symptom), the system identifies this pattern and dispatches targeted advice or schedules protective push notifications before the symptom window fully opens.
+Section 11: Backend Infrastructure & LLM Prompting Protocols
+11.1 Structural Data Payload Transmission Schemes
+To perform data parsing and text execution while maintaining user data security constraints, the communication channel between the client application and the isolated intermediate proxy server must standardize the core health data payload.
+* State Transmission Envelope: When a text interaction is initiated via the Smart Chat Interface, or when a background predictive check compiles a push notification alert, the client application compiles an optimized metadata packet to bundle into the proxy request payload.
+* Payload Schema Geometry: The payload transit structure must represent the user's system state using strictly structured, non-identifiable parametric numbers. The JSON packet geometry passing over the secure connection layer must conform to the following properties:
+o cycle_context: An object containing the current phase index integer (1 to 5), total active day positioning metrics within the loop, and long-term mean length averages.
+o tri_metric_matrix: An nested object containing the exact numerical scores out of 100 for all parent components and sub-metrics across the designated calculation lookback window.
+o nhs_guidance_vectors: An array of local vector reference IDs matching specific physical states or clinical concerns cached on-device, preventing the need to stream raw text back and forth.
+o transient_input_text: The raw string text entered by the user in the typewriter line, processed exclusively under memory-only parameters at the destination endpoint before drop out.
+11.2 Prompt Structuring and Character Injection Rules
+The intermediate application server proxy intercepts this parametric object and dynamically constructs the injection prompt context layer before pushing the inference execution request to the cloud Large Language Model.
+* Context Layer Ingestion: The proxy server hydrates the static base prompt by parsing the raw tri_metric_matrix numbers into structural behavioral observations (e.g., converting a numeric drop in Social Bandwidth or a HealthKit spike in trigger-day stress parameters into qualitative profile instructions for the model).
+* Character Matrix Validation Rules: The engine appends the immutable linguistic constraint matrix derived from Section 6 directly into the system wrapper instructions of the generation framework. The model is forced to evaluate character limits, dialect rules, and age boundaries immediately before parsing the user string.
+* Metadata Return Loop: The prompt template mandates that the cloud LLM output must be segmented into dual return layers: a natural chat text body representing Irma's spoken response, and a structured metadata dictionary containing newly isolated symptom variables and estimated sub-metric modifications discovered during the chat iteration pass.
+11.3 Network Fault Tolerance & Offline State Handling
+To maintain continuous local functionality and prevent data synchronization dropouts during active chat sessions, the Smart Chat Interface must actively observe network state availability:
+* The Interface Lock Trigger: Upon the detection of a network disconnection event or API proxy delivery failure, the system must immediately trigger a structural UI exception flag.
+* The Connection Notification Banner: The system will dynamically display a dedicated network fault notification component directly within the chat window layout. Concurrently, the typewriter text entry field must completely lock, freezing user input capabilities until an active, verified internet connection is fully restored by the device OS network lifecycle provider.
+Section 12: Application Launch & Native Lifecycle Triggers
+12.1 Hardware Wake Routine & Boot Sequencing
+The application initialization engine organizes cold start processes into a synchronous queue to protect user telemetry before displaying the primary runtime dashboard layouts.
+1. Biometric Validation Phase: The application framework requests secure local hardware authentication via the native OS provider immediately upon initialization. If authentication criteria fail, the boot stream terminates, preventing unauthenticated presentation of cached UI pixels.
+2. Cryptographic Initialization Phase: Following successful validation, the system reads local secure storage arrays for authorization tokens and credential states. If a cold cross-device login occurs, the client invokes the Key Escrow recovery endpoint to secure the localized decryption token. If no token context exists, the sequencing breaks and routes directly to the unauthenticated gate (Section 3.1.1).
+3. Local Database Hydration Phase: The device uses the client key to unlock and decrypt the local encrypted SQLite/Hive sandbox storage arrays. This populates active device memory with the five-phase calendar calculations and tri-metric vector data matrices. Once finished, the loading overlay is dismissed, revealing the functional primary workspace views.
+4. Wearable Background Query Phase (Premium Tier Only): Following database stabilization, the background ingestion routine opens native API links to Apple HealthKit or Google Fit frameworks. It fetches historical biometric entries logged since the last execution stamp, passing those coordinates into the Section 10 combination algorithm to update multi-variable trigger models.
+12.2 Silent Background State Execution & Synchronization Loops
+To evaluate trend variations and keep predictive parameters updated without forcing manual user interactions, the architecture implements background execution selectors managed by the OS lifecycle task runner:
+* The Background Wake Trigger: The client handles silent wake loops using localized execution intervals (WorkManager on Android, Background Tasks on iOS). The system wakes the application container silently in the background at regular intervals throughout the day.
+* Telemetry Sync Loop (Premium Tier Only): Upon a silent wake trigger, the background task establishes a silent pipeline channel to native hardware sensors via HealthKit/Google Fit APIs. It parses changes to active metrics since the last check-point timestamp, streaming them straight to the client data merger engine.
+* Proactive Analytics Pass: Immediately following telemetry consolidation, the local execution engine executes a localized analytics evaluation pass. It recalculates the 7-day predictive trend lines across the multi-variable correlation grids to assess if newly added telemetry sets off any active pre-emptive trigger parameters.
+* Silent Notification Alert Schedule: If the background predictive check generates an explicit insight profile matching an active trend risk or crucial update window, the task manager directly queues a private push notification alert (Section 4.3) to the local hardware notification tray. The system immediately completes and terminates the silent background state without waking any graphic UI layers or draining standard processor threads.
+Section 13: Primary View Definitions & Conceptual Modalities
+13.1 Core Space Layout Directives
+The workspace layer is organized into three unique viewing configurations, which the software swaps dynamically based on user state changes:
+1. The Primary Predictive Dashboard View:
+o Functional Utility: Serving as the functional entry container for an authenticated user, this view hosts the dynamic calculation visualizations of the active application lifecycle.
+o Structural Component Profiles: This workspace aggregates and showcases the visual transformations computed by The Predictive Cycle Engine and the visual indicators assigned to the continuous low, med, and high ranges of the parent Body, Mind, and Soul Metrics.
+o Dynamic Text Insertion Core: This panel provides the physical anchors for the contextual character output engine, serving as the default display location for Irma's Advice for the Day.
+2. The User-Initiated Smart Chat View:
+o Functional Utility: The explicit canvas for conversational logging and text-driven trend diagnostics.
+o Structural Component Profiles: Houses the typewriter-style plain text input framework and handles the structural presentation of the local message history log. It is explicitly governed by the Network Fault Tolerance Lock and renders Irma's output streams using the Rich Messaging Output Arrays placeholder modules.
+o Conversational Block Formatting: When Irma renders responses or rich media components within the streaming layout, the text rendering block engine must prioritize natural conversational groupings over structural text fragmentation. The language generator must bundle its text payloads into cohesive, conversational paragraph blocks that mimic an ongoing, organic dialogue with a close aunt figure, rejecting clinical point lists or sterile bullet formats.
+3. The Functional Daily Log Screen:
+o Functional Utility: The explicit component template for manual state updates.
+o Structural Component Profiles: Hosts the form objects, field frameworks, and input schemas used to feed coordinates straight into the parent tri-metric arrays.
+Agent Directive: This view stands as an isolated container framework. All specific variable fields, checklist structures, scale boundaries, and symptom arrays are completely missing from this core architectural document and will be provided separately by the product owner. The engineering agents are strictly prohibited from implementing or designing individual inputs within this view without explicitly halting execution to request your finalized parameter sheet.
+Section 14: Paid Subscription Lifecycles & Lock Gate Infrastructure
+14.1 Purchase Verification & Session Interception
+To protect Premium architectural access boundaries without creating local authentication bypass vulnerabilities, the system must structure its premium status state via cryptographic validation tokens handled during the hardware wake routine.
+* Receipt Validation Handshake: Premium verification states cannot rely on simplistic, mutable local storage boolean switches (e.g., isPremium = true). The system must require an encrypted transaction signature token issued directly by the platform-level store APIs (StoreKit 2 on iOS, Google Play Billing API on Android).
+* The Background Token Monitor: The billing system registers a persistent native event listener loop that monitors subscription state statuses (active, expired, grace periods, or billing retry states) on every background wake cycle and application launch routine.
+14.2 Premium Feature Gate Mechanics & Blind-Persona Rule
+The runtime engine implements explicit structural lock gates at the project configuration layer to dynamically isolate uncapped processing tasks if an active premium token is missing:
+* The Sync Intercept Wrapper: The compiler wraps the Native Health Framework Integration (Section 4.2.3) inside an implicit status block check. If an unverified token signature is parsed, the synchronization event logs are truncated and blocked before the native OS plugin can initialize its hardware scanning threads.
+* The Lookahead Horizon Lock: If a free-tier user selects an option pointing to future timeframes, the dashboard layout engine catches the index route parameters and safely blocks access to the 7-day forecast.
+* The Token Metering Filter: The proxy server routing framework calculates token traffic density per unique user profile. The moment a free-tier profile exceeds its daily conversation ceiling within the current 24-hour window, the proxy app server rejects the thread packet.
+* The Blind-Persona Execution Protocol: The character persona 'Irma' is systematically and completely blind to the user's commercial subscription status. Her language token weights and inference prompts contain zero variables representing billing tiers. She is structurally incapable of recognizing whether the account is free or premium, and she must never speak to the user about upgrading, tier structures, or subscription payments under any circumstances.
+* System-Level Promotion Layers: All monetization boundaries, usage caps, and upgrade invitations are executed strictly at the application system level. When a lookahead boundary is reached or token metering is triggered, the client layout engine intercepts the state and launches a native pop-up subscription wall layout wrapper entirely separate from, and outside of, Irma’s conversational stream.
+Section 15: National Layout Strings & Dialect Optimization
+15.1 UK-English Static Layout Registry
+Because the application functions and distributes exclusively within the United Kingdom domestic market, the layout compiler bypasses multi-language translation routing entirely. The structural architecture enforces a single, unyielding static layout dictionary:
+* The Hardcoded Locale Boundary: The app target environment isolates text strings entirely inside a permanent en_GB resource catalog. The layout engine renders all system typography, interface headers, navigation tools, configurations, and buttons exclusively in UK English.
+* Persona Tone Damping Protections: The system prompt layers pass unyielding context wrappers to prevent the cloud processing layers from drifting into non-UK lexical patterns or utilizing Americanised text token arrays. Her wise, conversational 65-year-old British aunt identity remains textually constant across all computational streams.
+Section 16: Screen Inventory & Core Navigation Topology
+16.1 Navigation Architecture Layouts
+The app shell coordinates routing configurations via two parallel structural layout components:
+* The Bottom Navigation Bar: The primary mechanism for switching between root-level features while maintaining active session context. It displays static links to target screens visible inside the main operational loop.
+* The Off-Canvas Menu Drawer: A sliding navigation panel containing links to configurations, personal data records, security states, and regulatory documents. It remains tucked away and is called on-demand via a button trigger in the primary layout headers.
+16.2 Complete Application Screen Index
+The engineering agents must implement exactly the screens enumerated below, grouping features into structural view stacks:
+Stack A: App Setup & Authentication (Pre-Session Layer)
+1. Loading Screen: The structural initialization window that runs the Hardware Wake Routine (Section 12.1). Renders an animated overlay state until localized asset caches and E2EE local database buckets are unlocked.
+2. Sign-In Screen: Hosts secure authentication elements for existing profiles utilizing OAuth credential entry workflows.
+3. Sign-Up Screen: Validation fields used to spawn fresh accounts and trigger the encryption key escrow routine.
+4. 2-Factor OTP Verification Screen: A hard authentication barrier inserted immediately behind the standard sign-in/sign-up credential checks. Enforces strict backend validation bounds:
+o One-Time Password Time-To-Live (TTL): Codes expire dynamically in temporary cache memory exactly 60 seconds post-dispatch.
+o Failed Attempt Boundary: Restricts entries to a maximum of 3 consecutive failures.
+o Incremental Lockout Penalty: Violating the attempt limit triggers a sequential lockout freeze sequence, locking out input parsing functions for 5 minutes on the initial breach, 15 minutes on the secondary breach, and completely destroying active session tokens to force a baseline login reset upon a tertiary breach.
+5. Onboarding Stack Wizard (3-Screen Sequence): A step-by-step sequential form layout that captures the explicit parameters outlined in Section 3.2. Once step 3 terminates, the data is sealed, and the session routes to the Main App Stack.
+Stack B: Main Operational Views (Bottom Navigation Bar Targets)
+6. Dashboard Screen: The root panel rendering active biological cycle countdown counters, phase indicators, and the dynamic block displaying Irma's Advice for the Day.
+7. Daily Body/Mind/Soul Data Screen: The primary visualization canvas showing the current composite 0-100 values computed across the Section 10 taxomatic sub-metrics.
+8. Add Daily Log Screen: The data entry view targeted by the directive in Section 13.1.3, which will remain unmapped until manual checklist inputs are passed separately.
+9. Irma Chat Screen: The natural language dialogue environment housing the typewriter string field line, message history container, and network lock logic.
+10. Notifications Screen: The centralized management workspace displaying recent local notification logs, insight alerts, and advice dispatch message summaries.
+Stack C: System Controls & Records (Off-Canvas Menu Targets)
+11. Profile Screen: Displays user verification states, tier identification badges, and configuration shortcuts.
+12. History Screen: A scrollable chronological data index that enables the viewing and retrieval of long-term period cycle metrics and local symptom logs.
+13. Doctor View Screen: The highly specialized, sandboxed viewing portal governed by the strict Accidental Resumption Lock rules detailed in Section 9.1.2.
+14. Settings Screen: Houses security flags, privacy controls, biometric authentication preference toggles, and the Cloud Database Purge function.
+15. Privacy Policy Screen: Displays the raw, regulatory UK data privacy legal text sandbox.
+Section 17: Functional Screen Specifications & Purpose Mapping
+This section maps the structural, non-visual intent and architectural responsibilities for each screen within the application inventory. Agents must build routing controllers and event streams to serve these precise structural behaviors.
+17.1 Stack A: App Setup & Authentication (Pre-Session Lifecycle)
+17.1.1 Loading Screen
+* Structural Purpose: Acts as the boot-level isolation wrapper for the application container.
+* Functional Responsibilities: Runs the hardware wake pipeline, checks for active encryption context, and evaluates the device environment before allowing any UI state allocation.
+17.1.2 Sign-In Screen
+* Structural Purpose: Secure portal for registered users to pass initial OAuth primary validation handles.
+* Functional Responsibilities: Captures verification parameters, updates backend identification handshakes, and routes directly to the 2-Factor OTP engine upon initial handle acceptance.
+17.1.3 Sign-Up Screen
+* Structural Purpose: Entry path for new platform profiles.
+* Functional Responsibilities: Initializes account state configurations, sets local environment properties, and invokes the generation of the AES-256 client key schema before tracking parameters are introduced.
+17.1.4 2-Factor OTP Verification Screen
+* Structural Purpose: Secondary identity verification checkpoint enforcing non-bypassable security checks.
+* Functional Responsibilities: Interrupts the authorization stream until a single-use numeric code passed via out-of-band networks matching user records is inputted. Upon validation, it unlocks token memory and hands off execution to the onboarding stack wizard or main application loops.
+17.1.5 Onboarding Stack Wizard (3-Screen Sequence)
+* Structural Purpose: Minimal initialization sequence establishing the baseline math parameters for a new tracking profile.
+* Functional Responsibilities: * Screen 1: Captures the binary cycle consistency parameter (regular/irregular).
+o Screen 2: Captures the average cycle length and expected duration indices.
+o Screen 3: Anchors the time matrix by capturing the precise calendar date of the last active menstruation onset event.
+17.2 Stack B: Main Operational Views (Bottom Navigation Bar Targets)
+17.2.1 Dashboard Screen
+* Structural Purpose: Serving as the central operational hub and entry workspace for authenticated sessions, this screen visualizes the active physiological cycle matrix.
+* Functional Responsibilities: * Hosts the real-time timeline telemetry derived from The Predictive Cycle Engine, updating active cycle countdown values and current physiological phase descriptors.
+o Acts as the primary injection canvas for the dynamic text execution engine, surfacing Irma's Advice for the Day based on active cycle markers.
+o Provides user routing shortcuts to trigger the off-canvas menu or navigate directly to the manual log input layers.
+17.2.2 Daily Body/Mind/Soul Data Screen
+* Structural Purpose: Provides a dedicated dashboard layer displaying the user's composite wellness vector positioning.
+* Functional Responsibilities: * Renders the output scores for the parent Body, Mind, and Soul metrics, translating raw mathematical values out of 100 into discrete graphical indicators (Low, Medium, High).
+o Tracks shifting sub-metric averages (Energy, Wakefulness, Recovery, Focus, Creativity, Motivation, Mood, Social Bandwidth, Stability) to help users spot pattern trends across their active timeline.
+17.2.3 Add Daily Log Screen
+* Structural Purpose: The structural container isolating all manual tracking forms and data ingestion pipelines.
+* Functional Responsibilities: * Tracks manual daily parameter logs before passing coordinates downstream to the parent metric arrays.
+o Agent Constraint Note: The exact checklist schemas, variable entry fields, and scale sliders are entirely missing from this spec. Development agents are strictly prohibited from implementing custom inputs here until the product owner provides the standalone symptom variable sheet.
+17.2.4 Irma Chat Screen
+* Structural Purpose: The interactive natural language environment for conversational logging and text-driven trend diagnostics.
+* Functional Responsibilities: * Manages the typewriter-style plain text entry field, completely freezing input capabilities if the system throws an offline status flag via the Network Fault Tolerance Lock.
+o Compiles local, historical chat transcripts from the encrypted SQLite/Hive sandbox, passing them securely through the cloud server proxy pipeline while enforcing the Conversational Block Formatting rule (grouping text into paragraphs, avoiding bullets/lists).
+17.2.5 Notifications Screen
+* Structural Purpose: A centralized workspace that indexes local notification alerts and historical insights.
+* Functional Responsibilities: * Organizes chronological logs of past private push alerts, system updates, and predictive pre-emptive advice dispatched by the notification engine.
+o Enables users to review deep-context updates they may have missed on their lock screen.
+17.3 Stack C: System Controls & Records (Off-Canvas Menu Targets)
+17.3.1 Profile Screen
+* Structural Purpose: Handles core identity display states and membership validation badges.
+* Functional Responsibilities: Surfaces verification parameters, active tier states (Free/Premium), and displays structural validation values mapping to platform account credentials.
+17.3.2 History Screen
+* Structural Purpose: A retrospective, continuous data indexing workspace.
+* Functional Responsibilities: Compiles scrollable arrays of past cycle logs, calculated phase histories, and historical sub-metric data over long-term tracking windows. Houses the initialization links for the PDF document compiler pipeline (Section 9.1.1).
+17.3.3 Doctor View Screen
+* Structural Purpose: A localized, highly fortified medical presentation container sandbox.
+* Functional Responsibilities: Renders the static interactive report for review during clinical consultations. Enforces the strict hardware lifecycle checks required by the Accidental Resumption Lock, entirely barring backwards system navigation.
+17.3.4 Settings Screen
+* Structural Purpose: The master terminal for security settings, localized preference metrics, and authorization controls.
+* Functional Responsibilities: Handles toggles for device biometric enforcement preferences, notification privacy state triggers, and wraps the interactive button triggers for both the Cloud Database Purge function and the Explicit Logout Destruction State process.
+17.3.5 Privacy Policy Screen
+* Structural Purpose: Regulatory containment container for mandatory legal literature.
+* Functional Responsibilities: Standardized view layout displaying uneditable, legally compliant UK data privacy policy text blocks and terms and conditions matrices.
+

@@ -72,7 +72,12 @@ class _DashboardViewState extends State<DashboardView> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(IrmaSpacing.lg),
+        padding: const EdgeInsets.only(
+          left: IrmaSpacing.lg,
+          right: IrmaSpacing.lg,
+          top: IrmaSpacing.lg,
+          bottom: IrmaSpacing.lg + 80.0 + 16.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

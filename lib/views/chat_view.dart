@@ -126,6 +126,12 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
+    final double finalBottomPadding = keyboardHeight > 0
+        ? keyboardHeight + IrmaSpacing.md
+        : 80.0 + bottomPadding + IrmaSpacing.md;
+
     return Scaffold(
       backgroundColor: IrmaColors.gray10,
 
@@ -282,7 +288,7 @@ class _ChatViewState extends State<ChatView> {
               top: IrmaSpacing.sm,
               left: IrmaSpacing.sm,
               right: IrmaSpacing.sm,
-              bottom: MediaQuery.of(context).viewInsets.bottom + IrmaSpacing.md,
+              bottom: finalBottomPadding,
             ),
             child: Row(
               children: [

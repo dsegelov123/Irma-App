@@ -59,6 +59,7 @@ class _MainShellState extends State<MainShell> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      extendBody: true,
       body: bodyContent,
 
       // ── Off-Canvas Drawer ────────────────────────────────────────
@@ -237,34 +238,45 @@ class _MainShellState extends State<MainShell> {
 // ── Custom Notched Tab Bar Painter ────────────────────────────────────
 
 class _NotchedTabBarPainter extends CustomPainter {
-  final Rect barRect;
+  final double screenWidth;
+  final double bottomPadding;
 
-  _NotchedTabBarPainter({required this.barRect});
+  _NotchedTabBarPainter({
+    required this.screenWidth,
+    required this.bottomPadding,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double scaleX = barRect.width / 375.0;
-    final double scaleY = barRect.height / 80.0;
-    final double dx = barRect.left;
-    final double dy = barRect.top;
+    final double centerX = screenWidth / 2;
+    final double totalHeight = 80.0 + bottomPadding;
 
-    double rx(double val) => dx + val * scaleX;
-    double ry(double val) => dy + val * scaleY;
-
-    final path = Path()
-      ..moveTo(rx(160.131), ry(28.6934))
-      ..cubicTo(rx(147.454), ry(16.3789), rx(133.673), ry(0), rx(116), ry(0))
-      ..lineTo(rx(40), ry(0))
-      ..cubicTo(rx(17.9086), ry(0), rx(0), ry(17.9086), rx(0), ry(40))
-      ..cubicTo(rx(0), ry(62.091), rx(17.9086), ry(80), rx(40), ry(80))
-      ..lineTo(rx(335), ry(80))
-      ..cubicTo(rx(357.091), ry(80), rx(375), ry(62.091), rx(375), ry(40))
-      ..cubicTo(rx(375), ry(17.9086), rx(357.091), ry(0), rx(335), ry(0))
-      ..lineTo(rx(260), ry(0))
-      ..cubicTo(rx(242.327), ry(0), rx(228.546), ry(16.3789), rx(215.869), ry(28.6934))
-      ..cubicTo(rx(208.666), ry(35.6912), rx(198.836), ry(40), rx(188), ry(40))
-      ..cubicTo(rx(177.164), ry(40), rx(167.334), ry(35.6912), rx(160.131), ry(28.6934))
-      ..close();
+    final path = Path();
+    // Start at top-left corner (rounded, starting at y = 40)
+    path.moveTo(0, 40);
+    // Cubic to top-left flat edge (40, 0)
+    path.cubicTo(0, 17.9086, 17.9086, 0, 40, 0);
+    // Line to left side of notch
+    path.lineTo(centerX - 72, 0);
+    
+    // Left notch outer curve
+    path.cubicTo(centerX - 54.327, 0, centerX - 40.546, 16.3789, centerX - 27.869, 28.6934);
+    // Left notch inner curve
+    path.cubicTo(centerX - 20.666, 35.6912, centerX - 10.836, 40, centerX, 40);
+    // Right notch inner curve
+    path.cubicTo(centerX + 10.836, 40, centerX + 20.666, 35.6912, centerX + 27.869, 28.6934);
+    // Right notch outer curve
+    path.cubicTo(centerX + 40.546, 16.3789, centerX + 54.327, 0, centerX + 72, 0);
+    
+    // Line to top-right corner
+    path.lineTo(screenWidth - 40, 0);
+    // Rounded corner to right edge (screenWidth, 40)
+    path.cubicTo(screenWidth - 17.9086, 0, screenWidth, 17.9086, screenWidth, 40);
+    // Line straight down to the bottom of the screen (including safe area)
+    path.lineTo(screenWidth, totalHeight);
+    // Line across the bottom of the screen
+    path.lineTo(0, totalHeight);
+    path.close();
 
     // Draw shadow (5% opacity of Brown 80, stdDev 16, shifted dy=-16)
     final shadowPaint = Paint()
@@ -281,7 +293,7 @@ class _NotchedTabBarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _NotchedTabBarPainter oldDelegate) {
-    return oldDelegate.barRect != barRect;
+    return oldDelegate.screenWidth != screenWidth || oldDelegate.bottomPadding != bottomPadding;
   }
 }
 
@@ -302,18 +314,7 @@ class _BottomTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
-    
-    // Determine bar size (default Figma scale is W=375, centered on screen)
-    final double barWidth = (screenWidth > 399) ? 375.0 : screenWidth - 24.0;
-    final double startX = (screenWidth - barWidth) / 2;
     const double barHeight = 80.0;
-    
-    final Rect barRect = Rect.fromLTWH(startX, 0, barWidth, barHeight);
-    final double scale = barWidth / 375.0;
-
-    double getX(double relativeX) {
-      return startX + (relativeX - 24.0) * scale;
-    }
 
     return Container(
       height: barHeight + bottomPadding,
@@ -326,30 +327,42 @@ class _BottomTabBar extends StatelessWidget {
             left: 0,
             right: 0,
             top: 0,
-            bottom: bottomPadding,
+            bottom: 0,
             child: CustomPaint(
-              painter: _NotchedTabBarPainter(barRect: barRect),
+              painter: _NotchedTabBarPainter(
+                screenWidth: screenWidth,
+                bottomPadding: bottomPadding,
+              ),
             ),
           ),
           
-          // Tab Item: Home (0)
+          // Tab Items in a Row
           Positioned(
-            left: getX(40),
-            top: 16,
-            child: _buildTabItem(0, Icons.home_rounded),
-          ),
-          
-          // Tab Item: Chat (1)
-          Positioned(
-            left: getX(108),
-            top: 16,
-            child: _buildTabItem(1, Icons.chat_bubble_rounded),
+            left: 0,
+            right: 0,
+            top: 0,
+            height: barHeight,
+            child: Row(
+              children: [
+                const Spacer(flex: 3),
+                _buildTabItem(0, Icons.home_rounded),
+                const Spacer(flex: 4),
+                _buildTabItem(1, Icons.chat_bubble_rounded),
+                const Spacer(flex: 2),
+                const SizedBox(width: 96), // Clearance for the center notch / FAB
+                const Spacer(flex: 2),
+                _buildTabItem(2, Icons.bar_chart_rounded),
+                const Spacer(flex: 4),
+                _buildTabItem(3, Icons.person_rounded),
+                const Spacer(flex: 3),
+              ],
+            ),
           ),
           
           // Floating Action Button (FAB)
           Positioned(
-            left: getX(180),
-            top: -16, // Protrude upward exactly matching Figma y=16 vs bar top y=48
+            left: screenWidth / 2 - 32,
+            top: -32, // Protrude upward exactly matching Figma y=16 vs bar top y=48
             child: GestureDetector(
               onTap: onLogSymptomsPressed,
               child: Container(
@@ -373,20 +386,6 @@ class _BottomTabBar extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          
-          // Tab Item: Metrics (2)
-          Positioned(
-            left: getX(267),
-            top: 16,
-            child: _buildTabItem(2, Icons.bar_chart_rounded),
-          ),
-          
-          // Tab Item: Profile (3)
-          Positioned(
-            left: getX(335),
-            top: 16,
-            child: _buildTabItem(3, Icons.person_rounded),
           ),
         ],
       ),

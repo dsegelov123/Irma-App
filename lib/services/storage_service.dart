@@ -4,20 +4,24 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 /// Service managing the encrypted Hive database storage and security credentials.
 class StorageService {
-  static const _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  static const _secureStorage = FlutterSecureStorage();
   static const _keyName = 'irma_encryption_key';
   
   static List<int>? _encryptionKey;
 
+  static Box? _settingsBox;
+
   /// Retrieves the active encryption key in memory.
   static List<int>? get encryptionKey => _encryptionKey;
+
+  /// Retrieves the opened settings box.
+  static Box get settingsBox => _settingsBox!;
 
   /// Initializes the local database sandbox and loads/generates the AES key.
   static Future<void> init() async {
     await Hive.initFlutter();
     await loadOrGenerateKey();
+    _settingsBox = await openEncryptedBox('irma_settings');
   }
 
   /// Loads the AES encryption key from secure storage, generating a new one if not present.
@@ -56,6 +60,7 @@ class StorageService {
   static Future<void> purgeAllData() async {
     // Wipe memory
     wipeKeyFromMemory();
+    _settingsBox = null;
     
     // Clear all files from disk
     await Hive.deleteFromDisk();

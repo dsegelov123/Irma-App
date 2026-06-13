@@ -24,11 +24,6 @@ class BiometricService {
       }
       return await _auth.authenticate(
         localizedReason: 'Access Irma securely with your biometric login',
-        options: const AuthenticationOptions(
-          useErrorDialogs: true,
-          stickyAuth: true,
-          sensitiveTransaction: true,
-        ),
       );
     } on PlatformException catch (_) {
       return false;

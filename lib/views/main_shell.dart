@@ -39,6 +39,7 @@ class _MainShellState extends State<MainShell> {
         case 0:
           bodyContent = DashboardView(
             onLogSymptomsPressed: () => setState(() => _showLogView = true),
+            onProfilePressed: () => setState(() => _activeTab = 3),
           );
           break;
         case 1:
@@ -53,6 +54,7 @@ class _MainShellState extends State<MainShell> {
         default:
           bodyContent = DashboardView(
             onLogSymptomsPressed: () => setState(() => _showLogView = true),
+            onProfilePressed: () => setState(() => _activeTab = 3),
           );
       }
     }

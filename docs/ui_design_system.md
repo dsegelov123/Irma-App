@@ -370,6 +370,62 @@ The design system includes helper elements for device mocking, data visualizatio
   - **Size**: `375px` x `291px`.
   - **Layout (Row)**: Gap `0px`.
 
+---
+
+## 10. Chat System Layout & Bubbles
+
+The chat interface comprises a structured message history feed, message bubbles, input fields, header bar, and real-time status banners:
+
+### Chat Header Bar (`top-bar`)
+- **Background**: Solid White (`#FFFFFF`).
+- **Padding**: `16px` on all sides.
+- **Layout (Column)**: Gap `24px`.
+- **Left Action Group**:
+  - **Back Button**: Circular (`1234px`), Background Light Warm Gray (`#F7F4F2`), Size `48px` x `48px`, contains left chevron icon.
+  - **Title Text**: "Doctor Freud.AI" (Font: `Urbanist`, Size: `20px`, Weight: `700` Bold, color: Brown 100 `#1F160F`).
+- **Right Action Group** (`icon-group`):
+  - **Search Button**: Circular (`1234px`), Border `1px` Light Gray (`#E8DDD9`), Size `48px` x `48px`.
+  - **Menu Button**: Circular (`1234px`), Border `1px` Light Gray (`#E8DDD9`), Size `48px` x `48px`.
+
+### Chat History Feed Container (`chat-main`)
+- **Corner Radius**: `32px`
+- **Padding**: `24px` on all sides.
+- **Border**: `1px` stroke, Sage Green (`#9BB068`).
+- **Layout (Column)**: Gap `24px` between messages.
+- **Message Bubble Variants Supported**:
+  - **`type-user`**: User sent message.
+  - **`type-chatbot-text`**: Sage AI plain text response.
+  - **`type-chatbot-thinking`**: Loading indicator during response generation.
+  - **`type-chatbot-reward`**: Gamified rewards (e.g. daily streak, health coins).
+  - **`type-chatbot-therapist-recommendation`**: Therapist referral card.
+  - **`type-chatbot-resource-recommendation`**: Article/exercise recommendation card.
+
+### Real-Time Emotion Status Banner (`chat-emotion-status`)
+- **Background**: Empathy Orange 40 (`#FE814B`).
+- **Corner Radius**: Pill shape (`1234px`).
+- **Padding**: Top/Bottom `6px`, Left/Right `12px`.
+- **Layout (Row)**: Space-between, Align cross axis `center`.
+- **Indicator Content**:
+  - Emotion icon prefix.
+  - Text: "Emotion: Anger. Journal Updated." (Font: `Urbanist`, Size: `14px`, Weight: `700`, color: White `#FFFFFF`).
+
+### Chat Input Box (`chat-textbox-user-input`)
+- **Background**: Solid White (`#FFFFFF`).
+- **Layout (Column)**: Gap `0px`.
+- **Padding**: Top `12px`, Right `12px`, Bottom `16px`, Left `12px`.
+- **Inner Content Row**:
+  - **Input Text Field Container**:
+    - **Background**: Light Warm Gray (`#F7F4F2`).
+    - **Corner Radius**: Pill shape (`1238px`).
+    - **Padding**: `8px` on all sides.
+    - **Text Placeholder**: "Type to start chatting..." (Font: `Urbanist`, Size: `14px`, Weight: `700`, color: Brown 70 `#6D4B36`).
+  - **Send Button**:
+    - **Background**: Sage Green (`#9BB068`).
+    - **Corner Radius**: Circular (`1234px`).
+    - **Size**: `48px` x `48px`.
+    - **Layout**: Centered, containing curved arrow send icon.
+
+
 
 
 

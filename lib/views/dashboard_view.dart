@@ -57,7 +57,7 @@ class _DashboardViewState extends State<DashboardView> {
     };
 
     return Scaffold(
-      backgroundColor: IrmaColors.gray10,
+      backgroundColor: IrmaColors.brown10,
       body: SingleChildScrollView(
         padding: EdgeInsets.zero,
         child: Column(
@@ -79,11 +79,6 @@ class _DashboardViewState extends State<DashboardView> {
                 children: [
                   const SizedBox(height: IrmaSpacing.xs),
  
-                  // ── Greeting ──────────────────────────────────────────
-                  Text('Good day.', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.gray60)),
-                  const SizedBox(height: 4),
-                  Text('Here\'s your cycle overview.', style: IrmaTextStyles.para2xl.copyWith(color: IrmaColors.brown100)),
-                  const SizedBox(height: IrmaSpacing.lg),
  
                   // ── Cycle Status Section (No Box/Card) ────────────────
                   Column(

@@ -146,42 +146,63 @@ class _DashboardViewState extends State<DashboardView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
- 
-                  // ── Advice Section Header ─────────────────────────────
-                  Text("Irma's Advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
-                  const SizedBox(height: IrmaSpacing.sm),
- 
-                  // ── Advice Card ───────────────────────────────────────
-                  Container(
-                    width: double.infinity,
-                    padding: IrmaPadding.cardLarge,
-                    decoration: IrmaCards.advice(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+
+                  // ── Advice Chat Bubble ────────────────────────────────
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Main bubble body
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: const BoxDecoration(
+                          color: IrmaColors.brown20,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16.0),
+                            topRight: Radius.circular(16.0),
+                            bottomRight: Radius.circular(16.0),
+                            bottomLeft: Radius.zero,
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.chat_bubble_outline_rounded, color: IrmaColors.green50, size: 16),
-                            const SizedBox(width: IrmaSpacing.xs),
-                            Text(
-                              'DAILY INSIGHT',
-                              style: IrmaTextStyles.labelXs.copyWith(
-                                color: IrmaColors.green50,
-                                letterSpacing: 1.0,
+                            // Clover icon in circle
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                color: IrmaColors.brown10,
+                                shape: BoxShape.circle,
+                              ),
+                              child: CustomPaint(
+                                size: const Size(40, 40),
+                                painter: _IrmaCloverIconPainter(),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Advice text
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 4.0, right: 8.0, bottom: 4.0),
+                                child: Text(
+                                  _advice,
+                                  style: IrmaTextStyles.paragraphSmMedium.copyWith(
+                                    color: IrmaColors.brown100.withOpacity(0.64),
+                                    height: 1.5,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: IrmaSpacing.sm),
-                        Text(
-                          _advice,
-                          style: IrmaTextStyles.paraMd.copyWith(
-                            color: IrmaColors.brown100,
-                            height: 1.6,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      // Speech-bubble tail
+                      CustomPaint(
+                        size: const Size(12, 12),
+                        painter: _BubbleTailPainter(),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: IrmaSpacing.xl),
 
@@ -401,4 +422,64 @@ class _DashboardViewState extends State<DashboardView> {
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// § Private painters for the Advice Chat Bubble
+// ─────────────────────────────────────────────────────────────────
+
+/// Paints a 4-dot clover/flower icon inside a 40×40 canvas.
+/// Each dot is ~3.9px radius, positioned N/S/E/W around center,
+/// matching the Figma SVG icon exactly.
+class _IrmaCloverIconPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = IrmaColors.brown40
+      ..style = PaintingStyle.fill;
+
+    final cx = size.width / 2;   // 20
+    final cy = size.height / 2;  // 20
+    const r = 3.9;               // dot radius matching SVG circles
+    const offset = 6.1;          // distance from center to each dot center
+
+    // Top dot
+    canvas.drawCircle(Offset(cx, cy - offset), r, paint);
+    // Bottom dot
+    canvas.drawCircle(Offset(cx, cy + offset), r, paint);
+    // Left dot
+    canvas.drawCircle(Offset(cx - offset, cy), r, paint);
+    // Right dot
+    canvas.drawCircle(Offset(cx + offset, cy), r, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Paints a concave speech-bubble tail (12×12) matching the Figma SVG
+/// bottom-left corner shape: a quarter-circle cutout that connects
+/// the bottom-left of the bubble to the background.
+class _BubbleTailPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = IrmaColors.brown20
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..cubicTo(
+        size.width, 0,
+        size.width, size.height,
+        0, size.height,
+      )
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

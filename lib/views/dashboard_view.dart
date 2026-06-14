@@ -187,7 +187,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 padding: const EdgeInsets.only(top: 4.0, right: 8.0, bottom: 4.0),
                                 child: Text(
                                   _advice,
-                                  style: IrmaTextStyles.paragraphSmMedium.copyWith(
+                                  style: IrmaTextStyles.labelMdBold.copyWith(
                                     color: IrmaColors.brown100.withOpacity(0.64),
                                     height: 1.5,
                                   ),

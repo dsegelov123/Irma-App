@@ -93,38 +93,38 @@ class CycleCircularIndicatorPainter extends CustomPainter {
     canvas.drawCircle(center, barRadius, trackPaint);
 
     // 2. Draw filled progress arc (white) day by day
-    if (progress > 0) {
-      final progressPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round
-        ..strokeWidth = 6.0;
+    final progressPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 6.0;
 
-      double sweepAngle = 2 * math.pi * progress.clamp(0.0, 1.0);
+    double sweepAngle = 2 * math.pi * (currentDay - 1) / totalDays;
+    if (sweepAngle > 0) {
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: barRadius),
         -math.pi / 2,
-        sweepAngle,
+        sweepAngle.clamp(0.0, 2 * math.pi),
         false,
         progressPaint,
       );
-
-      // Draw Today marker (white circle) at the current day's position
-      final double todayAngle = -math.pi / 2 + sweepAngle;
-      final double todayX = center.dx + barRadius * math.cos(todayAngle);
-      final double todayY = center.dy + barRadius * math.sin(todayAngle);
-
-      final markerPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill;
-      
-      // Draw white circle with shadow
-      final shadowPaint = Paint()
-        ..color = Colors.black.withOpacity(0.15)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
-      canvas.drawCircle(Offset(todayX, todayY) + const Offset(0, 1), 7.0, shadowPaint);
-      canvas.drawCircle(Offset(todayX, todayY), 7.0, markerPaint);
     }
+
+    // Draw Today marker (white circle) at the current day's position (aligns with current day dot)
+    final double todayAngle = -math.pi / 2 + sweepAngle;
+    final double todayX = center.dx + barRadius * math.cos(todayAngle);
+    final double todayY = center.dy + barRadius * math.sin(todayAngle);
+
+    final markerPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    
+    // Draw white circle with shadow
+    final shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.15)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
+    canvas.drawCircle(Offset(todayX, todayY) + const Offset(0, 1), 7.0, shadowPaint);
+    canvas.drawCircle(Offset(todayX, todayY), 7.0, markerPaint);
 
     // 3. Draw inner circle of dots representing the 5 phases of the cycle
     for (int i = 0; i < totalDays; i++) {
@@ -149,7 +149,7 @@ class CycleCircularIndicatorPainter extends CustomPainter {
         ..color = dotColor
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(dotOffset, 4.0, dotPaint);
+      canvas.drawCircle(dotOffset, 7.0, dotPaint);
     }
   }
 

@@ -68,24 +68,25 @@ class _DashboardViewState extends State<DashboardView> {
             Stack(
               children: [
                 // ── Cycle Status Section (Full Width Background Image & 30% Opacity Black Overlay) ──
-                // It starts at top = 0 and stretches behind the Hero section
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/young-woman-being-quarantined-home.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Builder(
-                    builder: (context) {
-                      final double rawTopPadding = MediaQuery.of(context).padding.top;
-                      final double actualHeroHeight = rawTopPadding > 0 ? rawTopPadding + 156.0 : 200.0;
-                      return Container(
-                        padding: EdgeInsets.only(
+                // It starts 34px above the bottom of the Hero section, extending under it by exactly 34px
+                Builder(
+                  builder: (context) {
+                    final double rawTopPadding = MediaQuery.of(context).padding.top;
+                    final double actualHeroHeight = rawTopPadding > 0 ? rawTopPadding + 156.0 : 200.0;
+                    return Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(top: actualHeroHeight - 34.0),
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/young-woman-being-quarantined-home.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.only(
                           left: IrmaSpacing.lg,
                           right: IrmaSpacing.lg,
-                          top: actualHeroHeight + IrmaSpacing.xl, // Extended under hero, content not raised
+                          top: IrmaSpacing.xl + 34.0, // Extended 34px under hero, content not raised
                           bottom: IrmaSpacing.xl,
                         ),
                         decoration: BoxDecoration(
@@ -122,9 +123,9 @@ class _DashboardViewState extends State<DashboardView> {
                             ),
                           ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
                 
                 // ── Figma Hero Header Card ───────────────────────────

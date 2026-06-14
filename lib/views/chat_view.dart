@@ -260,7 +260,7 @@ class _ChatViewState extends State<ChatView> {
                   controller: _scrollController,
                   padding: const EdgeInsets.all(IrmaSpacing.lg),
                   itemCount: _messages.length + (_isThinking ? 1 : 0),
-                  separatorBuilder: (_, __) => const SizedBox(height: IrmaSpacing.lg),
+                  separatorBuilder: (_, index) => const SizedBox(height: IrmaSpacing.lg),
                   itemBuilder: (_, i) {
                     if (i == _messages.length) return _ThinkingBubble();
                     final msg = _messages[i];

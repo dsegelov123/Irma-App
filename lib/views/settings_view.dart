@@ -137,33 +137,33 @@ class _SettingsViewState extends State<SettingsView> {
             Container(
               padding: const EdgeInsets.all(IrmaSpacing.md),
               decoration: IrmaCards.standard(),
-              child: Column(children: [
-                RadioListTile<String>(
-                  title: Text('State A (Conversational & Vague)',
-                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
-                  subtitle: Text(
-                    'Engaging and supportive notices without revealing explicit clinical variables.',
-                    style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
+              child: RadioGroup<String>(
+                groupValue: _privacyState,
+                onChanged: _updatePrivacyState,
+                child: Column(children: [
+                  RadioListTile<String>(
+                    title: Text('State A (Conversational & Vague)',
+                        style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                    subtitle: Text(
+                      'Engaging and supportive notices without revealing explicit clinical variables.',
+                      style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
+                    ),
+                    value: 'State A',
+                    activeColor: IrmaColors.green50,
                   ),
-                  value: 'State A',
-                  groupValue: _privacyState,
-                  activeColor: IrmaColors.green50,
-                  onChanged: _updatePrivacyState,
-                ),
-                Divider(height: IrmaSpacing.lg, color: IrmaColors.brown20),
-                RadioListTile<String>(
-                  title: Text('State B (Discreet / Masked)',
-                      style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
-                  subtitle: Text(
-                    'Sterilised system-style notices for absolute lock screen privacy.',
-                    style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
+                  Divider(height: IrmaSpacing.lg, color: IrmaColors.brown20),
+                  RadioListTile<String>(
+                    title: Text('State B (Discreet / Masked)',
+                        style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
+                    subtitle: Text(
+                      'Sterilised system-style notices for absolute lock screen privacy.',
+                      style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
+                    ),
+                    value: 'State B',
+                    activeColor: IrmaColors.green50,
                   ),
-                  value: 'State B',
-                  groupValue: _privacyState,
-                  activeColor: IrmaColors.green50,
-                  onChanged: _updatePrivacyState,
-                ),
-              ]),
+                ]),
+              ),
             ),
             const SizedBox(height: IrmaSpacing.xl),
             Text('Danger Zone', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.orange40)),

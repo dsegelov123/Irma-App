@@ -33,12 +33,14 @@ class _ProfileViewState extends State<ProfileView> {
     setState(() {
       _isPremium = value;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(value ? 'Premium subscription activated.' : 'Reverted to Free subscription tier.'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(value ? 'Premium subscription activated.' : 'Reverted to Free subscription tier.'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    }
   }
 
   @override
@@ -147,7 +149,7 @@ class _ProfileViewState extends State<ProfileView> {
                 const SizedBox(height: IrmaSpacing.lg),
                 SwitchListTile(
                   title: Text('Simulate Premium Upgrade', style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100)),
-                  activeColor: IrmaColors.green50,
+                  activeThumbColor: IrmaColors.green50,
                   value: _isPremium,
                   onChanged: _togglePremium,
                 ),

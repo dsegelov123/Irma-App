@@ -282,7 +282,7 @@ class _NotchedTabBarPainter extends CustomPainter {
 
     // Draw shadow (5% opacity of Brown 80, stdDev 16, shifted dy=-16)
     final shadowPaint = Paint()
-      ..color = IrmaColors.brown80.withOpacity(0.05)
+      ..color = IrmaColors.brown80.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16);
     canvas.drawPath(path.shift(const Offset(0, -16)), shadowPaint);
 
@@ -375,7 +375,7 @@ class _BottomTabBar extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: IrmaColors.green50.withOpacity(0.5),
+                      color: IrmaColors.green50.withValues(alpha: 0.5),
                       blurRadius: 32,
                       offset: const Offset(0, 16),
                     ),

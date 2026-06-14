@@ -96,14 +96,15 @@ class _AddLogViewState extends State<AddLogView> {
       await CycleEngine.removePeriodStart(_selectedDate);
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Daily log saved. Analytics updated.'),
-        duration: Duration(seconds: 1),
-      ),
-    );
-
-    widget.onLogSaved();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Daily log saved. Analytics updated.'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      widget.onLogSaved();
+    }
   }
 
   @override
@@ -176,7 +177,7 @@ class _AddLogViewState extends State<AddLogView> {
                   'Activates the Early Override reset. Forces current day to Day 1.',
                   style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
                 ),
-                activeColor: IrmaColors.orange40,
+                activeThumbColor: IrmaColors.orange40,
                 value: _isPeriodStart,
                 onChanged: (val) => setState(() => _isPeriodStart = val),
               ),

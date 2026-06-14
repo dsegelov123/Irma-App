@@ -167,7 +167,7 @@ class _DailyMetricsViewState extends State<DailyMetricsView> {
                       onPressed: () async {
                         await StorageService.settingsBox.put('user_is_premium', true);
                         _refreshData();
-                        if (mounted) {
+                        if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Premium mode unlocked for testing.')),
                           );
@@ -321,7 +321,7 @@ class _MiniIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
       child: Text(
         '$label:$val',
         style: IrmaTextStyles.labelXs.copyWith(color: color),

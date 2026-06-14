@@ -54,7 +54,7 @@ class IrmaCycleCircularIndicator extends StatelessWidget {
               Text(
                 phaseName,
                 style: IrmaTextStyles.paragraphXsMedium.copyWith(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -87,7 +87,7 @@ class CycleCircularIndicatorPainter extends CustomPainter {
 
     // 1. Draw outer progress track (thin transparent white)
     final trackPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6.0;
     canvas.drawCircle(center, barRadius, trackPaint);
@@ -121,7 +121,7 @@ class CycleCircularIndicatorPainter extends CustomPainter {
     
     // Draw white circle with shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.15)
+      ..color = Colors.black.withValues(alpha: 0.15)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
     canvas.drawCircle(Offset(todayX, todayY) + const Offset(0, 1), 7.0, shadowPaint);
     canvas.drawCircle(Offset(todayX, todayY), 7.0, markerPaint);
@@ -192,7 +192,7 @@ class IrmaHorizontalWeekCalendar extends StatelessWidget {
             decoration: BoxDecoration(
               color: tintColor,
               borderRadius: BorderRadius.circular(IrmaRadius.pill),
-              border: Border.all(color: themeColor.withOpacity(0.3), width: 0.8),
+              border: Border.all(color: themeColor.withValues(alpha: 0.3), width: 0.8),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -223,7 +223,7 @@ class IrmaHorizontalWeekCalendar extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   weekdayStr,
-                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: Colors.white.withOpacity(0.6)),
+                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: Colors.white.withValues(alpha: 0.6)),
                 ),
               ],
             ),

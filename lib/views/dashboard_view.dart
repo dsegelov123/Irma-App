@@ -103,7 +103,7 @@ class _DashboardViewState extends State<DashboardView> {
                           bottom: IrmaSpacing.xl,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5), // 50% black overlay
+                          color: Colors.black.withValues(alpha: 0.5), // 50% black overlay
                         ),
                         child: Column(
                           children: [
@@ -204,7 +204,7 @@ class _DashboardViewState extends State<DashboardView> {
                                 child: Text(
                                   _advice,
                                   style: IrmaTextStyles.labelMdBold.copyWith(
-                                    color: IrmaColors.brown100.withOpacity(0.64),
+                                    color: IrmaColors.brown100.withValues(alpha: 0.64),
                                     height: 1.5,
                                   ),
                                 ),
@@ -516,12 +516,12 @@ class _DashboardViewState extends State<DashboardView> {
         ),
         boxShadow: [
           BoxShadow(
-            color: IrmaColors.brown80.withOpacity(0.04),
+            color: IrmaColors.brown80.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 7),
           ),
           BoxShadow(
-            color: IrmaColors.brown80.withOpacity(0.03),
+            color: IrmaColors.brown80.withValues(alpha: 0.03),
             blurRadius: 28,
             offset: const Offset(0, 28),
           ),

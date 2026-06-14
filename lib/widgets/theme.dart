@@ -366,7 +366,7 @@ class IrmaCards {
     color: fill,
     borderRadius: BorderRadius.circular(32),
     border: Border.all(color: border ?? IrmaColors.gray20),
-    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 12, offset: const Offset(0, 4))],
+    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 12, offset: const Offset(0, 4))],
   );
 
   /// Standard action card — radius 32, 16px padding, white fill
@@ -374,7 +374,7 @@ class IrmaCards {
     color: fill,
     borderRadius: BorderRadius.circular(32),
     border: Border.all(color: border ?? IrmaColors.gray20),
-    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
+    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 2))],
   );
 
   /// Stat / content card — radius 24, 16px padding, white fill
@@ -382,7 +382,7 @@ class IrmaCards {
     color: fill,
     borderRadius: BorderRadius.circular(24),
     border: Border.all(color: border ?? IrmaColors.gray20),
-    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))],
+    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 2))],
   );
 
   /// Score / log list card — radius 24, 12px padding, gray10 fill
@@ -487,7 +487,7 @@ class IrmaTheme {
       color: color,
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(color: borderColor ?? IrmaColors.gray20, width: borderWidth),
-      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))],
     );
   }
 

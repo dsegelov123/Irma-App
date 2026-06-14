@@ -13,11 +13,11 @@ class MockPathProviderPlatform extends Fake
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {
   @override
-  Future<String?> getTemporaryPath() async => '.';
+  Future<String?> getTemporaryPath() async => './test_doctor_box';
   @override
-  Future<String?> getApplicationSupportPath() async => '.';
+  Future<String?> getApplicationSupportPath() async => './test_doctor_box';
   @override
-  Future<String?> getApplicationDocumentsPath() async => '.';
+  Future<String?> getApplicationDocumentsPath() async => './test_doctor_box';
 }
 
 void main() {

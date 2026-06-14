@@ -486,6 +486,41 @@ class _DashboardViewState extends State<DashboardView> {
                 ],
               ),
             ),
+                  const SizedBox(height: 32.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: IrmaColors.brown70,
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Daily Reflection",
+                                style: IrmaTextStyles.labelLg.copyWith(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          Text(
+                            "Take a quiet moment to record your thoughts and symptoms. Your daily patterns build a clearer picture of your wellbeing over time.",
+                            style: IrmaTextStyles.paraSm.copyWith(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: IrmaSpacing.lg),
                 ],
               ),

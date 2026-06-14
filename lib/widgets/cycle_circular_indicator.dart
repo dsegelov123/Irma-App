@@ -149,7 +149,7 @@ class CycleCircularIndicatorPainter extends CustomPainter {
         ..color = dotColor
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(dotOffset, 7.0, dotPaint);
+      canvas.drawCircle(dotOffset, 4.0, dotPaint);
     }
   }
 

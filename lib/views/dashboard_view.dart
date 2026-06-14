@@ -167,17 +167,17 @@ class _DashboardViewState extends State<DashboardView> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Clover icon in circle
+                            // Irma profile image in circle
                             Container(
                               width: 40,
                               height: 40,
                               decoration: const BoxDecoration(
                                 color: IrmaColors.brown10,
                                 shape: BoxShape.circle,
-                              ),
-                              child: CustomPaint(
-                                size: const Size(40, 40),
-                                painter: _IrmaCloverIconPainter(),
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/irma_title_profile.png'),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -427,35 +427,6 @@ class _DashboardViewState extends State<DashboardView> {
 // ─────────────────────────────────────────────────────────────────
 // § Private painters for the Advice Chat Bubble
 // ─────────────────────────────────────────────────────────────────
-
-/// Paints a 4-dot clover/flower icon inside a 40×40 canvas.
-/// Each dot is ~3.9px radius, positioned N/S/E/W around center,
-/// matching the Figma SVG icon exactly.
-class _IrmaCloverIconPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = IrmaColors.brown40
-      ..style = PaintingStyle.fill;
-
-    final cx = size.width / 2;   // 20
-    final cy = size.height / 2;  // 20
-    const r = 3.9;               // dot radius matching SVG circles
-    const offset = 6.1;          // distance from center to each dot center
-
-    // Top dot
-    canvas.drawCircle(Offset(cx, cy - offset), r, paint);
-    // Bottom dot
-    canvas.drawCircle(Offset(cx, cy + offset), r, paint);
-    // Left dot
-    canvas.drawCircle(Offset(cx - offset, cy), r, paint);
-    // Right dot
-    canvas.drawCircle(Offset(cx + offset, cy), r, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
 
 /// Paints a concave speech-bubble tail (12×12) matching the Figma SVG
 /// bottom-left corner shape: a quarter-circle cutout that connects

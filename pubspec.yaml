@@ -64,6 +64,7 @@ flutter:
 
   assets:
     - assets/images/young-woman-being-quarantined-home.jpg
+    - assets/images/irma_title_profile.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

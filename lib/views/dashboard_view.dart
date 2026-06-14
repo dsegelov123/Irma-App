@@ -140,12 +140,16 @@ class _DashboardViewState extends State<DashboardView> {
               padding: const EdgeInsets.only(
                 left: IrmaSpacing.lg,
                 right: IrmaSpacing.lg,
-                top: IrmaSpacing.lg,
+                top: IrmaSpacing.xl,
                 bottom: IrmaSpacing.lg + 80.0 + IrmaSpacing.md,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+                  // ── Advice Section Header ─────────────────────────────
+                  Text("Irma's advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                  const SizedBox(height: IrmaSpacing.sm),
 
                   // ── Advice Chat Bubble ────────────────────────────────
                   Column(

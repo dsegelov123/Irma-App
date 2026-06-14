@@ -90,7 +90,7 @@ class _DashboardViewState extends State<DashboardView> {
                           bottom: IrmaSpacing.xl,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3), // 30% black overlay
+                          color: Colors.black.withOpacity(0.5), // 50% black overlay
                         ),
                         child: Column(
                           children: [

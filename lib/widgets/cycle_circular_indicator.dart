@@ -26,13 +26,13 @@ class IrmaCycleCircularIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 240,
-      height: 240,
+      width: 312,
+      height: 312,
       child: Stack(
         alignment: Alignment.center,
         children: [
           CustomPaint(
-            size: const Size(240, 240),
+            size: const Size(312, 312),
             painter: CycleCircularIndicatorPainter(
               progress: progress,
               currentDay: currentDay,
@@ -82,8 +82,8 @@ class CycleCircularIndicatorPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final double barRadius = 110.0; // Radius of outer circular progress bar
-    final double dotsRadius = 85.0; // Radius of inner circle of dots
+    final double barRadius = 143.0; // Radius of outer circular progress bar (scaled 30%)
+    final double dotsRadius = 110.5; // Radius of inner circle of dots (scaled 30%)
 
     // 1. Draw outer progress track (thin transparent white)
     final trackPaint = Paint()

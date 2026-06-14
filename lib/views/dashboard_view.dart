@@ -47,6 +47,7 @@ class _DashboardViewState extends State<DashboardView> {
     final int daysUntil    = _cycleState['days_until_next'] as int;
     final bool isLate      = _cycleState['is_late'] as bool;
     final int avgLength    = _cycleState['average_length'] as int;
+    final int periodDuration = _cycleState['period_duration'] as int? ?? 5;
 
     final ({Color color, Color tint, IconData icon}) phaseStyle = switch (phase) {
       'Menstruation'         => (color: IrmaColors.orange40, tint: IrmaColors.orange10, icon: Icons.water_drop_rounded),
@@ -80,38 +81,54 @@ class _DashboardViewState extends State<DashboardView> {
                   const SizedBox(height: IrmaSpacing.xs),
  
  
-                  // ── Cycle Status Section (No Box/Card) ────────────────
-                  Column(
-                    children: [
-                      // Centered prediction header matching Figma style (Poppins 14 weight 500, mapped to labelMd)
-                      Text(
-                        isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                        style: IrmaTextStyles.paragraphSmMedium.copyWith(
-                          color: phaseStyle.color,
-                        ),
-                        textAlign: TextAlign.center,
+                  // ── Cycle Status Section (Redesigned with Image Background & 80% Opacity Overlay) ──
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(IrmaRadius.large),
+                      image: const DecorationImage(
+                        image: AssetImage('assets/images/young-woman-being-quarantined-home.jpg'),
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: IrmaSpacing.lg),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(IrmaSpacing.lg),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(IrmaRadius.large),
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                      child: Column(
+                        children: [
+                          // Centered prediction header
+                          Text(
+                            isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                            style: IrmaTextStyles.paragraphSmMedium.copyWith(
+                              color: phaseStyle.color,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: IrmaSpacing.lg),
 
-                      // Centered circular cycle graphic with premium wave liquid animation
-                      Center(
-                        child: IrmaCycleCircularIndicator(
-                          progress: (currentDay / avgLength).clamp(0.0, 1.0),
-                          currentDay: currentDay,
-                          totalDays: avgLength,
-                          themeColor: phaseStyle.color,
-                          tintColor: phaseStyle.tint,
-                          phaseName: phase,
-                        ),
-                      ),
-                      const SizedBox(height: IrmaSpacing.lg),
+                          // Centered circular cycle graphic
+                          Center(
+                            child: IrmaCycleCircularIndicator(
+                              progress: (currentDay / avgLength).clamp(0.0, 1.0),
+                              currentDay: currentDay,
+                              totalDays: avgLength,
+                              periodDuration: periodDuration,
+                              phaseName: phase,
+                            ),
+                          ),
+                          const SizedBox(height: IrmaSpacing.lg),
 
-                      // Horizontal weekly strip calendar centered around today
-                      IrmaHorizontalWeekCalendar(
-                        themeColor: phaseStyle.color,
-                        tintColor: phaseStyle.tint,
+                          // Horizontal weekly strip calendar centered around today
+                          IrmaHorizontalWeekCalendar(
+                            themeColor: phaseStyle.color,
+                            tintColor: phaseStyle.tint,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: IrmaSpacing.lg),
  

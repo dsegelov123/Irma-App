@@ -47,14 +47,14 @@ class IrmaCycleCircularIndicator extends StatelessWidget {
               Text(
                 'Day $currentDay',
                 style: IrmaTextStyles.headingLgBold.copyWith(
-                  color: IrmaColors.brown100,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 phaseName,
                 style: IrmaTextStyles.paragraphXsMedium.copyWith(
-                  color: IrmaColors.gray60,
+                  color: Colors.white.withOpacity(0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -219,12 +219,12 @@ class IrmaHorizontalWeekCalendar extends StatelessWidget {
               children: [
                 Text(
                   '${date.day}',
-                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: IrmaColors.brown100),
+                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   weekdayStr,
-                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: IrmaColors.gray60),
+                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: Colors.white.withOpacity(0.6)),
                 ),
               ],
             ),

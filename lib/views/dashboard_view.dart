@@ -64,58 +64,73 @@ class _DashboardViewState extends State<DashboardView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Figma Hero Header Card ───────────────────────────
-            _buildHeroSection(context),
-            
-            // ── Cycle Status Section (Full Width Background Image & 80% Opacity Overlay) ──
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/young-woman-being-quarantined-home.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: IrmaSpacing.lg,
-                  vertical: IrmaSpacing.xl,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                ),
-                child: Column(
-                  children: [
-                    // Centered prediction header
-                    Text(
-                      isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                      style: IrmaTextStyles.paragraphSmMedium.copyWith(
-                        color: phaseStyle.color,
-                      ),
-                      textAlign: TextAlign.center,
+            // We use a Stack to overlay the Hero section on top of the Cycle Status Section
+            Stack(
+              children: [
+                // ── Cycle Status Section (Full Width Background Image & 30% Opacity Black Overlay) ──
+                // It starts at top = 0 and stretches behind the Hero section
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/young-woman-being-quarantined-home.jpg'),
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: IrmaSpacing.lg),
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      final double rawTopPadding = MediaQuery.of(context).padding.top;
+                      final double actualHeroHeight = rawTopPadding > 0 ? rawTopPadding + 156.0 : 200.0;
+                      return Container(
+                        padding: EdgeInsets.only(
+                          left: IrmaSpacing.lg,
+                          right: IrmaSpacing.lg,
+                          top: actualHeroHeight + IrmaSpacing.xl, // Extended under hero, content not raised
+                          bottom: IrmaSpacing.xl,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3), // 30% black overlay
+                        ),
+                        child: Column(
+                          children: [
+                            // Centered prediction header
+                            Text(
+                              isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                              style: IrmaTextStyles.paragraphSmMedium.copyWith(
+                                color: phaseStyle.color,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: IrmaSpacing.lg),
 
-                    // Centered circular cycle graphic
-                    Center(
-                      child: IrmaCycleCircularIndicator(
-                        progress: (currentDay / avgLength).clamp(0.0, 1.0),
-                        currentDay: currentDay,
-                        totalDays: avgLength,
-                        periodDuration: periodDuration,
-                        phaseName: phase,
-                      ),
-                    ),
-                    const SizedBox(height: IrmaSpacing.lg),
+                            // Centered circular cycle graphic
+                            Center(
+                              child: IrmaCycleCircularIndicator(
+                                progress: (currentDay / avgLength).clamp(0.0, 1.0),
+                                currentDay: currentDay,
+                                totalDays: avgLength,
+                                periodDuration: periodDuration,
+                                phaseName: phase,
+                              ),
+                            ),
+                            const SizedBox(height: IrmaSpacing.lg),
 
-                    // Horizontal weekly strip calendar centered around today
-                    IrmaHorizontalWeekCalendar(
-                      themeColor: phaseStyle.color,
-                      tintColor: phaseStyle.tint,
-                    ),
-                  ],
+                            // Horizontal weekly strip calendar centered around today
+                            IrmaHorizontalWeekCalendar(
+                              themeColor: phaseStyle.color,
+                              tintColor: phaseStyle.tint,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
+                
+                // ── Figma Hero Header Card ───────────────────────────
+                // Positioned on top of the background image
+                _buildHeroSection(context),
+              ],
             ),
 
             // ── Main Dashboard Content ──────────────────────────

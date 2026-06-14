@@ -80,6 +80,7 @@ class _DashboardViewState extends State<DashboardView> {
                         image: DecorationImage(
                           image: AssetImage('assets/images/young-woman-being-quarantined-home.jpg'),
                           fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
                         ),
                       ),
                       child: Container(

@@ -150,17 +150,19 @@ class _DashboardViewState extends State<DashboardView> {
             // ── Main Dashboard Content ──────────────────────────
             Padding(
               padding: const EdgeInsets.only(
-                left: IrmaSpacing.lg,
-                right: IrmaSpacing.lg,
                 top: IrmaSpacing.xl,
                 bottom: IrmaSpacing.lg + 80.0 + IrmaSpacing.md,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  // ── Advice Section Header ─────────────────────────────
-                  Text("Irma's advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                  // ── Advice Section Header & Bubble ─────────────────────
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Irma's advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
                   const SizedBox(height: IrmaSpacing.sm),
 
                   // ── Advice Chat Bubble ────────────────────────────────
@@ -220,15 +222,23 @@ class _DashboardViewState extends State<DashboardView> {
                       ),
                     ],
                   ),
+                ],
+              ),
+            ),
                   const SizedBox(height: IrmaSpacing.xl),
 
                   // ── Mental Health Metrics Section ─────────────────────
-                  Text("Mental Health Metrics", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                    child: Text("Mental Health Metrics", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                  ),
                   const SizedBox(height: 12.0),
 
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Row(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                      child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Card 1: Relationships
@@ -413,6 +423,7 @@ class _DashboardViewState extends State<DashboardView> {
                       ],
                     ),
                   ),
+                ),
                   const SizedBox(height: 24.0),
 
                   // Pagination indicators

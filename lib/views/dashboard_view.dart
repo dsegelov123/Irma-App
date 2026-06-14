@@ -85,47 +85,39 @@ class _DashboardViewState extends State<DashboardView> {
                   Text('Here\'s your cycle overview.', style: IrmaTextStyles.para2xl.copyWith(color: IrmaColors.brown100)),
                   const SizedBox(height: IrmaSpacing.lg),
  
-                  // ── Cycle Status Card ─────────────────────────────────
-                  Container(
-                    width: double.infinity,
-                    padding: IrmaPadding.cardLarge,
-                    decoration: IrmaCards.large(),
-                    child: Column(
-                      children: [
-                        // Centered prediction header matching Figma style (Poppins 14 weight 500, mapped to labelMd)
-                        Text(
-                          isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                          style: IrmaTextStyles.labelMd.copyWith(
-                            color: phaseStyle.color,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
+                  // ── Cycle Status Section (No Box/Card) ────────────────
+                  Column(
+                    children: [
+                      // Centered prediction header matching Figma style (Poppins 14 weight 500, mapped to labelMd)
+                      Text(
+                        isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                        style: IrmaTextStyles.labelMd.copyWith(
+                          color: phaseStyle.color,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const SizedBox(height: IrmaSpacing.lg),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: IrmaSpacing.lg),
 
-                        // Centered circular cycle graphic with premium wave liquid animation
-                        Center(
-                          child: IrmaCycleCircularIndicator(
-                            progress: (currentDay / avgLength).clamp(0.0, 1.0),
-                            currentDay: currentDay,
-                            totalDays: avgLength,
-                            themeColor: phaseStyle.color,
-                            tintColor: phaseStyle.tint,
-                            phaseName: phase,
-                          ),
-                        ),
-                        const SizedBox(height: IrmaSpacing.lg),
-
-                        const Divider(),
-                        const SizedBox(height: IrmaSpacing.md),
-
-                        // Horizontal weekly strip calendar centered around today
-                        IrmaHorizontalWeekCalendar(
+                      // Centered circular cycle graphic with premium wave liquid animation
+                      Center(
+                        child: IrmaCycleCircularIndicator(
+                          progress: (currentDay / avgLength).clamp(0.0, 1.0),
+                          currentDay: currentDay,
+                          totalDays: avgLength,
                           themeColor: phaseStyle.color,
                           tintColor: phaseStyle.tint,
+                          phaseName: phase,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: IrmaSpacing.lg),
+
+                      // Horizontal weekly strip calendar centered around today
+                      IrmaHorizontalWeekCalendar(
+                        themeColor: phaseStyle.color,
+                        tintColor: phaseStyle.tint,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: IrmaSpacing.lg),
  

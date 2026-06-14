@@ -228,17 +228,24 @@ class _DashboardViewState extends State<DashboardView> {
                   const SizedBox(height: IrmaSpacing.xl),
 
                   // ── Mental Health Metrics Section ─────────────────────
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                    child: Text("Mental Health Metrics", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
-                  ),
-                  const SizedBox(height: 12.0),
+                  Container(
+                    width: double.infinity,
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 32.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                          child: Text("Mental Health Metrics", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                        ),
+                        const SizedBox(height: 12.0),
 
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                      child: Row(
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                            child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Card 1: Relationships
@@ -476,6 +483,9 @@ class _DashboardViewState extends State<DashboardView> {
                       ),
                     ],
                   ),
+                ],
+              ),
+            ),
                   const SizedBox(height: IrmaSpacing.lg),
                 ],
               ),

@@ -4,6 +4,7 @@ import 'package:irma/services/advice_service.dart';
 import 'package:irma/services/storage_service.dart';
 import 'package:irma/services/tri_metric_engine.dart';
 import 'package:irma/widgets/theme.dart';
+import 'package:irma/widgets/cycle_circular_indicator.dart';
 
 class DashboardView extends StatefulWidget {
   final VoidCallback onLogSymptomsPressed;
@@ -91,75 +92,37 @@ class _DashboardViewState extends State<DashboardView> {
                     decoration: IrmaCards.large(),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Phase pill label
-                                Container(
-                                  padding: IrmaPadding.tagXs,
-                                  decoration: BoxDecoration(
-                                    color: phaseStyle.tint,
-                                    borderRadius: BorderRadius.circular(IrmaRadius.pill),
-                                  ),
-                                  child: Text(
-                                    phase.toUpperCase(),
-                                    style: IrmaTextStyles.labelXs.copyWith(
-                                      color: phaseStyle.color,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: IrmaSpacing.sm),
-                                Text(
-                                  'Day $currentDay of $avgLength',
-                                  style: IrmaTextStyles.para2xl.copyWith(
-                                    color: IrmaColors.brown100,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            // Phase icon circle
-                            Container(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                color: phaseStyle.tint,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(phaseStyle.icon, color: phaseStyle.color, size: 26),
-                            ),
-                          ],
+                        // Centered prediction header matching Figma style (Poppins 14 weight 500, mapped to labelMd)
+                        Text(
+                          isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                          style: IrmaTextStyles.labelMd.copyWith(
+                            color: phaseStyle.color,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: IrmaSpacing.lg),
- 
-                        // Progress bar — §9 mood-daily-status style
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(IrmaRadius.pill),
-                          child: LinearProgressIndicator(
-                            value: (currentDay / avgLength).clamp(0.0, 1.0),
-                            minHeight: 8,
-                            backgroundColor: IrmaColors.brown20,
-                            valueColor: AlwaysStoppedAnimation<Color>(phaseStyle.color),
+
+                        // Centered circular cycle graphic with premium wave liquid animation
+                        Center(
+                          child: IrmaCycleCircularIndicator(
+                            progress: (currentDay / avgLength).clamp(0.0, 1.0),
+                            currentDay: currentDay,
+                            totalDays: avgLength,
+                            themeColor: phaseStyle.color,
+                            tintColor: phaseStyle.tint,
+                            phaseName: phase,
                           ),
                         ),
                         const SizedBox(height: IrmaSpacing.lg),
- 
-                        // Countdown row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              isLate ? 'Cycle extended past average' : 'Next period onset',
-                              style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.gray60),
-                            ),
-                            Text(
-                              isLate ? 'Late' : 'in $daysUntil days',
-                              style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown80),
-                            ),
-                          ],
+
+                        const Divider(),
+                        const SizedBox(height: IrmaSpacing.md),
+
+                        // Horizontal weekly strip calendar centered around today
+                        IrmaHorizontalWeekCalendar(
+                          themeColor: phaseStyle.color,
+                          tintColor: phaseStyle.tint,
                         ),
                       ],
                     ),

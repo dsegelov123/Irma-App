@@ -244,10 +244,8 @@ class CycleCircularIndicatorPainter extends CustomPainter {
         final textPainter = TextPainter(
           text: TextSpan(
             text: '$currentDay',
-            style: IrmaTextStyles.labelXs.copyWith(
+            style: IrmaTextStyles.paragraphXsMedium.copyWith(
               color: themeColor,
-              fontWeight: FontWeight.w700,
-              fontSize: 10.0,
             ),
           ),
           textDirection: TextDirection.ltr,
@@ -324,12 +322,12 @@ class IrmaHorizontalWeekCalendar extends StatelessWidget {
               children: [
                 Text(
                   '${date.day}',
-                  style: IrmaTextStyles.labelMd.copyWith(color: themeColor),
+                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: themeColor),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   weekdayStr,
-                  style: IrmaTextStyles.labelXs.copyWith(color: themeColor, fontSize: 10),
+                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: themeColor),
                 ),
               ],
             ),
@@ -343,12 +341,12 @@ class IrmaHorizontalWeekCalendar extends StatelessWidget {
               children: [
                 Text(
                   '${date.day}',
-                  style: IrmaTextStyles.labelMd.copyWith(color: IrmaColors.brown100),
+                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: IrmaColors.brown100),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   weekdayStr,
-                  style: IrmaTextStyles.paraXs.copyWith(color: IrmaColors.gray60),
+                  style: IrmaTextStyles.paragraphXsMedium.copyWith(color: IrmaColors.gray60),
                 ),
               ],
             ),

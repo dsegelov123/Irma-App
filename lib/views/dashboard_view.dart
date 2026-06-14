@@ -86,9 +86,8 @@ class _DashboardViewState extends State<DashboardView> {
                       // Centered prediction header matching Figma style (Poppins 14 weight 500, mapped to labelMd)
                       Text(
                         isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                        style: IrmaTextStyles.labelMd.copyWith(
+                        style: IrmaTextStyles.paragraphSmMedium.copyWith(
                           color: phaseStyle.color,
-                          fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,
                       ),

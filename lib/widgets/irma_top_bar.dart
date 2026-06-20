@@ -22,108 +22,111 @@ class IrmaTopBar extends StatelessWidget {
     final double topPadding = MediaQuery.of(context).padding.top;
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(32),
+      color: IrmaColors.brown10,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(32),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF4B3425).withValues(alpha: 0.05),
+              offset: const Offset(0, 0),
+              blurRadius: 0,
+            ),
+            BoxShadow(
+              color: const Color(0xFF4B3425).withValues(alpha: 0.05),
+              offset: const Offset(0, 7),
+              blurRadius: 15,
+            ),
+            BoxShadow(
+              color: const Color(0xFF4B3425).withValues(alpha: 0.04),
+              offset: const Offset(0, 28),
+              blurRadius: 28,
+            ),
+            BoxShadow(
+              color: const Color(0xFF4B3425).withValues(alpha: 0.03),
+              offset: const Offset(0, 62),
+              blurRadius: 37,
+            ),
+            BoxShadow(
+              color: const Color(0xFF4B3425).withValues(alpha: 0.01),
+              offset: const Offset(0, 110),
+              blurRadius: 44,
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF4B3425).withValues(alpha: 0.05),
-            offset: const Offset(0, 0),
-            blurRadius: 0,
-          ),
-          BoxShadow(
-            color: const Color(0xFF4B3425).withValues(alpha: 0.05),
-            offset: const Offset(0, 7),
-            blurRadius: 15,
-          ),
-          BoxShadow(
-            color: const Color(0xFF4B3425).withValues(alpha: 0.04),
-            offset: const Offset(0, 28),
-            blurRadius: 28,
-          ),
-          BoxShadow(
-            color: const Color(0xFF4B3425).withValues(alpha: 0.03),
-            offset: const Offset(0, 62),
-            blurRadius: 37,
-          ),
-          BoxShadow(
-            color: const Color(0xFF4B3425).withValues(alpha: 0.01),
-            offset: const Offset(0, 110),
-            blurRadius: 44,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: topPadding),
-          SizedBox(
-            height: 80,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  // Leading Widget / Back Button
-                  if (leading != null)
-                    leading!
-                  else if (onBackPressed != null)
-                    GestureDetector(
-                      onTap: onBackPressed,
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.brown10,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.chevron_left_rounded,
-                          color: IrmaColors.brown80,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  
-                  // Gap between leading and title (starts exactly at x=73.2 when leading is present)
-                  if (leading != null || onBackPressed != null)
-                    const SizedBox(width: 9.2)
-                  else
-                    const SizedBox(width: 8.0),
-                    
-                  // Title Text
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: IrmaTextStyles.label2xlBold.copyWith(
-                        color: IrmaColors.brown100,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  
-                  // Actions List (8px spacing between them)
-                  if (actions != null && actions!.isNotEmpty) ...[
-                    const SizedBox(width: 8.0),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(actions!.length, (index) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            right: index == actions!.length - 1 ? 0.0 : 8.0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: topPadding),
+            SizedBox(
+              height: 80,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    // Leading Widget / Back Button
+                    if (leading != null)
+                      leading!
+                    else if (onBackPressed != null)
+                      GestureDetector(
+                        onTap: onBackPressed,
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: const BoxDecoration(
+                            color: IrmaColors.brown10,
+                            shape: BoxShape.circle,
                           ),
-                          child: actions![index],
-                        );
-                      }),
+                          child: const Icon(
+                            Icons.chevron_left_rounded,
+                            color: IrmaColors.brown80,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    
+                    // Gap between leading and title (starts exactly at x=73.2 when leading is present)
+                    if (leading != null || onBackPressed != null)
+                      const SizedBox(width: 9.2)
+                    else
+                      const SizedBox(width: 8.0),
+                      
+                    // Title Text
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: IrmaTextStyles.label2xlBold.copyWith(
+                          color: IrmaColors.brown100,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
+                    
+                    // Actions List (8px spacing between them)
+                    if (actions != null && actions!.isNotEmpty) ...[
+                      const SizedBox(width: 8.0),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(actions!.length, (index) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              right: index == actions!.length - 1 ? 0.0 : 8.0,
+                            ),
+                            child: actions![index],
+                          );
+                        }),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

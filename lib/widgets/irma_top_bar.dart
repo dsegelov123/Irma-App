@@ -88,9 +88,9 @@ class IrmaTopBar extends StatelessWidget {
                         ),
                       ),
                     
-                    // Gap between leading and title (starts exactly at x=73.2 when leading is present)
+                    // Gap between leading and title (updated to 16px)
                     if (leading != null || onBackPressed != null)
-                      const SizedBox(width: 9.2)
+                      const SizedBox(width: 16.0)
                     else
                       const SizedBox(width: 8.0),
                       
@@ -132,7 +132,7 @@ class IrmaTopBar extends StatelessWidget {
   }
 }
 
-/// Standardoutlined action button used in IrmaTopBar.
+/// Standard outlined action button used in IrmaTopBar.
 class IrmaTopBarActionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;

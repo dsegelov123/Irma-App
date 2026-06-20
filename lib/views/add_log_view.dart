@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:irma/services/storage_service.dart';
 import 'package:irma/services/cycle_engine.dart';
 import 'package:irma/widgets/theme.dart';
+import 'package:irma/widgets/irma_top_bar.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class AddLogView extends StatefulWidget {
@@ -801,41 +802,23 @@ class _AddLogViewState extends State<AddLogView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: IrmaColors.brown10,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: Center(
-          child: GestureDetector(
-            onTap: widget.onBackPressed,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(color: IrmaColors.brown20),
-              ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: IrmaColors.brown80, size: 16),
-            ),
+      body: Column(
+        children: [
+          IrmaTopBar(
+            title: 'Daily log entry',
+            onBackPressed: widget.onBackPressed,
           ),
-        ),
-        title: Text(
-          'Daily log entry',
-          style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(
-          left: 24.0,
-          right: 24.0,
-          top: IrmaSpacing.xl,
-          bottom: IrmaSpacing.xl + 80.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                left: 24.0,
+                right: 24.0,
+                top: IrmaSpacing.xl,
+                bottom: IrmaSpacing.xl + 80.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
             _buildHorizontalCalendar(),
             const SizedBox(height: IrmaSpacing.xl),
             const Divider(color: IrmaColors.brown30, height: 1),
@@ -1058,8 +1041,11 @@ class _AddLogViewState extends State<AddLogView> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  ],
+),
+);
+}
 }
 
 // ── Custom selectable symptom button ─────────────────────────────────

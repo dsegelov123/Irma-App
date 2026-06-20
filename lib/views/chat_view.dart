@@ -103,7 +103,7 @@ class _ChatViewState extends State<ChatView> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     child: Text(
                       message.text,
-                      style: IrmaTextStyles.paragraphMdMedium.copyWith(
+                      style: IrmaTextStyles.labelMdBold.copyWith(
                         color: Colors.white,
                       ),
                     ),
@@ -433,7 +433,7 @@ class _ChatViewState extends State<ChatView> {
             left: 0,
             right: 0,
             child: IrmaTopBar(
-              title: 'Doctor Consultation',
+              title: 'Chat with Irma',
               onBackPressed: widget.onBackPressed,
             ),
           ),

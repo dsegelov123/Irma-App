@@ -51,7 +51,9 @@ class _MainShellState extends State<MainShell> {
           );
           break;
         case 2:
-          bodyContent = const DailyMetricsView();
+          bodyContent = DailyMetricsView(
+            onBackPressed: () => setState(() => _activeTab = 0),
+          );
           break;
         case 3:
           bodyContent = const ProfileView();

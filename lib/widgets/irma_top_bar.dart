@@ -22,7 +22,7 @@ class IrmaTopBar extends StatelessWidget {
     final double topPadding = MediaQuery.of(context).padding.top;
 
     return Container(
-      color: IrmaColors.brown10,
+      color: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

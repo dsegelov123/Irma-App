@@ -809,240 +809,240 @@ class _AddLogViewState extends State<AddLogView> {
               SizedBox(height: MediaQuery.of(context).padding.top + 80.0),
               Expanded(
                 child: SingleChildScrollView(
-              padding: const EdgeInsets.only(
-                left: 24.0,
-                right: 24.0,
-                top: IrmaSpacing.xl,
-                bottom: IrmaSpacing.xl + 80.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-            _buildHorizontalCalendar(),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                  padding: const EdgeInsets.only(
+                    left: 24.0,
+                    right: 24.0,
+                    top: IrmaSpacing.xxl,
+                    bottom: IrmaSpacing.xl + 80.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildHorizontalCalendar(),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Mood
-            _buildCategorySection('Mood', _moods, _selectedMoods, (opt) {
-              setState(() {
-                if (_selectedMoods.contains(opt)) {
-                  _selectedMoods.remove(opt);
-                } else {
-                  _selectedMoods.add(opt);
-                }
-              });
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Mood
+                      _buildCategorySection('Mood', _moods, _selectedMoods, (opt) {
+                        setState(() {
+                          if (_selectedMoods.contains(opt)) {
+                            _selectedMoods.remove(opt);
+                          } else {
+                            _selectedMoods.add(opt);
+                          }
+                        });
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Menstrual Flow
-            _buildFlowSection(),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Menstrual Flow
+                      _buildFlowSection(),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Abdominal Cramps
-            _buildSingleSelectSection('Abdominal Cramps', _cramps, _selectedCramps, (opt) {
-              setState(() => _selectedCramps = (_selectedCramps == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Abdominal Cramps
+                      _buildSingleSelectSection('Abdominal Cramps', _cramps, _selectedCramps, (opt) {
+                        setState(() => _selectedCramps = (_selectedCramps == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Somatic Pain
-            _buildCategorySection('Somatic Pain', _somaticPains, _selectedSomaticPains, (opt) {
-              _toggleMultiSelect(_selectedSomaticPains, opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Somatic Pain
+                      _buildCategorySection('Somatic Pain', _somaticPains, _selectedSomaticPains, (opt) {
+                        _toggleMultiSelect(_selectedSomaticPains, opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Physical Energy
-            _buildSingleSelectSection('Physical Energy', _energies, _selectedEnergy, (opt) {
-              setState(() => _selectedEnergy = (_selectedEnergy == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Physical Energy
+                      _buildSingleSelectSection('Physical Energy', _energies, _selectedEnergy, (opt) {
+                        setState(() => _selectedEnergy = (_selectedEnergy == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Gastrointestinal Activity
-            _buildCategorySection('Gastrointestinal Activity', _gi, _selectedGI, (opt) {
-              _toggleMultiSelect(_selectedGI, opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Gastrointestinal Activity
+                      _buildCategorySection('Gastrointestinal Activity', _gi, _selectedGI, (opt) {
+                        _toggleMultiSelect(_selectedGI, opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Sleep Quality
-            _buildSingleSelectSection('Sleep Quality', _sleeps, _selectedSleep, (opt) {
-              setState(() => _selectedSleep = (_selectedSleep == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Sleep Quality
+                      _buildSingleSelectSection('Sleep Quality', _sleeps, _selectedSleep, (opt) {
+                        setState(() => _selectedSleep = (_selectedSleep == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Mental Focus
-            _buildSingleSelectSection('Mental Focus', _focuses, _selectedFocus, (opt) {
-              setState(() => _selectedFocus = (_selectedFocus == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Mental Focus
+                      _buildSingleSelectSection('Mental Focus', _focuses, _selectedFocus, (opt) {
+                        setState(() => _selectedFocus = (_selectedFocus == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Exercise
-            _buildSingleSelectSection('Exercise', _exercises, _selectedExercise, (opt) {
-              setState(() => _selectedExercise = (_selectedExercise == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Exercise
+                      _buildSingleSelectSection('Exercise', _exercises, _selectedExercise, (opt) {
+                        setState(() => _selectedExercise = (_selectedExercise == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Libido
-            _buildSingleSelectSection('Libido', _libidos, _selectedLibido, (opt) {
-              setState(() => _selectedLibido = (_selectedLibido == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Libido
+                      _buildSingleSelectSection('Libido', _libidos, _selectedLibido, (opt) {
+                        setState(() => _selectedLibido = (_selectedLibido == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Sexual Activity
-            _buildCategorySection('Sexual Activity', _sexActivity, _selectedSexActivity, (opt) {
-              _toggleMultiSelect(_selectedSexActivity, opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Sexual Activity
+                      _buildCategorySection('Sexual Activity', _sexActivity, _selectedSexActivity, (opt) {
+                        _toggleMultiSelect(_selectedSexActivity, opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Social Bandwidth
-            _buildSingleSelectSection('Social Bandwidth', _socials, _selectedSocial, (opt) {
-              setState(() => _selectedSocial = (_selectedSocial == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Social Bandwidth
+                      _buildSingleSelectSection('Social Bandwidth', _socials, _selectedSocial, (opt) {
+                        setState(() => _selectedSocial = (_selectedSocial == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Appetite
-            _buildCategorySection('Appetite', _appetites, _selectedAppetite, _toggleAppetite),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Appetite
+                      _buildCategorySection('Appetite', _appetites, _selectedAppetite, _toggleAppetite),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Alcohol
-            _buildSingleSelectSection('Alcohol', _alcohols, _selectedAlcohol, (opt) {
-              setState(() => _selectedAlcohol = (_selectedAlcohol == opt) ? '' : opt);
-            }),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Alcohol
+                      _buildSingleSelectSection('Alcohol', _alcohols, _selectedAlcohol, (opt) {
+                        setState(() => _selectedAlcohol = (_selectedAlcohol == opt) ? '' : opt);
+                      }),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Weight
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Weight', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _weightController,
-                  readOnly: true,
-                  onTap: _showWeightBottomSheet,
-                  decoration: InputDecoration(
-                    hintText: 'Record weight',
-                    hintStyle: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown40),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 16.0, right: 12.0),
-                      child: PhosphorIcon(
-                        PhosphorIcons.scales(),
-                        color: IrmaColors.orange50,
+                      // Weight
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Weight', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: _weightController,
+                            readOnly: true,
+                            onTap: _showWeightBottomSheet,
+                            decoration: InputDecoration(
+                              hintText: 'Record weight',
+                              hintStyle: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown40),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.only(left: 16.0, right: 12.0),
+                                child: PhosphorIcon(
+                                  PhosphorIcons.scales(),
+                                  color: IrmaColors.orange50,
+                                ),
+                              ),
+                              prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown100),
+                          ),
+                        ],
                       ),
-                    ),
-                    prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown100),
-                ),
-              ],
-            ),
-            const SizedBox(height: IrmaSpacing.xl),
-            const Divider(color: IrmaColors.brown30, height: 1),
-            const SizedBox(height: IrmaSpacing.xl),
+                      const SizedBox(height: IrmaSpacing.xl),
+                      const Divider(color: IrmaColors.brown30, height: 1),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Notes
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Notes', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _noteController,
-                  maxLines: 5,
-                  minLines: 3,
-                  decoration: InputDecoration(
-                    hintText: 'Add details about your day...',
-                    hintStyle: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown40),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.all(16.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: IrmaColors.orange50, width: 1.5),
-                    ),
-                  ),
-                  style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown100),
-                ),
-              ],
-            ),
-            const SizedBox(height: IrmaSpacing.xl),
+                      // Notes
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Notes', style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: _noteController,
+                            maxLines: 5,
+                            minLines: 3,
+                            decoration: InputDecoration(
+                              hintText: 'Add details about your day...',
+                              hintStyle: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown40),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.all(16.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(color: IrmaColors.orange50, width: 1.5),
+                              ),
+                            ),
+                            style: IrmaTextStyles.paraMd.copyWith(color: IrmaColors.brown100),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: IrmaSpacing.xl),
 
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _clearLog,
-                    style: IrmaButtonStyles.outlinedLg(),
-                    child: const Text('Clear log'),
+                      // Action Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _clearLog,
+                              style: IrmaButtonStyles.outlinedLg(),
+                              child: const Text('Clear log'),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _saveLog,
+                              style: IrmaButtonStyles.primaryLg(),
+                              child: const Text('Save log'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _saveLog,
-                    style: IrmaButtonStyles.primaryLg(),
-                    child: const Text('Save log'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  ],
-),
+              ),
+            ],
+          ),
           Positioned(
             top: 0,
             left: 0,

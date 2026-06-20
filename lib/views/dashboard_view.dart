@@ -24,6 +24,7 @@ class _DashboardViewState extends State<DashboardView> {
   late String _advice;
   late Map<String, dynamic> _metrics;
   late bool _isPremium;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -49,6 +50,10 @@ class _DashboardViewState extends State<DashboardView> {
     final int avgLength    = _cycleState['average_length'] as int;
     final int periodDuration = _cycleState['period_duration'] as int? ?? 5;
 
+    // Compute cycle day for the selected date (allows ring to track tapped day)
+    final int selectedCycleDay = CycleEngine.getCycleDay(targetDate: _selectedDate);
+    final String selectedPhase = CycleEngine.getPhaseForDay(selectedCycleDay, avgLength, periodDuration);
+
     final int relationshipsVal = _metrics['sub_metrics']?['SocialBandwidth'] as int? ?? 80;
     final int stabilityVal = _metrics['sub_metrics']?['Stability'] as int? ?? 80;
 
@@ -61,12 +66,12 @@ class _DashboardViewState extends State<DashboardView> {
       return (mood: mood, phase: phase);
     });
 
-    final ({Color color, Color tint, IconData icon}) phaseStyle = switch (phase) {
-      'Menstruation'         => (color: IrmaColors.orange40, tint: IrmaColors.orange10, icon: Icons.water_drop_rounded),
+    final ({Color color, Color tint, IconData icon}) phaseStyle = switch (selectedPhase) {
+      'Menstruation'         => (color: IrmaColors.orange50, tint: IrmaColors.orange10, icon: Icons.water_drop_rounded),
       'Follicular Phase'     => (color: IrmaColors.green50,  tint: IrmaColors.green10,  icon: Icons.spa_rounded),
-      'Ovulation'            => (color: IrmaColors.purple40, tint: IrmaColors.purple10, icon: Icons.wb_sunny_rounded),
-      'Luteal Phase'         => (color: IrmaColors.brown60,  tint: IrmaColors.brown10,  icon: Icons.nights_stay_rounded),
-      _                      => (color: IrmaColors.yellow40, tint: IrmaColors.yellow10, icon: Icons.hourglass_empty_rounded),
+      'Ovulation'            => (color: IrmaColors.purple50, tint: IrmaColors.purple10, icon: Icons.wb_sunny_rounded),
+      'Luteal Phase'         => (color: IrmaColors.yellow50, tint: IrmaColors.yellow10, icon: Icons.nights_stay_rounded),
+      _                      => (color: IrmaColors.yellow50, tint: IrmaColors.yellow10, icon: Icons.hourglass_empty_rounded),
     };
 
     return Scaffold(
@@ -89,11 +94,7 @@ class _DashboardViewState extends State<DashboardView> {
                       width: double.infinity,
                       margin: EdgeInsets.only(top: actualHeroHeight - 34.0),
                       decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/young-woman-being-quarantined-home.jpg'),
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
-                        ),
+                        color: IrmaColors.brown10,
                       ),
                       child: Container(
                         padding: const EdgeInsets.only(
@@ -102,37 +103,41 @@ class _DashboardViewState extends State<DashboardView> {
                           top: IrmaSpacing.xl + 34.0, // Extended 34px under hero, content not raised
                           bottom: IrmaSpacing.xl,
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5), // 50% black overlay
+                        decoration: const BoxDecoration(
+                          color: IrmaColors.brown10,
                         ),
                         child: Column(
                           children: [
                             // Centered prediction header
                             Text(
                               isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                              style: IrmaTextStyles.paragraphSmMedium.copyWith(
+                              style: IrmaTextStyles.labelXl.copyWith(
                                 color: phaseStyle.color,
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: IrmaSpacing.lg),
 
                             // Centered circular cycle graphic
                             Center(
                               child: IrmaCycleCircularIndicator(
-                                progress: (currentDay / avgLength).clamp(0.0, 1.0),
-                                currentDay: currentDay,
+                                progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
+                                currentDay: selectedCycleDay,
                                 totalDays: avgLength,
                                 periodDuration: periodDuration,
-                                phaseName: phase,
+                                phaseName: selectedPhase,
+                                phaseColor: phaseStyle.color,
                               ),
                             ),
                             const SizedBox(height: IrmaSpacing.lg),
 
                             // Horizontal weekly strip calendar centered around today
                             IrmaHorizontalWeekCalendar(
-                              themeColor: phaseStyle.color,
-                              tintColor: phaseStyle.tint,
+                              themeColor: IrmaColors.orange50,
+                              tintColor: IrmaColors.orange10,
+                              selectedDate: _selectedDate,
+                              onDateSelected: (date) {
+                                setState(() => _selectedDate = date);
+                              },
                             ),
                           ],
                         ),

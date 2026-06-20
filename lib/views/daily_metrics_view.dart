@@ -40,17 +40,21 @@ class _DailyMetricsViewState extends State<DailyMetricsView> {
     final int soul = _metrics['soul'] as int? ?? 80;
     final imageAsset = _getBackgroundImage(body, mind, soul);
 
+    // Mock variations for trend display (with index 5 matching today's actual scores)
+    final List<int> bodyMock = [55, 75, 48, 82, 62, body, 70];
+    final List<int> mindMock = [85, 50, 72, 58, 88, mind, 65];
+    final List<int> soulMock = [42, 68, 52, 80, 60, soul, 78];
+
     // Calculate metrics history for 7 days (today is the 6th day, index 5)
     final today = DateTime.now();
     final List<Map<String, dynamic>> metricsHistory = [];
     for (int i = 0; i < 7; i++) {
       final date = today.add(Duration(days: i - 5));
-      final m = TriMetricEngine.calculateMetricsForDate(date);
       metricsHistory.add({
         'date': date,
-        'body': m['body'] as int? ?? 80,
-        'mind': m['mind'] as int? ?? 80,
-        'soul': m['soul'] as int? ?? 80,
+        'body': bodyMock[i],
+        'mind': mindMock[i],
+        'soul': soulMock[i],
       });
     }
 
@@ -100,7 +104,6 @@ class _DailyMetricsViewState extends State<DailyMetricsView> {
                           soulScore: soul,
                         ),
                       ),
-                      const SizedBox(height: IrmaSpacing.xl),
                       SmoothedLineChart(metricsHistory: metricsHistory),
                     ],
                   ),
@@ -378,73 +381,15 @@ class SmoothedLineChart extends StatelessWidget {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(
-        horizontal: IrmaSpacing.lg,
-        vertical: IrmaSpacing.xl,
+        vertical: IrmaSpacing.lg,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '7-Day Trend',
-                style: IrmaTextStyles.labelLgBold.copyWith(
-                  color: IrmaColors.brown100,
-                ),
-              ),
-              Row(
-                children: [
-                  _LegendItem(label: 'Body', color: IrmaColors.orange50),
-                  const SizedBox(width: 12),
-                  _LegendItem(label: 'Mind', color: IrmaColors.green50),
-                  const SizedBox(width: 12),
-                  _LegendItem(label: 'Soul', color: IrmaColors.purple40),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            height: 180,
-            child: CustomPaint(
-              size: const Size(double.infinity, 180),
-              painter: _SmoothedLineChartPainter(metricsHistory: metricsHistory),
-            ),
-          ),
-        ],
+      child: SizedBox(
+        height: 260,
+        child: CustomPaint(
+          size: const Size(double.infinity, 260),
+          painter: _SmoothedLineChartPainter(metricsHistory: metricsHistory),
+        ),
       ),
-    );
-  }
-}
-
-class _LegendItem extends StatelessWidget {
-  final String label;
-  final Color color;
-
-  const _LegendItem({required this.label, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          label,
-          style: IrmaTextStyles.labelSm.copyWith(
-            color: IrmaColors.brown80,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -456,19 +401,19 @@ class _SmoothedLineChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const double paddingLeft = 32.0;
-    const double paddingRight = 16.0;
+    const double paddingLeft = 0.0;
+    const double paddingRight = 0.0;
     const double paddingTop = 16.0;
-    const double paddingBottom = 24.0;
+    const double paddingBottom = 32.0;
 
-    final double chartWidth = size.width - paddingLeft - paddingRight;
+    final double chartWidth = size.width;
     final double chartHeight = size.height - paddingTop - paddingBottom;
-    final double stepX = chartWidth / 6.0;
+    final double stepX = chartWidth / 8.0;
 
     double getY(double val) => size.height - paddingBottom - (val / 100.0) * chartHeight;
-    double getX(int i) => paddingLeft + i * stepX;
+    double getX(int i) => (i + 1) * stepX;
 
-    // 1. Draw horizontal grid lines
+    // 1. Draw horizontal grid lines (from 0 to W, without numbers)
     final gridPaint = Paint()
       ..color = IrmaColors.brown20.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
@@ -476,20 +421,7 @@ class _SmoothedLineChartPainter extends CustomPainter {
 
     for (int percent in [0, 25, 50, 75, 100]) {
       final y = getY(percent.toDouble());
-      canvas.drawLine(Offset(paddingLeft, y), Offset(size.width - paddingRight, y), gridPaint);
-
-      // Draw Y-axis text
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: '$percent',
-          style: IrmaTextStyles.labelXs.copyWith(
-            color: IrmaColors.brown60,
-            fontSize: 10,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      textPainter.paint(canvas, Offset(paddingLeft - textPainter.width - 8, y - textPainter.height / 2));
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
     }
 
     // 2. Draw vertical today line highlight and X-axis labels
@@ -553,55 +485,41 @@ class _SmoothedLineChartPainter extends CustomPainter {
       final linePaint = Paint()
         ..color = color
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 3.0
+        ..strokeWidth = 6.0
         ..strokeCap = StrokeCap.round;
 
+      // Extrapolate values for edge points (virtual point at i=-1 is index 0, actual days are 1..7, virtual at i=7 is index 8)
+      final List<double> allValues = List.filled(9, 0.0);
+      for (int i = 0; i < 7; i++) {
+        allValues[i + 1] = values[i];
+      }
+      // Linear extrapolation for left edge (index 0)
+      allValues[0] = (2 * allValues[1] - allValues[2]).clamp(0.0, 100.0);
+      // Linear extrapolation for right edge (index 8)
+      allValues[8] = (2 * allValues[7] - allValues[6]).clamp(0.0, 100.0);
+
       final path = Path();
-      final double x0 = getX(0);
-      final double y0 = getY(values[0]);
+      // Start exactly at the left edge x = 0
+      final double x0 = 0.0;
+      final double y0 = getY(allValues[0]);
       path.moveTo(x0, y0);
 
-      for (int i = 0; i < 6; i++) {
-        final double x1 = getX(i);
-        final double y1 = getY(values[i]);
-        final double x2 = getX(i + 1);
-        final double y2 = getY(values[i + 1]);
+      for (int i = 0; i < 8; i++) {
+        final double xStart = i * stepX;
+        final double yStart = getY(allValues[i]);
+        final double xEnd = (i + 1) * stepX;
+        final double yEnd = getY(allValues[i + 1]);
 
-        final double controlX1 = x1 + stepX / 3;
-        final double controlY1 = y1;
-        final double controlX2 = x2 - stepX / 3;
-        final double controlY2 = y2;
+        final double controlX1 = xStart + stepX / 3;
+        final double controlY1 = yStart;
+        final double controlX2 = xEnd - stepX / 3;
+        final double controlY2 = yEnd;
 
-        path.cubicTo(controlX1, controlY1, controlX2, controlY2, x2, y2);
+        path.cubicTo(controlX1, controlY1, controlX2, controlY2, xEnd, yEnd);
       }
 
       canvas.drawPath(path, linePaint);
 
-      // Draw dots
-      final dotFillPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill;
-      final dotStrokePaint = Paint()
-        ..color = color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0;
-
-      for (int i = 0; i < 7; i++) {
-        final double x = getX(i);
-        final double y = getY(values[i]);
-        final isToday = (i == 5);
-
-        if (isToday) {
-          final todayDotPaint = Paint()
-            ..color = color
-            ..style = PaintingStyle.fill;
-          canvas.drawCircle(Offset(x, y), 5.0, todayDotPaint);
-          canvas.drawCircle(Offset(x, y), 2.5, dotFillPaint);
-        } else {
-          canvas.drawCircle(Offset(x, y), 3.0, dotFillPaint);
-          canvas.drawCircle(Offset(x, y), 3.0, dotStrokePaint);
-        }
-      }
     }
 
     final bodyValues = metricsHistory.map((m) => (m['body'] as int).toDouble()).toList();

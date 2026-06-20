@@ -580,7 +580,7 @@ class _DashboardViewState extends State<DashboardView> {
     }
 
     final double rawTopPadding = MediaQuery.of(context).padding.top;
-    final double topPadding = rawTopPadding > 0 ? rawTopPadding + 16.0 : 60.0;
+    final double topPadding = rawTopPadding > 0 ? rawTopPadding + 16.0 : 32.0;
 
     return Container(
       width: double.infinity,
@@ -605,9 +605,9 @@ class _DashboardViewState extends State<DashboardView> {
       ),
       padding: EdgeInsets.fromLTRB(
         IrmaSpacing.md, // EXACT Figma padding-left-16
-        topPadding, // EXACT Figma padding-top-60 (including safe area if on mobile)
+        topPadding, // EXACT Figma padding-top-32 (including safe area if on mobile)
         IrmaSpacing.md, // EXACT Figma padding-right-16
-        IrmaSpacing.md, // EXACT Figma padding-bottom-16
+        IrmaSpacing.xl, // EXACT Figma padding-bottom-32
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

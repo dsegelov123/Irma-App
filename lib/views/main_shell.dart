@@ -46,7 +46,9 @@ class _MainShellState extends State<MainShell> {
           );
           break;
         case 1:
-          bodyContent = const ChatView();
+          bodyContent = ChatView(
+            onBackPressed: () => setState(() => _activeTab = 0),
+          );
           break;
         case 2:
           bodyContent = const DailyMetricsView();
@@ -205,7 +207,7 @@ class _MainShellState extends State<MainShell> {
       ),
 
       // ── Bottom Tab Bar (§12) ─────────────────────────────────────
-      bottomNavigationBar: _showLogView ? null : _BottomTabBar(
+      bottomNavigationBar: (_showLogView || _activeTab == 1) ? null : _BottomTabBar(
         activeTab: _activeTab,
         onTap: (i) => setState(() {
           _showLogView = false;

@@ -37,6 +37,18 @@ class _ChatViewState extends State<ChatView> {
     super.dispose();
   }
 
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
   void _sendMessage() {
     final text = _textController.text.trim();
     if (text.isEmpty) return;
@@ -50,15 +62,19 @@ class _ChatViewState extends State<ChatView> {
       _textController.clear();
     });
 
-    // Scroll to bottom after layout
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+    _scrollToBottom();
+
+    // Simulate Irma's reply
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (!mounted) return;
+      setState(() {
+        _messages.add(ChatMessage(
+          text: "I hear you. Every phase of your cycle is a natural progression of your body's inner wisdom. Let's explore how you are feeling today.",
+          isUser: false,
+          timestamp: DateTime.now(),
+        ));
+      });
+      _scrollToBottom();
     });
   }
 
@@ -126,7 +142,62 @@ class _ChatViewState extends State<ChatView> {
         ),
       );
     } else {
-      return Container();
+      // Bot message (Irma) - Styled exactly like the dashboard's Irma's Advice section
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0, right: 48.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Irma profile image in circle
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: IrmaColors.brown10,
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: AssetImage('assets/images/irma_title_profile.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            // Main bubble + tail Column
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: IrmaColors.brown20,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16.0),
+                        topRight: Radius.circular(16.0),
+                        bottomRight: Radius.circular(16.0),
+                        bottomLeft: Radius.zero,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                    child: Text(
+                      message.text,
+                      style: IrmaTextStyles.labelMdBold.copyWith(
+                        color: IrmaColors.brown100.withValues(alpha: 0.64),
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                  // Speech-bubble tail
+                  CustomPaint(
+                    size: const Size(12, 12),
+                    painter: BubbleTailLeftPainter(IrmaColors.brown20),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -397,6 +468,33 @@ class BubbleTailPainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..cubicTo(size.width * 0.44775, size.height, 0, size.height * 0.55228, 0, 0)
       ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class BubbleTailLeftPainter extends CustomPainter {
+  final Color color;
+  BubbleTailLeftPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..cubicTo(
+        size.width, 0,
+        size.width, size.height,
+        0, size.height,
+      )
+      ..close();
+
     canvas.drawPath(path, paint);
   }
 

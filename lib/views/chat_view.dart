@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:irma/widgets/theme.dart';
+import 'package:irma/widgets/irma_top_bar.dart';
 
 class ChatView extends StatefulWidget {
   final VoidCallback onBackPressed;
@@ -24,7 +25,6 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    final double topPadding = MediaQuery.of(context).padding.top;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
@@ -33,112 +33,20 @@ class _ChatViewState extends State<ChatView> {
       // ── Custom Layout with Exact Top & Bottom Bars ──────────────────
       body: Column(
         children: [
-          // ── Custom Top Header (height 124px including status bar) ──
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(32),
+          // ── Reusable Top Header (height 124px including status bar) ──
+          IrmaTopBar(
+            title: 'Doctor Consultation',
+            onBackPressed: widget.onBackPressed,
+            actions: [
+              IrmaTopBarActionButton(
+                icon: Icons.search_rounded,
+                onTap: () {},
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF4B3425).withValues(alpha: 0.05),
-                  offset: const Offset(0, 0),
-                  blurRadius: 0,
-                ),
-                BoxShadow(
-                  color: const Color(0xFF4B3425).withValues(alpha: 0.05),
-                  offset: const Offset(0, 7),
-                  blurRadius: 15,
-                ),
-                BoxShadow(
-                  color: const Color(0xFF4B3425).withValues(alpha: 0.04),
-                  offset: const Offset(0, 28),
-                  blurRadius: 28,
-                ),
-                BoxShadow(
-                  color: const Color(0xFF4B3425).withValues(alpha: 0.03),
-                  offset: const Offset(0, 62),
-                  blurRadius: 37,
-                ),
-                BoxShadow(
-                  color: const Color(0xFF4B3425).withValues(alpha: 0.01),
-                  offset: const Offset(0, 110),
-                  blurRadius: 44,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: topPadding),
-                SizedBox(
-                  height: 80,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        // Back Button (48x48 Brown 10 circle with Brown 80 chevron)
-                        GestureDetector(
-                          onTap: widget.onBackPressed,
-                          child: Container(
-                            width: 48,
-                            height: 48,
-                            decoration: const BoxDecoration(
-                              color: IrmaColors.brown10,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.chevron_left_rounded,
-                              color: IrmaColors.brown80,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 9.2), // Starts exactly at x=73.2 (16 + 48 + 9.2)
-                        Expanded(
-                          child: Text(
-                            'Doctor Consultation',
-                            style: IrmaTextStyles.label2xlBold.copyWith(
-                              color: IrmaColors.brown100,
-                            ),
-                          ),
-                        ),
-                        // Search Button (48x48 with Brown 20 outline)
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: IrmaColors.brown20, width: 1),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.search_rounded, color: IrmaColors.brown80, size: 20),
-                            onPressed: () {},
-                            padding: EdgeInsets.zero,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        // Filter Button (48x48 with Brown 20 outline)
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: IrmaColors.brown20, width: 1),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.tune_rounded, color: IrmaColors.brown80, size: 20),
-                            onPressed: () {},
-                            padding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              IrmaTopBarActionButton(
+                icon: Icons.tune_rounded,
+                onTap: () {},
+              ),
+            ],
           ),
 
           // ── Empty State Center Placeholder ──────────────────────────

@@ -802,14 +802,13 @@ class _AddLogViewState extends State<AddLogView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: IrmaColors.brown10,
-      body: Column(
+      body: Stack(
         children: [
-          IrmaTopBar(
-            title: 'Daily log entry',
-            onBackPressed: widget.onBackPressed,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
+          Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).padding.top + 80.0),
+              Expanded(
+                child: SingleChildScrollView(
               padding: const EdgeInsets.only(
                 left: 24.0,
                 right: 24.0,
@@ -1044,8 +1043,19 @@ class _AddLogViewState extends State<AddLogView> {
     ),
   ],
 ),
-);
-}
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: IrmaTopBar(
+              title: 'Daily log entry',
+              onBackPressed: widget.onBackPressed,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // ── Custom selectable symptom button ─────────────────────────────────

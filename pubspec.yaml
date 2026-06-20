@@ -69,6 +69,8 @@ flutter:
     - assets/images/irma_title_profile.png
     - assets/images/specsoverlay.png
     - assets/images/therapy_illustration.svg
+    - assets/images/edited_photo.png
+    - assets/images/main_ai_image.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

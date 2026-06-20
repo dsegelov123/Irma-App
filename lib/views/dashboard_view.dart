@@ -80,93 +80,103 @@ class _DashboardViewState extends State<DashboardView> {
     if (_useIrmaTopBar) {
       return Scaffold(
         backgroundColor: IrmaColors.brown10,
-        body: Column(
+        body: Stack(
           children: [
-            IrmaTopBar(
-              title: 'Hi, Shinomiya!',
-              leading: GestureDetector(
-                onTap: widget.onProfilePressed,
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: IrmaColors.brown10,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: IrmaColors.green50, width: 2),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'IM',
-                      style: IrmaTextStyles.labelMdBold.copyWith(
-                        color: IrmaColors.brown80,
-                      ),
+            Column(
+              children: [
+                SizedBox(height: MediaQuery.of(context).padding.top + 80.0),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(
+                            left: IrmaSpacing.lg,
+                            right: IrmaSpacing.lg,
+                            top: IrmaSpacing.xl,
+                            bottom: IrmaSpacing.xl,
+                          ),
+                          decoration: const BoxDecoration(
+                            color: IrmaColors.brown10,
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                                style: IrmaTextStyles.labelXl.copyWith(
+                                  color: phaseStyle.color,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Center(
+                                child: IrmaCycleCircularIndicator(
+                                  progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
+                                  currentDay: selectedCycleDay,
+                                  totalDays: avgLength,
+                                  periodDuration: periodDuration,
+                                  phaseName: selectedPhase,
+                                  phaseColor: phaseStyle.color,
+                                ),
+                              ),
+                              const SizedBox(height: IrmaSpacing.lg),
+                              IrmaHorizontalWeekCalendar(
+                                themeColor: IrmaColors.orange50,
+                                tintColor: IrmaColors.orange10,
+                                selectedDate: _selectedDate,
+                                onDateSelected: (date) {
+                                  setState(() => _selectedDate = date);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        _buildMainDashboardContent(context, relationshipsVal, stabilityVal, last12DaysData),
+                      ],
                     ),
                   ),
-                ),
-              ),
-              actions: [
-                IrmaTopBarActionButton(
-                  icon: Icons.calendar_today_rounded,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HistoryView()),
-                    );
-                  },
                 ),
               ],
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.zero,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.only(
-                        left: IrmaSpacing.lg,
-                        right: IrmaSpacing.lg,
-                        top: IrmaSpacing.xl,
-                        bottom: IrmaSpacing.xl,
-                      ),
-                      decoration: const BoxDecoration(
-                        color: IrmaColors.brown10,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                            style: IrmaTextStyles.labelXl.copyWith(
-                              color: phaseStyle.color,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          Center(
-                            child: IrmaCycleCircularIndicator(
-                              progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
-                              currentDay: selectedCycleDay,
-                              totalDays: avgLength,
-                              periodDuration: periodDuration,
-                              phaseName: selectedPhase,
-                              phaseColor: phaseStyle.color,
-                            ),
-                          ),
-                          const SizedBox(height: IrmaSpacing.lg),
-                          IrmaHorizontalWeekCalendar(
-                            themeColor: IrmaColors.orange50,
-                            tintColor: IrmaColors.orange10,
-                            selectedDate: _selectedDate,
-                            onDateSelected: (date) {
-                              setState(() => _selectedDate = date);
-                            },
-                          ),
-                        ],
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: IrmaTopBar(
+                title: 'Hi, Shinomiya!',
+                leading: GestureDetector(
+                  onTap: widget.onProfilePressed,
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: IrmaColors.brown10,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: IrmaColors.green50, width: 2),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'IM',
+                        style: IrmaTextStyles.labelMdBold.copyWith(
+                          color: IrmaColors.brown80,
+                        ),
                       ),
                     ),
-                    _buildMainDashboardContent(context, relationshipsVal, stabilityVal, last12DaysData),
-                  ],
+                  ),
                 ),
+                actions: [
+                  IrmaTopBarActionButton(
+                    icon: Icons.calendar_today_rounded,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HistoryView()),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ],

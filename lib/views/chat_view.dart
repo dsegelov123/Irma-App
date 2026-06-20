@@ -435,16 +435,6 @@ class _ChatViewState extends State<ChatView> {
             child: IrmaTopBar(
               title: 'Doctor Consultation',
               onBackPressed: widget.onBackPressed,
-              actions: [
-                IrmaTopBarActionButton(
-                  icon: Icons.search_rounded,
-                  onTap: () {},
-                ),
-                IrmaTopBarActionButton(
-                  icon: Icons.tune_rounded,
-                  onTap: () {},
-                ),
-              ],
             ),
           ),
         ],

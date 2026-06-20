@@ -301,12 +301,24 @@ class _ChatViewState extends State<ChatView> {
                         ),
                         decoration: InputDecoration(
                           border: InputBorder.none,
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Icon(
+                              Icons.add_circle_outline_rounded,
+                              color: IrmaColors.brown80,
+                              size: 24,
+                            ),
+                          ),
+                          prefixIconConstraints: const BoxConstraints(
+                            minWidth: 40,
+                            minHeight: 24,
+                          ),
                           hintText: 'Type to start chatting...',
                           hintStyle: IrmaTextStyles.paragraphMdMedium.copyWith(
                             color: IrmaColors.brown50,
                           ),
                           contentPadding: const EdgeInsets.symmetric(
-                            horizontal: IrmaSpacing.md,
+                            horizontal: IrmaSpacing.sm,
                             vertical: 10,
                           ),
                           isDense: true,

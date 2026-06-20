@@ -133,7 +133,7 @@ class _ChatViewState extends State<ChatView> {
         : 80.0 + bottomPadding + IrmaSpacing.md;
 
     return Scaffold(
-      backgroundColor: IrmaColors.gray10,
+      backgroundColor: IrmaColors.brown10,
 
       // ── Chat Header (§10) ─────────────────────────────────────
       appBar: AppBar(

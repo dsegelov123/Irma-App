@@ -128,14 +128,25 @@ class _DoctorViewState extends State<DoctorView> {
         await _handleBackAttempt();
       },
       child: Scaffold(
-        backgroundColor: IrmaColors.gray10,
+        backgroundColor: IrmaColors.brown10,
         appBar: AppBar(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: IrmaColors.brown80),
-            onPressed: () async => await _handleBackAttempt(),
+          leading: Center(
+            child: GestureDetector(
+              onTap: () async => await _handleBackAttempt(),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: IrmaColors.brown20),
+                ),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, color: IrmaColors.brown80, size: 16),
+              ),
+            ),
           ),
           title: Text('Doctor Consultation Mode',
               style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),

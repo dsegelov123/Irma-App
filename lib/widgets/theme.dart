@@ -305,6 +305,7 @@ class IrmaButtonStyles {
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
     elevation: 0,
     textStyle: IrmaTextStyles.labelLg,
+    visualDensity: VisualDensity.standard,
   );
 
   /// Brown 80 fill, white label — medium size (24/16 padding)
@@ -315,6 +316,7 @@ class IrmaButtonStyles {
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
     elevation: 0,
     textStyle: IrmaTextStyles.labelLg,
+    visualDensity: VisualDensity.standard,
   );
 
   /// Brown 80 fill, white label — small size (20/8 padding)
@@ -325,6 +327,18 @@ class IrmaButtonStyles {
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
     elevation: 0,
     textStyle: IrmaTextStyles.labelMd,
+    visualDensity: VisualDensity.standard,
+  );
+
+  /// Brown 80 fill, white label — extra small size (20/8 padding)
+  static ButtonStyle primaryXs() => ElevatedButton.styleFrom(
+    backgroundColor: IrmaColors.brown80,
+    foregroundColor: Colors.white,
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
+    elevation: 0,
+    textStyle: IrmaTextStyles.labelSm,
+    visualDensity: VisualDensity.standard,
   );
 
   /// Brown 10 fill, Brown 80 label — large (32/16 padding)
@@ -335,6 +349,7 @@ class IrmaButtonStyles {
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
     elevation: 0,
     textStyle: IrmaTextStyles.labelLg,
+    visualDensity: VisualDensity.standard,
   );
 
   /// Transparent fill, Brown 80 outline & label — large (32/16 padding)
@@ -344,6 +359,7 @@ class IrmaButtonStyles {
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
     side: const BorderSide(color: IrmaColors.brown80),
     textStyle: IrmaTextStyles.labelLg,
+    visualDensity: VisualDensity.standard,
   );
 
   /// Transparent fill, Brown 80 outline & label — medium
@@ -353,6 +369,18 @@ class IrmaButtonStyles {
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
     side: const BorderSide(color: IrmaColors.brown80),
     textStyle: IrmaTextStyles.labelLg,
+    visualDensity: VisualDensity.standard,
+  );
+
+  /// Transparent fill, Brown 80 outline & label — extra small size (20/8 padding)
+  static ButtonStyle outlinedXs() => OutlinedButton.styleFrom(
+    foregroundColor: IrmaColors.brown80,
+    backgroundColor: Colors.transparent,
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_pillRadius))),
+    side: const BorderSide(color: IrmaColors.brown80, width: 1),
+    textStyle: IrmaTextStyles.labelSm,
+    visualDensity: VisualDensity.standard,
   );
 }
 
@@ -495,7 +523,7 @@ class IrmaTheme {
   static ThemeData get themeData => ThemeData(
     useMaterial3: true,
     fontFamily: 'Urbanist',
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: IrmaColors.brown10,
     colorScheme: const ColorScheme.light(
       primary: IrmaColors.green50,
       secondary: IrmaColors.brown80,

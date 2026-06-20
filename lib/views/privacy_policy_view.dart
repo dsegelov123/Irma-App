@@ -7,15 +7,24 @@ class PrivacyPolicyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: IrmaColors.gray10,
+      backgroundColor: IrmaColors.brown10,
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: IrmaColors.brown80),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+        leading: Center(
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: IrmaColors.brown20),
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: IrmaColors.brown80, size: 16),
+            ),
           ),
         ),
         title: Text(

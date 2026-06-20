@@ -33,7 +33,10 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     Widget bodyContent;
     if (_showLogView) {
-      bodyContent = AddLogView(onLogSaved: _onSaveLog);
+      bodyContent = AddLogView(
+        onLogSaved: _onSaveLog,
+        onBackPressed: () => setState(() => _showLogView = false),
+      );
     } else {
       switch (_activeTab) {
         case 0:

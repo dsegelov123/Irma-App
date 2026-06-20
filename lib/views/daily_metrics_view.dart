@@ -40,7 +40,7 @@ class _DailyMetricsViewState extends State<DailyMetricsView> {
     final Map sub = _metrics['sub_metrics'] as Map;
 
     return Scaffold(
-      backgroundColor: IrmaColors.gray10,
+      backgroundColor: IrmaColors.brown10,
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,

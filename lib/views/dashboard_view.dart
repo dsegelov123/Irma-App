@@ -5,6 +5,8 @@ import 'package:irma/services/storage_service.dart';
 import 'package:irma/services/tri_metric_engine.dart';
 import 'package:irma/widgets/theme.dart';
 import 'package:irma/widgets/cycle_circular_indicator.dart';
+import 'package:irma/widgets/irma_top_bar.dart';
+import 'package:irma/views/history_view.dart';
 
 class DashboardView extends StatefulWidget {
   final VoidCallback onLogSymptomsPressed;
@@ -20,6 +22,7 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
+  static const bool _useIrmaTopBar = true;
   late Map<String, dynamic> _cycleState;
   late String _advice;
   late Map<String, dynamic> _metrics;
@@ -73,6 +76,103 @@ class _DashboardViewState extends State<DashboardView> {
       'Luteal Phase'         => (color: IrmaColors.yellow50, tint: IrmaColors.yellow10, icon: Icons.nights_stay_rounded),
       _                      => (color: IrmaColors.yellow50, tint: IrmaColors.yellow10, icon: Icons.hourglass_empty_rounded),
     };
+
+    if (_useIrmaTopBar) {
+      return Scaffold(
+        backgroundColor: IrmaColors.brown10,
+        body: Column(
+          children: [
+            IrmaTopBar(
+              title: 'Hi, Shinomiya!',
+              leading: GestureDetector(
+                onTap: widget.onProfilePressed,
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: IrmaColors.brown10,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: IrmaColors.green50, width: 2),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'IM',
+                      style: IrmaTextStyles.labelMdBold.copyWith(
+                        color: IrmaColors.brown80,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                IrmaTopBarActionButton(
+                  icon: Icons.calendar_today_rounded,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HistoryView()),
+                    );
+                  },
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.zero,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(
+                        left: IrmaSpacing.lg,
+                        right: IrmaSpacing.lg,
+                        top: IrmaSpacing.xl,
+                        bottom: IrmaSpacing.xl,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.brown10,
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                            style: IrmaTextStyles.labelXl.copyWith(
+                              color: phaseStyle.color,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Center(
+                            child: IrmaCycleCircularIndicator(
+                              progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
+                              currentDay: selectedCycleDay,
+                              totalDays: avgLength,
+                              periodDuration: periodDuration,
+                              phaseName: selectedPhase,
+                              phaseColor: phaseStyle.color,
+                            ),
+                          ),
+                          const SizedBox(height: IrmaSpacing.lg),
+                          IrmaHorizontalWeekCalendar(
+                            themeColor: IrmaColors.orange50,
+                            tintColor: IrmaColors.orange10,
+                            selectedDate: _selectedDate,
+                            onDateSelected: (date) {
+                              setState(() => _selectedDate = date);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    _buildMainDashboardContent(context, relationshipsVal, stabilityVal, last12DaysData),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: IrmaColors.brown10,
@@ -153,104 +253,117 @@ class _DashboardViewState extends State<DashboardView> {
             ),
 
             // ── Main Dashboard Content ──────────────────────────
-            Padding(
-              padding: const EdgeInsets.only(
-                top: IrmaSpacing.xl,
-                bottom: IrmaSpacing.lg + 80.0 + IrmaSpacing.md,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Advice Section Header & Bubble ─────────────────────
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Irma's advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
-                  const SizedBox(height: IrmaSpacing.sm),
+            _buildMainDashboardContent(context, relationshipsVal, stabilityVal, last12DaysData),
+          ],
+        ),
+      ),
+    );
+  }
 
-                  // ── Advice Chat Bubble ────────────────────────────────
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Main bubble body
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.brown20,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16.0),
-                            topRight: Radius.circular(16.0),
-                            bottomRight: Radius.circular(16.0),
-                            bottomLeft: Radius.zero,
+  Widget _buildMainDashboardContent(
+    BuildContext context,
+    int relationshipsVal,
+    int stabilityVal,
+    List<({int mood, String phase})> last12DaysData,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: IrmaSpacing.xl,
+        bottom: IrmaSpacing.lg + 80.0 + IrmaSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Advice Section Header & Bubble ─────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Irma's advice", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                const SizedBox(height: IrmaSpacing.sm),
+
+                // ── Advice Chat Bubble ────────────────────────────────
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Main bubble body
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.brown20,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16.0),
+                          topRight: Radius.circular(16.0),
+                          bottomRight: Radius.circular(16.0),
+                          bottomLeft: Radius.zero,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Irma profile image in circle
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                              color: IrmaColors.brown10,
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/irma_title_profile.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Irma profile image in circle
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: const BoxDecoration(
-                                color: IrmaColors.brown10,
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage('assets/images/irma_title_profile.png'),
-                                  fit: BoxFit.cover,
+                          const SizedBox(width: 12),
+                          // Advice text
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4.0, right: 8.0, bottom: 4.0),
+                              child: Text(
+                                _advice,
+                                style: IrmaTextStyles.labelMdBold.copyWith(
+                                  color: IrmaColors.brown100.withValues(alpha: 0.64),
+                                  height: 1.5,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            // Advice text
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 4.0, right: 8.0, bottom: 4.0),
-                                child: Text(
-                                  _advice,
-                                  style: IrmaTextStyles.labelMdBold.copyWith(
-                                    color: IrmaColors.brown100.withValues(alpha: 0.64),
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      // Speech-bubble tail
-                      CustomPaint(
-                        size: const Size(12, 12),
-                        painter: _BubbleTailPainter(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    // Speech-bubble tail
+                    CustomPaint(
+                      size: const Size(12, 12),
+                      painter: _BubbleTailPainter(),
+                    ),
+                  ],
+                ),
+              ],
             ),
-                  const SizedBox(height: IrmaSpacing.xl),
+          ),
+          const SizedBox(height: IrmaSpacing.xl),
 
-                  // ── Mental Health Metrics Section ─────────────────────
-                  Container(
-                    width: double.infinity,
-                    color: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 32.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                          child: Text("Mental Health Metrics", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
-                        ),
-                        const SizedBox(height: 12.0),
+          // ── Mental Health Metrics Section ─────────────────────
+          Container(
+            width: double.infinity,
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 32.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                  child: Text("Mental Health Metrics", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
+                ),
+                const SizedBox(height: 12.0),
 
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                            child: Row(
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Card 1: Relationships
@@ -436,122 +549,118 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ),
                 ),
-                  const SizedBox(height: 24.0),
+                const SizedBox(height: 24.0),
 
-                  // Pagination indicators
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.brown80,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.brown20,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.brown20,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.brown20,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.brown20,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-                  const SizedBox(height: 32.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
+                // Pagination indicators
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
                         color: IrmaColors.brown80,
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Image.asset(
-                              'assets/images/specsoverlay.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      "Daily Reflection",
-                                      style: IrmaTextStyles.labelLg.copyWith(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12.0),
-                                SizedBox(
-                                  width: 220,
-                                  child: Text(
-                                    "Take a quiet moment to record your thoughts and symptoms. Your daily patterns build a clearer picture of your wellbeing over time.",
-                                    style: IrmaTextStyles.paraSm.copyWith(
-                                      color: Colors.white.withValues(alpha: 0.8),
-                                      height: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        shape: BoxShape.circle,
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.brown20,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.brown20,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.brown20,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.brown20,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: IrmaColors.brown80,
+                borderRadius: BorderRadius.circular(32),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Image.asset(
+                      'assets/images/specsoverlay.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  const SizedBox(height: IrmaSpacing.lg),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Daily Reflection",
+                              style: IrmaTextStyles.labelLg.copyWith(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12.0),
+                        SizedBox(
+                          width: 220,
+                          child: Text(
+                            "Take a quiet moment to record your thoughts and symptoms. Your daily patterns build a clearer picture of your wellbeing over time.",
+                            style: IrmaTextStyles.paraSm.copyWith(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: IrmaSpacing.lg),
+        ],
       ),
     );
   }

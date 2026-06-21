@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:irma/widgets/theme.dart';
@@ -30,6 +31,7 @@ class _ChatViewState extends State<ChatView> {
   final _textController = TextEditingController();
   final _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
+  bool _isIrmaTyping = false;
 
   @override
   void dispose() {
@@ -65,17 +67,27 @@ class _ChatViewState extends State<ChatView> {
 
     _scrollToBottom();
 
-    // Simulate Irma's reply
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    // 2 second pause before showing typing indicator
+    Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
       setState(() {
-        _messages.add(ChatMessage(
-          text: "I hear you. Every phase of your cycle is a natural progression of your body's inner wisdom. Let's explore how you are feeling today.",
-          isUser: false,
-          timestamp: DateTime.now(),
-        ));
+        _isIrmaTyping = true;
       });
       _scrollToBottom();
+
+      // Show typing indicator for at least 2 seconds before rendering the reply
+      Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
+        setState(() {
+          _isIrmaTyping = false;
+          _messages.add(ChatMessage(
+            text: "I hear you. Every phase of your cycle is a natural progression of your body's inner wisdom. Let's explore how you are feeling today.",
+            isUser: false,
+            timestamp: DateTime.now(),
+          ));
+        });
+        _scrollToBottom();
+      });
     });
   }
 
@@ -202,10 +214,73 @@ class _ChatViewState extends State<ChatView> {
     }
   }
 
+  Widget _buildTypingIndicator() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0, right: 48.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Irma profile image in circle
+          Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              color: IrmaColors.brown10,
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: AssetImage('assets/images/irma_title_profile.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Main bubble + tail Column
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    color: IrmaColors.brown20,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.0),
+                      topRight: Radius.circular(16.0),
+                      bottomRight: Radius.circular(16.0),
+                      bottomLeft: Radius.zero,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Irma is typing',
+                        style: IrmaTextStyles.labelMdBold.copyWith(
+                          color: IrmaColors.brown100.withValues(alpha: 0.64),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const AnimatedTypingDots(),
+                    ],
+                  ),
+                ),
+                // Speech-bubble tail
+                CustomPaint(
+                  size: const Size(12, 12),
+                  painter: BubbleTailLeftPainter(IrmaColors.brown20),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double bottomPadding = MediaQuery.of(context).padding.bottom;
-
     return Scaffold(
       backgroundColor: IrmaColors.brown10,
 
@@ -310,8 +385,11 @@ class _ChatViewState extends State<ChatView> {
                           horizontal: IrmaSpacing.lg,
                           vertical: IrmaSpacing.md,
                         ),
-                        itemCount: _messages.length,
+                        itemCount: _messages.length + (_isIrmaTyping ? 1 : 0),
                         itemBuilder: (context, index) {
+                          if (index == _messages.length) {
+                            return _buildTypingIndicator();
+                          }
                           final message = _messages[index];
                           return _buildMessage(message);
                         },
@@ -353,85 +431,101 @@ class _ChatViewState extends State<ChatView> {
                     ),
                   ],
                 ),
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                   top: 12,
                   left: 12,
                   right: 12,
-                  bottom: bottomPadding > 0 ? bottomPadding : 16,
+                  bottom: 16,
                 ),
-                child: SizedBox(
-                  height: 48,
-                  child: Row(
-                    children: [
-                      // Input Field Box (x=12, width 279, height 48)
-                      Expanded(
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF7F4F2),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SvgPicture.string(
-                                '''<svg width="20" height="20" viewBox="8 14 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path fill-rule="evenodd" clip-rule="evenodd" d="M18.0001 17.3332C14.3182 17.3332 11.3334 20.3179 11.3334 23.9998C11.3334 27.6817 14.3182 30.6665 18.0001 30.6665C21.682 30.6665 24.6667 27.6817 24.6667 23.9998C24.6667 20.3179 21.682 17.3332 18.0001 17.3332ZM9.66675 23.9998C9.66675 19.3975 13.3977 15.6665 18.0001 15.6665C22.6025 15.6665 26.3334 19.3975 26.3334 23.9998C26.3334 28.6022 22.6025 32.3332 18.0001 32.3332C13.3977 32.3332 9.66675 28.6022 9.66675 23.9998Z" fill="#4B3425"/>
-                                </svg>''',
-                                width: 20,
-                                height: 20,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextField(
-                                  controller: _textController,
-                                  onSubmitted: (_) => _sendMessage(),
-                                  textAlignVertical: TextAlignVertical.center,
-                                  cursorColor: const Color(0xFF926247),
-                                  style: IrmaTextStyles.labelMdBold.copyWith(
-                                    color: IrmaColors.brown80,
-                                  ),
-                                  decoration: InputDecoration(
-                                    hintText: 'Type to start chatting...',
-                                    hintStyle: IrmaTextStyles.labelMdBold.copyWith(
-                                      color: IrmaColors.brown70,
-                                    ),
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Input Field Box (x=12, width 279, height 48)
+                    Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        onSubmitted: (_) => _sendMessage(),
+                        maxLines: 8,
+                        minLines: 1,
+                        keyboardType: TextInputType.multiline,
+                        textAlignVertical: TextAlignVertical.center,
+                        cursorColor: const Color(0xFF926247),
+                        style: IrmaTextStyles.labelMdBold.copyWith(
+                          color: IrmaColors.brown80,
                         ),
-                      ),
-                      const SizedBox(width: 16), // Spacing between input and send button
-                      // Send Button (48x48 Green 50 circle at x=315)
-                      GestureDetector(
-                        onTap: _sendMessage,
-                        behavior: HitTestBehavior.opaque,
-                        child: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: const BoxDecoration(
-                            color: IrmaColors.green50,
-                            shape: BoxShape.circle,
+                        decoration: InputDecoration(
+                          hintText: 'Type to start chatting...',
+                          hintStyle: IrmaTextStyles.labelMdBold.copyWith(
+                            color: IrmaColors.brown70,
                           ),
-                          child: Center(
+                          filled: true,
+                          fillColor: const Color(0xFFF7F4F2),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                          isDense: true,
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 10.0),
                             child: SvgPicture.string(
-                              '''<svg width="48" height="48" viewBox="303 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M335 15V23C335 25.7614 332.761 28 330 28H320.101C320.208 28.5252 320.4 29.032 320.67 29.5C321.109 30.2601 321.74 30.8913 322.5 31.3301L321.5 33.0622C320.436 32.4478 319.552 31.5641 318.938 30.5C318.323 29.4359 318 28.2288 318 27C318 25.7712 318.323 24.5641 318.938 23.5C319.552 22.4359 320.436 21.5522 321.5 20.9378L322.5 22.6699C321.74 23.1087 321.109 23.7399 320.67 24.5C320.4 24.968 320.208 25.4748 320.101 26H330C331.657 26 333 24.6569 333 23V15H335Z" fill="white"/>
+                              '''<svg width="20" height="20" viewBox="8 14 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M18.0001 17.3332C14.3182 17.3332 11.3334 20.3179 11.3334 23.9998C11.3334 27.6817 14.3182 30.6665 18.0001 30.6665C21.682 30.6665 24.6667 27.6817 24.6667 23.9998C24.6667 20.3179 21.682 17.3332 18.0001 17.3332ZM9.66675 23.9998C9.66675 19.3975 13.3977 15.6665 18.0001 15.6665C22.6025 15.6665 26.3334 19.3975 26.3334 23.9998C26.3334 28.6022 22.6025 32.3332 18.0001 32.3332C13.3977 32.3332 9.66675 28.6022 9.66675 23.9998Z" fill="#4B3425"/>
                               </svg>''',
-                              width: 48,
-                              height: 48,
+                              width: 20,
+                              height: 20,
                             ),
                           ),
+                          prefixIconConstraints: const BoxConstraints(
+                            minWidth: 38,
+                            minHeight: 48,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                            ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 16), // Spacing between input and send button
+                    // Send Button (48x48 Green 50 circle at x=315)
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.green50,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.subdirectory_arrow_left_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        onPressed: _sendMessage,
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -498,4 +592,61 @@ class BubbleTailLeftPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class AnimatedTypingDots extends StatefulWidget {
+  const AnimatedTypingDots({super.key});
+
+  @override
+  State<AnimatedTypingDots> createState() => _AnimatedTypingDotsState();
+}
+
+class _AnimatedTypingDotsState extends State<AnimatedTypingDots> {
+  int _tick = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      if (mounted) {
+        setState(() {
+          _tick = (_tick + 1) % 4;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (index) {
+        double opacity = 0.3;
+        if (_tick == 0 && index == 0) opacity = 1.0;
+        if (_tick == 1 && index == 1) opacity = 1.0;
+        if (_tick == 2 && index == 2) opacity = 1.0;
+
+        return AnimatedOpacity(
+          opacity: opacity,
+          duration: const Duration(milliseconds: 200),
+          child: Container(
+            width: 4,
+            height: 4,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            decoration: const BoxDecoration(
+              color: IrmaColors.brown60,
+              shape: BoxShape.circle,
+            ),
+          ),
+        );
+      }),
+    );
+  }
 }

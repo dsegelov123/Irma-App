@@ -3,6 +3,7 @@ import 'package:irma/views/dashboard_view.dart';
 import 'package:irma/views/daily_metrics_view.dart';
 import 'package:irma/views/add_log_view.dart';
 import 'package:irma/views/chat_view.dart';
+import 'package:irma/views/therapy_chatbot_view.dart';
 import 'package:irma/views/profile_view.dart';
 import 'package:irma/views/history_view.dart';
 import 'package:irma/views/doctor_view.dart';
@@ -46,8 +47,17 @@ class _MainShellState extends State<MainShell> {
           );
           break;
         case 1:
-          bodyContent = ChatView(
-            onBackPressed: () => setState(() => _activeTab = 0),
+          bodyContent = TherapyChatbotView(
+            onStartChatPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ChatView(
+                    onBackPressed: () => Navigator.pop(context),
+                  ),
+                ),
+              );
+            },
           );
           break;
         case 2:
@@ -209,7 +219,7 @@ class _MainShellState extends State<MainShell> {
       ),
 
       // ── Bottom Tab Bar (§12) ─────────────────────────────────────
-      bottomNavigationBar: (_showLogView || _activeTab == 1) ? null : _BottomTabBar(
+      bottomNavigationBar: _showLogView ? null : _BottomTabBar(
         activeTab: _activeTab,
         onTap: (i) => setState(() {
           _showLogView = false;

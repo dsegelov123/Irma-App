@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:irma/widgets/theme.dart';
 import 'package:irma/widgets/irma_top_bar.dart';
 
@@ -356,7 +357,7 @@ class _ChatViewState extends State<ChatView> {
                   top: 12,
                   left: 12,
                   right: 12,
-                  bottom: bottomPadding > 0 ? bottomPadding : 12,
+                  bottom: bottomPadding > 0 ? bottomPadding : 16,
                 ),
                 child: SizedBox(
                   height: 48,
@@ -365,61 +366,68 @@ class _ChatViewState extends State<ChatView> {
                       // Input Field Box (x=12, width 279, height 48)
                       Expanded(
                         child: Container(
+                          height: 48,
                           decoration: BoxDecoration(
-                            color: IrmaColors.brown10,
+                            color: const Color(0xFFF7F4F2),
                             borderRadius: BorderRadius.circular(24),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                          child: TextField(
-                            controller: _textController,
-                            onSubmitted: (_) => _sendMessage(),
-                            style: IrmaTextStyles.paragraphMdMedium.copyWith(
-                              color: IrmaColors.brown80,
-                            ),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              prefixIcon: const Padding(
-                                padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                                child: Icon(
-                                  Icons.add_circle_outline_rounded,
-                                  color: IrmaColors.brown80,
-                                  size: 24,
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.string(
+                                '''<svg width="20" height="20" viewBox="8 14 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path fill-rule="evenodd" clip-rule="evenodd" d="M18.0001 17.3332C14.3182 17.3332 11.3334 20.3179 11.3334 23.9998C11.3334 27.6817 14.3182 30.6665 18.0001 30.6665C21.682 30.6665 24.6667 27.6817 24.6667 23.9998C24.6667 20.3179 21.682 17.3332 18.0001 17.3332ZM9.66675 23.9998C9.66675 19.3975 13.3977 15.6665 18.0001 15.6665C22.6025 15.6665 26.3334 19.3975 26.3334 23.9998C26.3334 28.6022 22.6025 32.3332 18.0001 32.3332C13.3977 32.3332 9.66675 28.6022 9.66675 23.9998Z" fill="#4B3425"/>
+                                </svg>''',
+                                width: 20,
+                                height: 20,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: TextField(
+                                  controller: _textController,
+                                  onSubmitted: (_) => _sendMessage(),
+                                  textAlignVertical: TextAlignVertical.center,
+                                  cursorColor: const Color(0xFF926247),
+                                  style: IrmaTextStyles.labelMdBold.copyWith(
+                                    color: IrmaColors.brown80,
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: 'Type to start chatting...',
+                                    hintStyle: IrmaTextStyles.labelMdBold.copyWith(
+                                      color: IrmaColors.brown70,
+                                    ),
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
                                 ),
                               ),
-                              prefixIconConstraints: const BoxConstraints(
-                                minWidth: 40,
-                                minHeight: 24,
-                              ),
-                              hintText: 'Type to start chatting...',
-                              hintStyle: IrmaTextStyles.paragraphMdMedium.copyWith(
-                                color: IrmaColors.brown50,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: IrmaSpacing.sm,
-                                vertical: 10,
-                              ),
-                              isDense: true,
-                            ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(width: 24), // Spacing between input and send button
+                      const SizedBox(width: 16), // Spacing between input and send button
                       // Send Button (48x48 Green 50 circle at x=315)
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: const BoxDecoration(
-                          color: IrmaColors.green50,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.subdirectory_arrow_left_rounded,
-                            color: Colors.white,
-                            size: 20,
+                      GestureDetector(
+                        onTap: _sendMessage,
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: const BoxDecoration(
+                            color: IrmaColors.green50,
+                            shape: BoxShape.circle,
                           ),
-                          onPressed: _sendMessage,
-                          padding: EdgeInsets.zero,
+                          child: Center(
+                            child: SvgPicture.string(
+                              '''<svg width="48" height="48" viewBox="303 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M335 15V23C335 25.7614 332.761 28 330 28H320.101C320.208 28.5252 320.4 29.032 320.67 29.5C321.109 30.2601 321.74 30.8913 322.5 31.3301L321.5 33.0622C320.436 32.4478 319.552 31.5641 318.938 30.5C318.323 29.4359 318 28.2288 318 27C318 25.7712 318.323 24.5641 318.938 23.5C319.552 22.4359 320.436 21.5522 321.5 20.9378L322.5 22.6699C321.74 23.1087 321.109 23.7399 320.67 24.5C320.4 24.968 320.208 25.4748 320.101 26H330C331.657 26 333 24.6569 333 23V15H335Z" fill="white"/>
+                              </svg>''',
+                              width: 48,
+                              height: 48,
+                            ),
+                          ),
                         ),
                       ),
                     ],

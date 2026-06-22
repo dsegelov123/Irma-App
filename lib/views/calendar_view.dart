@@ -329,162 +329,197 @@ class _CalendarViewState extends State<CalendarView> {
     return Container(
       width: double.infinity,
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-        child: Row(
-          children: [
-            _buildScoreCard(),
-            const SizedBox(width: 8),
-            _buildScoreCard(),
-            const SizedBox(width: 8),
-            _buildScoreCard(),
-          ],
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: 24),
+      child: Row(
+        children: [
+          Expanded(child: _buildScoreCard()),
+          const SizedBox(width: 16),
+          Expanded(child: _buildScoreCard()),
+          const SizedBox(width: 16),
+          Expanded(child: _buildScoreCard()),
+        ],
       ),
     );
   }
 
   Widget _buildScoreCard() {
-    return Container(
-      width: 163,
-      height: 200,
-      decoration: BoxDecoration(
-        color: IrmaColors.green50,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: IrmaColors.green50.withOpacity(0.15),
-            blurRadius: 32,
-            offset: const Offset(0, 16),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Heart icon & label "Freud Score"
-          Positioned(
-            left: 20.5,
-            top: 20.5,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 17,
-                  height: 16,
-                  child: CustomPaint(
-                    painter: _HeartPainter(),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Freud Score',
-                  style: IrmaTextStyles.labelXsBold.copyWith(
-                    color: Colors.white,
-                    fontSize: 11.2,
-                    height: 1.0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Segmented score progress ring & content
-          Positioned(
-            left: 21.5,
-            top: 64.0,
-            child: SizedBox(
-              width: 120,
-              height: 120,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CustomPaint(
-                    size: const Size(120, 120),
-                    painter: _SegmentedScorePainter(
-                      trackColor: IrmaColors.green40,
-                      progressColor: IrmaColors.green10,
-                    ),
-                  ),
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          '80',
-                          style: IrmaTextStyles.headingSmBold.copyWith(
-                            color: IrmaColors.green10,
-                            fontSize: 17.5,
-                            height: 1.0,
-                          ),
-                        ),
-                        const SizedBox(height: 8.2),
-                        Text(
-                          'Healthy',
-                          style: IrmaTextStyles.labelXsBold.copyWith(
-                            color: IrmaColors.green20,
-                            fontSize: 10.5,
-                            height: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double cardWidth = constraints.maxWidth;
+        final double scale = cardWidth / 163.0;
+        final double cardHeight = 200.0 * scale;
+
+        // Scaled layout dimensions
+        final double heartWidth = 17.0 * scale;
+        final double heartHeight = 16.0 * scale;
+        final double labelFontSize = 11.2 * scale;
+        final double labelGap = 12.0 * scale;
+
+        final double circleSize = 120.0 * scale;
+        final double strokeWidth = 10.0 * scale;
+        final double radius = 55.0 * scale;
+
+        final double scoreFontSize = 17.5 * scale;
+        final double scoreGap = 8.2 * scale;
+        final double statusFontSize = 10.5 * scale;
+
+        final double shadowBlur = 32.0 * scale;
+        final double shadowOffsetY = 16.0 * scale;
+        final double cornerRadius = 32.0 * scale;
+
+        final double paddingLeft = 20.5 * scale;
+        final double paddingTop = 20.5 * scale;
+        final double circleLeft = 21.5 * scale;
+        final double circleTop = 64.0 * scale;
+
+        return Container(
+          width: cardWidth,
+          height: cardHeight,
+          decoration: BoxDecoration(
+            color: IrmaColors.green50,
+            borderRadius: BorderRadius.circular(cornerRadius),
+            boxShadow: [
+              BoxShadow(
+                color: IrmaColors.green50.withOpacity(0.15),
+                blurRadius: shadowBlur,
+                offset: Offset(0, shadowOffsetY),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+          child: Stack(
+            children: [
+              // Heart icon & label "Freud Score"
+              Positioned(
+                left: paddingLeft,
+                top: paddingTop,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: heartWidth,
+                      height: heartHeight,
+                      child: CustomPaint(
+                        painter: _HeartPainter(scale: scale),
+                      ),
+                    ),
+                    SizedBox(width: labelGap),
+                    Text(
+                      'Freud Score',
+                      style: IrmaTextStyles.labelXsBold.copyWith(
+                        color: Colors.white,
+                        fontSize: labelFontSize,
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Segmented score progress ring & content
+              Positioned(
+                left: circleLeft,
+                top: circleTop,
+                child: SizedBox(
+                  width: circleSize,
+                  height: circleSize,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CustomPaint(
+                        size: Size(circleSize, circleSize),
+                        painter: _SegmentedScorePainter(
+                          radius: radius,
+                          strokeWidth: strokeWidth,
+                          trackColor: IrmaColors.green40,
+                          progressColor: IrmaColors.green10,
+                        ),
+                      ),
+                      Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '80',
+                              style: IrmaTextStyles.headingSmBold.copyWith(
+                                color: IrmaColors.green10,
+                                fontSize: scoreFontSize,
+                                height: 1.0,
+                              ),
+                            ),
+                            SizedBox(height: scoreGap),
+                            Text(
+                              'Healthy',
+                              style: IrmaTextStyles.labelXsBold.copyWith(
+                                color: IrmaColors.green20,
+                                fontSize: statusFontSize,
+                                height: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 class _HeartPainter extends CustomPainter {
+  final double scale;
+
+  _HeartPainter({required this.scale});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
+      ..strokeWidth = 2.0 * scale
       ..strokeJoin = StrokeJoin.round;
 
     final heartPath = Path()
-      ..moveTo(15.0, 9.0)
-      ..lineTo(8.1471, 15.8529)
-      ..cubicTo(7.7897, 16.2103, 7.2103, 16.2103, 6.8529, 15.8529)
-      ..lineTo(0.0, 9.0)
-      ..cubicTo(-1.933, 7.067, -1.933, 3.933, 0.0, 2.0)
-      ..cubicTo(1.933, 0.067, 5.067, 0.067, 7.0, 2.0)
-      ..lineTo(7.5, 2.5)
-      ..lineTo(8.0, 2.0)
-      ..cubicTo(9.933, 0.067, 13.067, 0.067, 15.0, 2.0)
-      ..cubicTo(16.933, 3.933, 16.933, 7.067, 15.0, 9.0)
+      ..moveTo(15.0 * scale, 9.0 * scale)
+      ..lineTo(8.1471 * scale, 15.8529 * scale)
+      ..cubicTo(7.7897 * scale, 16.2103 * scale, 7.2103 * scale, 16.2103 * scale, 6.8529 * scale, 15.8529 * scale)
+      ..lineTo(0.0 * scale, 9.0 * scale)
+      ..cubicTo(-1.933 * scale, 7.067 * scale, -1.933 * scale, 3.933 * scale, 0.0 * scale, 2.0 * scale)
+      ..cubicTo(1.933 * scale, 0.067 * scale, 5.067 * scale, 0.067 * scale, 7.0 * scale, 2.0 * scale)
+      ..lineTo(7.5 * scale, 2.5 * scale)
+      ..lineTo(8.0 * scale, 2.0 * scale)
+      ..cubicTo(9.933 * scale, 0.067 * scale, 13.067 * scale, 0.067 * scale, 15.0 * scale, 2.0 * scale)
+      ..cubicTo(16.933 * scale, 3.933 * scale, 16.933 * scale, 7.067 * scale, 15.0 * scale, 9.0 * scale)
       ..close();
 
-    canvas.translate((size.width - 17) / 2, (size.height - 16) / 2);
+    canvas.translate((size.width - 17.0 * scale) / 2, (size.height - 16.0 * scale) / 2);
     canvas.drawPath(heartPath, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _HeartPainter oldDelegate) => oldDelegate.scale != scale;
 }
 
 class _SegmentedScorePainter extends CustomPainter {
+  final double radius;
+  final double strokeWidth;
   final Color trackColor;
   final Color progressColor;
 
   _SegmentedScorePainter({
+    required this.radius,
+    required this.strokeWidth,
     required this.trackColor,
     required this.progressColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double strokeWidth = 10.0;
-    final double radius = 55.0;
     final Offset center = Offset(size.width / 2, size.height / 2);
     final Rect rect = Rect.fromCircle(center: center, radius: radius);
 
@@ -514,7 +549,9 @@ class _SegmentedScorePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _SegmentedScorePainter oldDelegate) {
-    return oldDelegate.trackColor != trackColor ||
+    return oldDelegate.radius != radius ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.trackColor != trackColor ||
         oldDelegate.progressColor != progressColor;
   }
 }

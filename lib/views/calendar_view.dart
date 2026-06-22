@@ -70,7 +70,7 @@ class _CalendarViewState extends State<CalendarView> {
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
-    return '${months[date.month - 1]} ${date.year}';
+    return months[date.month - 1];
   }
 
   @override
@@ -137,7 +137,7 @@ class _CalendarViewState extends State<CalendarView> {
   }
 
   Widget _buildMonthCalendar(BuildContext context) {
-    final List<String> weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+    final List<String> weekdays = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'];
     final List<DateTime> gridDays = _generateCalendarDays(_currentMonth);
     final int rowCount = gridDays.length ~/ 7;
 
@@ -153,99 +153,99 @@ class _CalendarViewState extends State<CalendarView> {
         );
       }
       rows.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: weekDays,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: weekDays,
         ),
       );
+      if (week < rowCount - 1) {
+        rows.add(const SizedBox(height: 4)); // 4px vertical gap between rows (matching SVG)
+      }
     }
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        children: [
-          // ── Navigation Header ──────────────────────────────────────
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Previous Month Button
-              GestureDetector(
-                onTap: _goToPrevMonth,
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: IrmaColors.brown20, width: 1.5),
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.chevron_left_rounded,
-                      color: IrmaColors.brown80,
-                      size: 18,
+    return Center(
+      child: Container(
+        width: 314, // Exact width of the SVG
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          children: [
+            // ── Navigation Header ──────────────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Previous Month Button
+                GestureDetector(
+                  onTap: _goToPrevMonth,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: IrmaColors.brown20, width: 1.5),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.chevron_left_rounded,
+                        color: IrmaColors.brown80,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              // Month Title
-              Text(
-                _formatMonthName(_currentMonth),
-                style: IrmaTextStyles.headingSmBold.copyWith(
-                  color: IrmaColors.brown100,
-                ),
-              ),
-              // Next Month Button
-              GestureDetector(
-                onTap: _goToNextMonth,
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: IrmaColors.brown20, width: 1.5),
+                // Month Title
+                Text(
+                  _formatMonthName(_currentMonth),
+                  style: IrmaTextStyles.headingSmBold.copyWith(
+                    color: IrmaColors.brown100,
                   ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      color: IrmaColors.brown80,
-                      size: 18,
+                ),
+                // Next Month Button
+                GestureDetector(
+                  onTap: _goToNextMonth,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: IrmaColors.brown20, width: 1.5),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.chevron_right_rounded,
+                        color: IrmaColors.brown80,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
+              ],
+            ),
+            const SizedBox(height: 20),
 
-          // ── Weekdays Labels Row ────────────────────────────────────
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: weekdays.map((day) {
-              return Expanded(
-                child: Center(
-                  child: Text(
-                    day,
-                    style: IrmaTextStyles.labelXsBold.copyWith(
-                      color: IrmaColors.gray60,
+            // ── Weekdays Labels Row ────────────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: weekdays.map((day) {
+                return Expanded(
+                  child: Center(
+                    child: Text(
+                      day,
+                      style: IrmaTextStyles.labelXsBold.copyWith(
+                        color: IrmaColors.gray60,
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 12),
-          const Divider(color: IrmaColors.brown20, height: 1),
-          const SizedBox(height: 12),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16), // Spacing between weekdays and grid (matching SVG)
 
-          // ── Days Grid ──────────────────────────────────────────────
-          Column(
-            children: rows,
-          ),
-        ],
+            // ── Days Grid ──────────────────────────────────────────────
+            Column(
+              children: rows,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -265,29 +265,31 @@ class _CalendarViewState extends State<CalendarView> {
                          DateTime.now().month == date.month &&
                          DateTime.now().day == date.day;
 
-    // Apply color & text rules based on state
+    // Apply decoration based on state
     BoxDecoration? decoration;
-    TextStyle textStyle;
-
-    if (!isCurrentMonth) {
-      // Days from other months
-      textStyle = IrmaTextStyles.labelMd.copyWith(color: IrmaColors.gray30);
-    } else if (isMenstruation) {
-      // Menstrual phase highlights: orange10 bg, orange50 text
+    if (isCurrentMonth && isMenstruation) {
       decoration = BoxDecoration(
         color: IrmaColors.orange10,
         borderRadius: BorderRadius.circular(8),
       );
-      textStyle = IrmaTextStyles.labelMdBold.copyWith(color: IrmaColors.orange50);
-    } else if (isSelected) {
-      // Selected day border outline
+    }
+
+    if (isSelected) {
       decoration = BoxDecoration(
+        color: isCurrentMonth && isMenstruation ? IrmaColors.orange10 : Colors.transparent,
         border: Border.all(color: IrmaColors.brown80, width: 1.5),
         borderRadius: BorderRadius.circular(8),
       );
-      textStyle = IrmaTextStyles.labelMdBold.copyWith(color: IrmaColors.brown100);
+    }
+
+    // Apply text style
+    TextStyle textStyle;
+    if (!isCurrentMonth) {
+      // Days from other months
+      textStyle = IrmaTextStyles.labelMd.copyWith(color: IrmaColors.gray30);
+    } else if (isMenstruation) {
+      textStyle = IrmaTextStyles.labelMdBold.copyWith(color: IrmaColors.orange50);
     } else {
-      // Normal day in current month
       textStyle = IrmaTextStyles.labelMdBold.copyWith(color: IrmaColors.brown100);
     }
 
@@ -302,8 +304,8 @@ class _CalendarViewState extends State<CalendarView> {
       },
       child: Center(
         child: Container(
-          width: 40,
-          height: 40,
+          width: 41.4, // Matches SVG cell width
+          height: 40.3, // Matches SVG cell height
           decoration: decoration,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

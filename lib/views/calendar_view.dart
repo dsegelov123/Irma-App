@@ -332,8 +332,10 @@ class _CalendarViewState extends State<CalendarView> {
       padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: 24),
       child: Row(
         children: [
+          // Card 1: Body Score
           Expanded(
             child: _buildScoreCard(
+              title: 'Body Score',
               backgroundColor: IrmaColors.green50,
               trackColor: IrmaColors.green40,
               activeColor: IrmaColors.green10,
@@ -342,8 +344,10 @@ class _CalendarViewState extends State<CalendarView> {
             ),
           ),
           const SizedBox(width: 16),
+          // Card 2: Mind Score
           Expanded(
             child: _buildScoreCard(
+              title: 'Mind Score',
               backgroundColor: IrmaColors.orange40,
               trackColor: IrmaColors.orange30,
               activeColor: IrmaColors.orange10,
@@ -352,8 +356,10 @@ class _CalendarViewState extends State<CalendarView> {
             ),
           ),
           const SizedBox(width: 16),
+          // Card 3: Soul Score
           Expanded(
             child: _buildScoreCard(
+              title: 'Soul Score',
               backgroundColor: IrmaColors.purple30,
               trackColor: IrmaColors.purple20,
               activeColor: IrmaColors.purple10,
@@ -367,6 +373,7 @@ class _CalendarViewState extends State<CalendarView> {
   }
 
   Widget _buildScoreCard({
+    required String title,
     required Color backgroundColor,
     required Color trackColor,
     required Color activeColor,
@@ -418,7 +425,7 @@ class _CalendarViewState extends State<CalendarView> {
           ),
           child: Stack(
             children: [
-              // Heart icon & label "Freud Score"
+              // Heart icon & label
               Positioned(
                 left: paddingLeft,
                 top: paddingTop,
@@ -434,7 +441,7 @@ class _CalendarViewState extends State<CalendarView> {
                     ),
                     SizedBox(width: labelGap),
                     Text(
-                      'Freud Score',
+                      title,
                       style: IrmaTextStyles.labelXsBold.copyWith(
                         color: Colors.white,
                         fontSize: labelFontSize,
@@ -457,6 +464,7 @@ class _CalendarViewState extends State<CalendarView> {
                       CustomPaint(
                         size: Size(circleSize, circleSize),
                         painter: _SegmentedScorePainter(
+                          progress: 0.80,
                           radius: radius,
                           strokeWidth: strokeWidth,
                           trackColor: trackColor,
@@ -536,12 +544,14 @@ class _HeartPainter extends CustomPainter {
 }
 
 class _SegmentedScorePainter extends CustomPainter {
+  final double progress;
   final double radius;
   final double strokeWidth;
   final Color trackColor;
   final Color progressColor;
 
   _SegmentedScorePainter({
+    required this.progress,
     required this.radius,
     required this.strokeWidth,
     required this.trackColor,
@@ -566,15 +576,18 @@ class _SegmentedScorePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     const double degToRad = math.pi / 180.0;
+    const double segmentSweep = 60.0 * degToRad; // 60 degrees sweep
+    const double gapSweep = 12.0 * degToRad;    // 12 degrees gap
+    const double totalSegmentAngle = segmentSweep + gapSweep; // 72 degrees total step
 
-    // Arc 1 (active)
-    canvas.drawArc(rect, -90 * degToRad, 135 * degToRad, false, activePaint);
-    // Arc 2 (active)
-    canvas.drawArc(rect, 60 * degToRad, 60 * degToRad, false, activePaint);
-    // Arc 3 (inactive)
-    canvas.drawArc(rect, 135 * degToRad, 75 * degToRad, false, inactivePaint);
-    // Arc 4 (inactive)
-    canvas.drawArc(rect, 225 * degToRad, 30 * degToRad, false, inactivePaint);
+    final int totalSegments = 5;
+    final int activeSegments = (progress * totalSegments).round();
+
+    for (int i = 0; i < totalSegments; i++) {
+      final double startAngle = -90.0 * degToRad + i * totalSegmentAngle;
+      final Paint paint = (i < activeSegments) ? activePaint : inactivePaint;
+      canvas.drawArc(rect, startAngle, segmentSweep, false, paint);
+    }
   }
 
   @override

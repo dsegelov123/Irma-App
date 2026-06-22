@@ -87,19 +87,20 @@ class _CalendarViewState extends State<CalendarView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Full-width white background section containing Top Bar clearance and Calendar
-                Container(
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      SizedBox(height: MediaQuery.of(context).padding.top + 100), // Clearance for Top Bar
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                        child: _buildMonthCalendar(context),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                // Top Bar clearance (brown10 background shows here)
+                SizedBox(height: MediaQuery.of(context).padding.top + 100),
+
+                // Contained white calendar card
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(IrmaRadius.stat),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.md),
+                    child: _buildMonthCalendar(context),
                   ),
                 ),
                 
@@ -110,8 +111,18 @@ class _CalendarViewState extends State<CalendarView> {
                 
                 const SizedBox(height: 24), // Gap
                 
-                // Daily Roundup Section (white background, full width)
-                _buildDailyRoundupSection(context),
+                // Daily Roundup Section (contained white card)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(IrmaRadius.stat),
+                    ),
+                    child: _buildDailyRoundupSection(context),
+                  ),
+                ),
                 
                 const SizedBox(height: 120), // Bottom nav bar clearance
               ],
@@ -299,20 +310,24 @@ class _CalendarViewState extends State<CalendarView> {
                          DateTime.now().month == date.month &&
                          DateTime.now().day == date.day;
 
+    // Check if a log entry exists for this date
+    final String logKey = 'log_${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    final bool hasLog = isCurrentMonth && StorageService.settingsBox.get(logKey) != null;
+
     final double cornerRadius = 8.0 * scale;
 
     // Apply decoration based on state
     BoxDecoration? decoration;
     if (isCurrentMonth && isMenstruation) {
       decoration = BoxDecoration(
-        color: IrmaColors.orange10,
+        color: IrmaColors.orange30,
         borderRadius: BorderRadius.circular(cornerRadius),
       );
     }
 
     if (isSelected) {
       decoration = BoxDecoration(
-        color: isCurrentMonth && isMenstruation ? IrmaColors.orange10 : Colors.transparent,
+        color: isCurrentMonth && isMenstruation ? IrmaColors.orange30 : Colors.transparent,
         border: Border.all(color: IrmaColors.brown80, width: 1.5 * scale),
         borderRadius: BorderRadius.circular(cornerRadius),
       );
@@ -324,17 +339,17 @@ class _CalendarViewState extends State<CalendarView> {
       // Days from other months
       textStyle = IrmaTextStyles.labelMd.copyWith(
         color: IrmaColors.gray30,
-        fontSize: 14.0 * scale,
+        fontSize: 11.0 * scale,
       );
     } else if (isMenstruation) {
       textStyle = IrmaTextStyles.labelMdBold.copyWith(
-        color: IrmaColors.orange50,
-        fontSize: 14.0 * scale,
+        color: IrmaColors.orange70,
+        fontSize: 11.0 * scale,
       );
     } else {
       textStyle = IrmaTextStyles.labelMdBold.copyWith(
         color: IrmaColors.brown100,
-        fontSize: 14.0 * scale,
+        fontSize: 11.0 * scale,
       );
     }
 
@@ -342,6 +357,7 @@ class _CalendarViewState extends State<CalendarView> {
     final double cellHeight = 40.3 * scale;
     final double todayDotSize = 4.0 * scale;
     final double todayDotGap = 2.0 * scale;
+    final double logDotSize = 4.0 * scale;
 
     return GestureDetector(
       onTap: () {
@@ -357,24 +373,40 @@ class _CalendarViewState extends State<CalendarView> {
           width: cellWidth,
           height: cellHeight,
           decoration: decoration,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
+              // Date number — always perfectly centred
               Text(
                 '${date.day}',
                 style: textStyle,
               ),
-              if (isToday) ...[
-                SizedBox(height: todayDotGap),
-                Container(
-                  width: todayDotSize,
-                  height: todayDotSize,
-                  decoration: BoxDecoration(
-                    color: isMenstruation ? IrmaColors.orange50 : IrmaColors.brown80,
-                    shape: BoxShape.circle,
+              // Green log dot — pinned near top
+              if (hasLog)
+                Positioned(
+                  top: 3 * scale,
+                  child: Container(
+                    width: logDotSize,
+                    height: logDotSize,
+                    decoration: const BoxDecoration(
+                      color: IrmaColors.green50,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
-              ],
+              // Today dot — pinned near bottom
+              if (isToday)
+                Positioned(
+                  bottom: 3 * scale,
+                  child: Container(
+                    width: todayDotSize,
+                    height: todayDotSize,
+                    decoration: BoxDecoration(
+                      color: isMenstruation ? IrmaColors.orange70 : IrmaColors.brown80,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -882,47 +914,78 @@ class _CalendarViewState extends State<CalendarView> {
     }
 
     if (logData == null) {
-      return Container(
-        width: double.infinity,
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.lg),
+      return Padding(
+        padding: const EdgeInsets.all(IrmaSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _formatDateWithOrdinal(_selectedDate),
-                  style: IrmaTextStyles.headingSmBold.copyWith(
-                    color: IrmaColors.brown100,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: _openLogEntryEditor,
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      color: IrmaColors.brown10,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.add_rounded,
-                        color: IrmaColors.brown80,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            // Date title
+            Text(
+              _formatDateWithOrdinal(_selectedDate),
+              style: IrmaTextStyles.headingSmBold.copyWith(
+                color: IrmaColors.brown100,
+              ),
             ),
             const SizedBox(height: 16),
-            Text(
-              'No daily log recorded for this day.',
-              style: IrmaTextStyles.paraSm.copyWith(
-                color: IrmaColors.gray50,
+            // Purple10 inner box with Irma image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(IrmaRadius.log),
+              child: Container(
+                width: double.infinity,
+                height: 140,
+                color: IrmaColors.purple10,
+                child: Stack(
+                  children: [
+                    // Text — vertically centred
+                    Positioned.fill(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            FractionallySizedBox(
+                              widthFactor: 0.65,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'It seems that there\'s no daily log recorded for this day.',
+                                style: IrmaTextStyles.paraSm.copyWith(
+                                  color: IrmaColors.purple50,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            FractionallySizedBox(
+                              widthFactor: 0.65,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Don\'t forget to fill it out for me',
+                                style: IrmaTextStyles.paraSm.copyWith(
+                                  color: IrmaColors.purple50,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Irma — bottom right overlay
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Image.asset(
+                        'assets/images/irma_reminder2.png',
+                        height: 130,
+                        fit: BoxFit.contain,
+                        alignment: Alignment.bottomRight,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -930,10 +993,9 @@ class _CalendarViewState extends State<CalendarView> {
       );
     }
 
-    return Container(
-      width: double.infinity,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.lg),
+
+    return Padding(
+      padding: const EdgeInsets.all(IrmaSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

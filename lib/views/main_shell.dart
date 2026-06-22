@@ -3,7 +3,7 @@ import 'package:irma/views/dashboard_view.dart';
 import 'package:irma/views/daily_metrics_view.dart';
 import 'package:irma/views/add_log_view.dart';
 import 'package:irma/views/chat_view.dart';
-import 'package:irma/views/therapy_chatbot_view.dart';
+
 import 'package:irma/views/profile_view.dart';
 import 'package:irma/views/history_view.dart';
 import 'package:irma/views/doctor_view.dart';
@@ -57,17 +57,8 @@ class _MainShellState extends State<MainShell> {
           );
           break;
         case 1:
-          bodyContent = TherapyChatbotView(
-            onStartChatPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ChatView(
-                    onBackPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              );
-            },
+          bodyContent = ChatView(
+            onBackPressed: () => setState(() => _activeTab = 0),
           );
           break;
         case 2:

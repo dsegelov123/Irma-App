@@ -155,6 +155,9 @@ class CycleEngine {
 
   /// Maps a specific cycle day number to one of the 5 physiological states (Section 7.1).
   static String getPhaseForDay(int day, int cycleLength, int periodDuration) {
+    // Days ≤ 0 are before the cycle anchor (prior cycle) — do not classify
+    if (day <= 0) return 'Unknown';
+
     if (day <= periodDuration) {
       return 'Menstruation';
     }

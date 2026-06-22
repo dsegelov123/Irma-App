@@ -73,6 +73,8 @@ flutter:
     - assets/images/main_ai_image.png
     - assets/images/therapy_header_bg.svg
     - assets/images/therapy_leaves.svg
+    - assets/images/irma_reminder.png
+    - assets/images/irma_reminder2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

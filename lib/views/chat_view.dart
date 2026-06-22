@@ -381,9 +381,12 @@ class _ChatViewState extends State<ChatView> {
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: IrmaSpacing.lg,
-                          vertical: IrmaSpacing.md,
+                        padding: EdgeInsets.only(
+                          left: IrmaSpacing.lg,
+                          right: IrmaSpacing.lg,
+                          top: IrmaSpacing.md,
+                          // Extra clearance for floating input bar (~72px) + 12px gap
+                          bottom: 84 + MediaQuery.of(context).padding.bottom,
                         ),
                         itemCount: _messages.length + (_isIrmaTyping ? 1 : 0),
                         itemBuilder: (context, index) {
@@ -396,140 +399,9 @@ class _ChatViewState extends State<ChatView> {
                       ),
               ),
 
-              // ── Bottom Input Bar (height 110px + padding) ──────────────────
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(32),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF4B3425).withValues(alpha: 0.05),
-                      offset: const Offset(0, 0),
-                      blurRadius: 0,
-                    ),
-                    BoxShadow(
-                      color: const Color(0xFF4B3425).withValues(alpha: 0.05),
-                      offset: const Offset(0, -5),
-                      blurRadius: 11,
-                    ),
-                    BoxShadow(
-                      color: const Color(0xFF4B3425).withValues(alpha: 0.04),
-                      offset: const Offset(0, -20),
-                      blurRadius: 20,
-                    ),
-                    BoxShadow(
-                      color: const Color(0xFF4B3425).withValues(alpha: 0.03),
-                      offset: const Offset(0, -45),
-                      blurRadius: 27,
-                    ),
-                    BoxShadow(
-                      color: const Color(0xFF4B3425).withValues(alpha: 0.01),
-                      offset: const Offset(0, -80),
-                      blurRadius: 32,
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.only(
-                  top: 12,
-                  left: 12,
-                  right: 12,
-                  bottom: 16,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Input Field Box (x=12, width 279, height 48)
-                    Expanded(
-                      child: TextField(
-                        controller: _textController,
-                        onSubmitted: (_) => _sendMessage(),
-                        maxLines: 8,
-                        minLines: 1,
-                        keyboardType: TextInputType.multiline,
-                        textAlignVertical: TextAlignVertical.center,
-                        cursorColor: const Color(0xFF926247),
-                        style: IrmaTextStyles.labelMdBold.copyWith(
-                          color: IrmaColors.brown80,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Type to start chatting...',
-                          hintStyle: IrmaTextStyles.labelMdBold.copyWith(
-                            color: IrmaColors.brown70,
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFF7F4F2),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 14,
-                          ),
-                          isDense: true,
-                          prefixIcon: Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 10.0),
-                            child: SvgPicture.string(
-                              '''<svg width="20" height="20" viewBox="8 14 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M18.0001 17.3332C14.3182 17.3332 11.3334 20.3179 11.3334 23.9998C11.3334 27.6817 14.3182 30.6665 18.0001 30.6665C21.682 30.6665 24.6667 27.6817 24.6667 23.9998C24.6667 20.3179 21.682 17.3332 18.0001 17.3332ZM9.66675 23.9998C9.66675 19.3975 13.3977 15.6665 18.0001 15.6665C22.6025 15.6665 26.3334 19.3975 26.3334 23.9998C26.3334 28.6022 22.6025 32.3332 18.0001 32.3332C13.3977 32.3332 9.66675 28.6022 9.66675 23.9998Z" fill="#4B3425"/>
-                              </svg>''',
-                              width: 20,
-                              height: 20,
-                            ),
-                          ),
-                          prefixIconConstraints: const BoxConstraints(
-                            minWidth: 38,
-                            minHeight: 48,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                            ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16), // Spacing between input and send button
-                    // Send Button (48x48 Green 50 circle at x=315)
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: const BoxDecoration(
-                        color: IrmaColors.green50,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.subdirectory_arrow_left_rounded,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        onPressed: _sendMessage,
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
+          // ── Top Bar ────────────────────────────────────────────────────
           Positioned(
             top: 0,
             left: 0,
@@ -537,6 +409,101 @@ class _ChatViewState extends State<ChatView> {
             child: IrmaTopBar(
               title: 'Chat with Irma',
               onBackPressed: widget.onBackPressed,
+            ),
+          ),
+
+          // ── Floating Input Bar ─────────────────────────────────────────
+          Positioned(
+            left: IrmaSpacing.lg,
+            right: IrmaSpacing.lg,
+            // Sit above the FAB (protrudes 32px above nav bar) + 12px gap
+            bottom: MediaQuery.of(context).padding.bottom + 44,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(IrmaRadius.pill),
+                boxShadow: [
+                  BoxShadow(
+                    color: IrmaColors.brown80.withValues(alpha: 0.08),
+                    blurRadius: 24,
+                    offset: const Offset(0, 8),
+                  ),
+                  BoxShadow(
+                    color: IrmaColors.brown80.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Text field
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      onSubmitted: (_) => _sendMessage(),
+                      maxLines: 5,
+                      minLines: 1,
+                      keyboardType: TextInputType.multiline,
+                      textAlignVertical: TextAlignVertical.center,
+                      cursorColor: IrmaColors.brown80,
+                      style: IrmaTextStyles.labelMdBold.copyWith(
+                        color: IrmaColors.brown80,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Type to start chatting...',
+                        hintStyle: IrmaTextStyles.labelMd.copyWith(
+                          color: IrmaColors.brown40,
+                        ),
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        isDense: true,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(left: 6.0, right: 8.0),
+                          child: SvgPicture.string(
+                            '''<svg width="20" height="20" viewBox="8 14 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd" clip-rule="evenodd" d="M18.0001 17.3332C14.3182 17.3332 11.3334 20.3179 11.3334 23.9998C11.3334 27.6817 14.3182 30.6665 18.0001 30.6665C21.682 30.6665 24.6667 27.6817 24.6667 23.9998C24.6667 20.3179 21.682 17.3332 18.0001 17.3332ZM9.66675 23.9998C9.66675 19.3975 13.3977 15.6665 18.0001 15.6665C22.6025 15.6665 26.3334 19.3975 26.3334 23.9998C26.3334 28.6022 22.6025 32.3332 18.0001 32.3332C13.3977 32.3332 9.66675 28.6022 9.66675 23.9998Z" fill="#4B3425"/>
+                            </svg>''',
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 38,
+                          minHeight: 48,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Send button
+                  GestureDetector(
+                    onTap: _sendMessage,
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: const BoxDecoration(
+                        color: IrmaColors.green50,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.subdirectory_arrow_left_rounded,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

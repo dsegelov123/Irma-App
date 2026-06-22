@@ -80,28 +80,33 @@ class _CalendarViewState extends State<CalendarView> {
       body: Stack(
         children: [
           // ── Scrollable Content ─────────────────────────────────────
-          SafeArea(
-            bottom: false,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 100), // Clearance for Top Bar
-                  
-                  // Month Calendar Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                    child: _buildMonthCalendar(context),
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Full-width white background section containing Top Bar clearance and Calendar
+                Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      SizedBox(height: MediaQuery.of(context).padding.top + 100), // Clearance for Top Bar
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
+                        child: _buildMonthCalendar(context),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
-                  
-                  const SizedBox(height: 24), // Gap
-                  
-                  // Score Section (full width container with white background)
-                  _buildScoreSection(context),
-                  
-                  const SizedBox(height: 120), // Bottom nav bar clearance
-                ],
-              ),
+                ),
+                
+                const SizedBox(height: 24), // Gap
+                
+                // Score Section (transparent background, showing brown10 underneath)
+                _buildScoreSection(context),
+                
+                const SizedBox(height: 120), // Bottom nav bar clearance
+              ],
             ),
           ),
 
@@ -328,7 +333,7 @@ class _CalendarViewState extends State<CalendarView> {
   Widget _buildScoreSection(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: Colors.white,
+      color: Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: 24),
       child: Row(
         children: [

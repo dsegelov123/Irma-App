@@ -7,14 +7,17 @@ import 'package:irma/widgets/theme.dart';
 import 'package:irma/widgets/cycle_circular_indicator.dart';
 import 'package:irma/widgets/irma_top_bar.dart';
 import 'package:irma/views/history_view.dart';
+import 'package:irma/views/calendar_view.dart';
 
 class DashboardView extends StatefulWidget {
   final VoidCallback onLogSymptomsPressed;
   final VoidCallback onProfilePressed;
+  final ValueChanged<int> onTabChanged;
   const DashboardView({
     super.key,
     required this.onLogSymptomsPressed,
     required this.onProfilePressed,
+    required this.onTabChanged,
   });
 
   @override
@@ -169,11 +172,14 @@ class _DashboardViewState extends State<DashboardView> {
                 actions: [
                   IrmaTopBarActionButton(
                     icon: Icons.calendar_today_rounded,
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      final result = await Navigator.push<int?>(
                         context,
-                        MaterialPageRoute(builder: (_) => const HistoryView()),
+                        MaterialPageRoute(builder: (_) => const CalendarView()),
                       );
+                      if (result != null) {
+                        widget.onTabChanged(result);
+                      }
                     },
                   ),
                 ],

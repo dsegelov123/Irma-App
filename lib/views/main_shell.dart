@@ -44,6 +44,16 @@ class _MainShellState extends State<MainShell> {
           bodyContent = DashboardView(
             onLogSymptomsPressed: () => setState(() => _showLogView = true),
             onProfilePressed: () => setState(() => _activeTab = 3),
+            onTabChanged: (index) {
+              setState(() {
+                if (index == -1) {
+                  _showLogView = true;
+                } else {
+                  _showLogView = false;
+                  _activeTab = index;
+                }
+              });
+            },
           );
           break;
         case 1:
@@ -72,6 +82,16 @@ class _MainShellState extends State<MainShell> {
           bodyContent = DashboardView(
             onLogSymptomsPressed: () => setState(() => _showLogView = true),
             onProfilePressed: () => setState(() => _activeTab = 3),
+            onTabChanged: (index) {
+              setState(() {
+                if (index == -1) {
+                  _showLogView = true;
+                } else {
+                  _showLogView = false;
+                  _activeTab = index;
+                }
+              });
+            },
           );
       }
     }
@@ -219,7 +239,7 @@ class _MainShellState extends State<MainShell> {
       ),
 
       // ── Bottom Tab Bar (§12) ─────────────────────────────────────
-      bottomNavigationBar: _showLogView ? null : _BottomTabBar(
+      bottomNavigationBar: _showLogView ? null : IrmaBottomTabBar(
         activeTab: _activeTab,
         onTap: (i) => setState(() {
           _showLogView = false;
@@ -318,12 +338,12 @@ class _NotchedTabBarPainter extends CustomPainter {
 
 // ── Custom bottom tab bar widget ────────────────────────────────────
 
-class _BottomTabBar extends StatelessWidget {
+class IrmaBottomTabBar extends StatelessWidget {
   final int activeTab;
   final ValueChanged<int> onTap;
   final VoidCallback onLogSymptomsPressed;
 
-  const _BottomTabBar({
+  const IrmaBottomTabBar({
     required this.activeTab,
     required this.onTap,
     required this.onLogSymptomsPressed,

@@ -1,9 +1,12 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:irma/services/cycle_engine.dart';
+import 'package:irma/services/storage_service.dart';
 import 'package:irma/widgets/theme.dart';
 import 'package:irma/widgets/irma_top_bar.dart';
 import 'package:irma/views/main_shell.dart';
+import 'package:irma/views/add_log_view.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({super.key});
@@ -105,6 +108,11 @@ class _CalendarViewState extends State<CalendarView> {
                 // Score Section (transparent background, showing brown10 underneath)
                 _buildScoreSection(context),
                 
+                const SizedBox(height: 24), // Gap
+                
+                // Daily Roundup Section (white background, full width)
+                _buildDailyRoundupSection(context),
+                
                 const SizedBox(height: 120), // Bottom nav bar clearance
               ],
             ),
@@ -137,120 +145,146 @@ class _CalendarViewState extends State<CalendarView> {
   }
 
   Widget _buildMonthCalendar(BuildContext context) {
-    final List<String> weekdays = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'];
-    final List<DateTime> gridDays = _generateCalendarDays(_currentMonth);
-    final int rowCount = gridDays.length ~/ 7;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double availableWidth = constraints.maxWidth;
+        final double scale = availableWidth / 314.0;
 
-    final List<Widget> rows = [];
-    for (int week = 0; week < rowCount; week++) {
-      final List<Widget> weekDays = [];
-      for (int dayIndex = 0; dayIndex < 7; dayIndex++) {
-        final DateTime date = gridDays[week * 7 + dayIndex];
-        weekDays.add(
-          Expanded(
-            child: _buildDayCell(date),
+        final List<String> weekdays = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'];
+        final List<DateTime> gridDays = _generateCalendarDays(_currentMonth);
+        final int rowCount = gridDays.length ~/ 7;
+
+        final double cellGap = 4.0 * scale;
+
+        final List<Widget> rows = [];
+        for (int week = 0; week < rowCount; week++) {
+          final List<Widget> weekDays = [];
+          for (int dayIndex = 0; dayIndex < 7; dayIndex++) {
+            final DateTime date = gridDays[week * 7 + dayIndex];
+            weekDays.add(
+              _buildDayCell(date, scale),
+            );
+            if (dayIndex < 6) {
+              weekDays.add(SizedBox(width: cellGap));
+            }
+          }
+          rows.add(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: weekDays,
+            ),
+          );
+          if (week < rowCount - 1) {
+            rows.add(SizedBox(height: cellGap));
+          }
+        }
+
+        final double chevronSize = 32.0 * scale;
+        final double iconSize = 18.0 * scale;
+        final double titleFontSize = 20.0 * scale;
+        final double headerGap = 20.0 * scale;
+        final double weekdayFontSize = 10.0 * scale;
+        final double weekdayGap = 16.0 * scale;
+
+        return Container(
+          width: availableWidth,
+          padding: EdgeInsets.symmetric(vertical: 16 * scale),
+          child: Column(
+            children: [
+              // ── Navigation Header ──────────────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Previous Month Button
+                  GestureDetector(
+                    onTap: _goToPrevMonth,
+                    child: Container(
+                      width: chevronSize,
+                      height: chevronSize,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8 * scale),
+                        border: Border.all(color: IrmaColors.brown20, width: 1.5 * scale),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.chevron_left_rounded,
+                          color: IrmaColors.brown80,
+                          size: iconSize,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Month Title
+                  Text(
+                    _formatMonthName(_currentMonth),
+                    style: IrmaTextStyles.headingSmBold.copyWith(
+                      color: IrmaColors.brown100,
+                      fontSize: titleFontSize,
+                    ),
+                  ),
+                  // Next Month Button
+                  GestureDetector(
+                    onTap: _goToNextMonth,
+                    child: Container(
+                      width: chevronSize,
+                      height: chevronSize,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8 * scale),
+                        border: Border.all(color: IrmaColors.brown20, width: 1.5 * scale),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: IrmaColors.brown80,
+                          size: iconSize,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: headerGap),
+
+              // ── Weekdays Labels Row ────────────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(7, (index) {
+                  final String day = weekdays[index];
+                  final double cellWidth = 41.428 * scale;
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: cellWidth,
+                        child: Center(
+                          child: Text(
+                            day,
+                            style: IrmaTextStyles.labelXsBold.copyWith(
+                              color: IrmaColors.gray60,
+                              fontSize: weekdayFontSize,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (index < 6) SizedBox(width: cellGap),
+                    ],
+                  );
+                }),
+              ),
+              SizedBox(height: weekdayGap),
+
+              // ── Days Grid ──────────────────────────────────────────────
+              Column(
+                children: rows,
+              ),
+            ],
           ),
         );
-      }
-      rows.add(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: weekDays,
-        ),
-      );
-      if (week < rowCount - 1) {
-        rows.add(const SizedBox(height: 4)); // 4px vertical gap between rows (matching SVG)
-      }
-    }
-
-    return Center(
-      child: Container(
-        width: 314, // Exact width of the SVG
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          children: [
-            // ── Navigation Header ──────────────────────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Previous Month Button
-                GestureDetector(
-                  onTap: _goToPrevMonth,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: IrmaColors.brown20, width: 1.5),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.chevron_left_rounded,
-                        color: IrmaColors.brown80,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                ),
-                // Month Title
-                Text(
-                  _formatMonthName(_currentMonth),
-                  style: IrmaTextStyles.headingSmBold.copyWith(
-                    color: IrmaColors.brown100,
-                  ),
-                ),
-                // Next Month Button
-                GestureDetector(
-                  onTap: _goToNextMonth,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: IrmaColors.brown20, width: 1.5),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.chevron_right_rounded,
-                        color: IrmaColors.brown80,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // ── Weekdays Labels Row ────────────────────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: weekdays.map((day) {
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: IrmaTextStyles.labelXsBold.copyWith(
-                        color: IrmaColors.gray60,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16), // Spacing between weekdays and grid (matching SVG)
-
-            // ── Days Grid ──────────────────────────────────────────────
-            Column(
-              children: rows,
-            ),
-          ],
-        ),
-      ),
+      },
     );
   }
 
-  Widget _buildDayCell(DateTime date) {
+  Widget _buildDayCell(DateTime date, double scale) {
     final bool isCurrentMonth = date.month == _currentMonth.month && date.year == _currentMonth.year;
     
     // Cycle predictions for the date
@@ -265,20 +299,22 @@ class _CalendarViewState extends State<CalendarView> {
                          DateTime.now().month == date.month &&
                          DateTime.now().day == date.day;
 
+    final double cornerRadius = 8.0 * scale;
+
     // Apply decoration based on state
     BoxDecoration? decoration;
     if (isCurrentMonth && isMenstruation) {
       decoration = BoxDecoration(
         color: IrmaColors.orange10,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(cornerRadius),
       );
     }
 
     if (isSelected) {
       decoration = BoxDecoration(
         color: isCurrentMonth && isMenstruation ? IrmaColors.orange10 : Colors.transparent,
-        border: Border.all(color: IrmaColors.brown80, width: 1.5),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: IrmaColors.brown80, width: 1.5 * scale),
+        borderRadius: BorderRadius.circular(cornerRadius),
       );
     }
 
@@ -286,12 +322,26 @@ class _CalendarViewState extends State<CalendarView> {
     TextStyle textStyle;
     if (!isCurrentMonth) {
       // Days from other months
-      textStyle = IrmaTextStyles.labelMd.copyWith(color: IrmaColors.gray30);
+      textStyle = IrmaTextStyles.labelMd.copyWith(
+        color: IrmaColors.gray30,
+        fontSize: 14.0 * scale,
+      );
     } else if (isMenstruation) {
-      textStyle = IrmaTextStyles.labelMdBold.copyWith(color: IrmaColors.orange50);
+      textStyle = IrmaTextStyles.labelMdBold.copyWith(
+        color: IrmaColors.orange50,
+        fontSize: 14.0 * scale,
+      );
     } else {
-      textStyle = IrmaTextStyles.labelMdBold.copyWith(color: IrmaColors.brown100);
+      textStyle = IrmaTextStyles.labelMdBold.copyWith(
+        color: IrmaColors.brown100,
+        fontSize: 14.0 * scale,
+      );
     }
+
+    final double cellWidth = 41.428 * scale;
+    final double cellHeight = 40.3 * scale;
+    final double todayDotSize = 4.0 * scale;
+    final double todayDotGap = 2.0 * scale;
 
     return GestureDetector(
       onTap: () {
@@ -304,8 +354,8 @@ class _CalendarViewState extends State<CalendarView> {
       },
       child: Center(
         child: Container(
-          width: 41.4, // Matches SVG cell width
-          height: 40.3, // Matches SVG cell height
+          width: cellWidth,
+          height: cellHeight,
           decoration: decoration,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -315,10 +365,10 @@ class _CalendarViewState extends State<CalendarView> {
                 style: textStyle,
               ),
               if (isToday) ...[
-                const SizedBox(height: 2),
+                SizedBox(height: todayDotGap),
                 Container(
-                  width: 4,
-                  height: 4,
+                  width: todayDotSize,
+                  height: todayDotSize,
                   decoration: BoxDecoration(
                     color: isMenstruation ? IrmaColors.orange50 : IrmaColors.brown80,
                     shape: BoxShape.circle,
@@ -512,6 +562,420 @@ class _CalendarViewState extends State<CalendarView> {
           ),
         );
       },
+    );
+  }
+
+  void _openLogEntryEditor() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddLogView(
+          initialDate: _selectedDate,
+          onLogSaved: () => Navigator.pop(context),
+          onBackPressed: () => Navigator.pop(context),
+        ),
+      ),
+    );
+    setState(() {});
+  }
+
+  String _formatDateWithOrdinal(DateTime date) {
+    final day = date.day;
+    String suffix = 'th';
+    if (day >= 11 && day <= 13) {
+      suffix = 'th';
+    } else {
+      switch (day % 10) {
+        case 1: suffix = 'st'; break;
+        case 2: suffix = 'nd'; break;
+        case 3: suffix = 'rd'; break;
+        default: suffix = 'th';
+      }
+    }
+    final months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return '$day$suffix ${months[date.month - 1]} ${date.year}';
+  }
+
+  String _formatWeight(double? value, String unit, double? pounds) {
+    if (value == null) return '';
+    if (unit == 'kg') {
+      return '${value.toStringAsFixed(1)} kg';
+    } else if (unit == 'lbs') {
+      return '${value.toStringAsFixed(1)} lbs';
+    } else if (unit == 'st;lb') {
+      final st = value.toInt();
+      final lb = pounds?.toInt() ?? 0;
+      return '$st st $lb lb';
+    }
+    return '${value.toStringAsFixed(1)} kg';
+  }
+
+  Widget _buildOptionCircle(IconData icon) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: const BoxDecoration(
+        color: IrmaColors.brown10,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Icon(
+          icon,
+          size: 16,
+          color: IrmaColors.orange50,
+        ),
+      ),
+    );
+  }
+
+  TableRow _buildRoundupRow(String title, List<Widget> icons) {
+    final List<Widget> spacedIcons = [];
+    for (int i = 0; i < icons.length; i++) {
+      spacedIcons.add(icons[i]);
+      if (i < icons.length - 1) {
+        spacedIcons.add(const SizedBox(width: 8));
+      }
+    }
+    return _buildRoundupRowWidget(
+      title,
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: spacedIcons,
+      ),
+    );
+  }
+
+  TableRow _buildRoundupRowWidget(String title, Widget valueWidget) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              title,
+              style: IrmaTextStyles.labelMd.copyWith(
+                color: IrmaColors.brown80,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: valueWidget,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDailyRoundupSection(BuildContext context) {
+    final box = StorageService.settingsBox;
+    final String dateKey = 'log_${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
+    final logData = box.get(dateKey);
+
+    List<String> symptoms = [];
+    String note = '';
+    double? weightValue = null;
+    String weightUnit = 'kg';
+    double? weightPounds = null;
+
+    if (logData != null && logData is Map) {
+      final List<dynamic>? list = logData['symptoms'] as List<dynamic>?;
+      if (list != null) {
+        symptoms = list.map((e) => e.toString()).toList();
+      }
+      note = logData['note'] as String? ?? '';
+      weightValue = logData['weight_value'] as double?;
+      weightUnit = logData['weight_unit'] as String? ?? 'kg';
+      weightPounds = logData['weight_pounds'] as double?;
+    }
+
+    final Map<String, List<String>> categorySelections = {};
+    for (final s in symptoms) {
+      final parts = s.split(': ');
+      if (parts.length == 2) {
+        final category = parts[0];
+        final option = parts[1];
+        if (option.isNotEmpty && option != 'None' && option != 'Typical') {
+          categorySelections.putIfAbsent(category, () => []).add(option);
+        }
+      }
+    }
+
+    final List<TableRow> tableRows = [];
+
+    if (categorySelections.containsKey('Mood')) {
+      final List<Widget> moodIcons = [];
+      for (final option in categorySelections['Mood']!) {
+        final iconKey = 'Mood: $option';
+        final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.smiley();
+        moodIcons.add(_buildOptionCircle(icon));
+      }
+      tableRows.add(_buildRoundupRow('Mood', moodIcons));
+    }
+
+    if (categorySelections.containsKey('Menstrual Flow')) {
+      final option = categorySelections['Menstrual Flow']!.first;
+      final iconKey = 'Menstrual Flow: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.drop();
+      tableRows.add(_buildRoundupRow('Menstrual Flow', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Abdominal Cramps')) {
+      final option = categorySelections['Abdominal Cramps']!.first;
+      final iconKey = 'Abdominal Cramps: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.sparkle();
+      tableRows.add(_buildRoundupRow('Cramps', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Somatic Pain')) {
+      final List<Widget> painIcons = [];
+      for (final option in categorySelections['Somatic Pain']!) {
+        final iconKey = 'Somatic Pain: $option';
+        final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.pulse();
+        painIcons.add(_buildOptionCircle(icon));
+      }
+      tableRows.add(_buildRoundupRow('Somatic Pain', painIcons));
+    }
+
+    if (categorySelections.containsKey('Physical Energy')) {
+      final option = categorySelections['Physical Energy']!.first;
+      final iconKey = 'Physical Energy: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.batteryMedium();
+      tableRows.add(_buildRoundupRow('Energy', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Gastrointestinal Activity')) {
+      final List<Widget> giIcons = [];
+      for (final option in categorySelections['Gastrointestinal Activity']!) {
+        final iconKey = 'Gastrointestinal Activity: $option';
+        final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.wind();
+        giIcons.add(_buildOptionCircle(icon));
+      }
+      tableRows.add(_buildRoundupRow('Digestive', giIcons));
+    }
+
+    if (categorySelections.containsKey('Sleep Quality')) {
+      final option = categorySelections['Sleep Quality']!.first;
+      final iconKey = 'Sleep Quality: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.moon();
+      tableRows.add(_buildRoundupRow('Sleep', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Mental Focus')) {
+      final option = categorySelections['Mental Focus']!.first;
+      final iconKey = 'Mental Focus: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.target();
+      tableRows.add(_buildRoundupRow('Focus', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Exercise')) {
+      final option = categorySelections['Exercise']!.first;
+      final iconKey = 'Exercise: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.bicycle();
+      tableRows.add(_buildRoundupRow('Exercise', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Libido')) {
+      final option = categorySelections['Libido']!.first;
+      final iconKey = 'Libido: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.heart();
+      tableRows.add(_buildRoundupRow('Libido', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Sexual Activity')) {
+      final List<Widget> sexIcons = [];
+      for (final option in categorySelections['Sexual Activity']!) {
+        final iconKey = 'Sexual Activity: $option';
+        final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.users();
+        sexIcons.add(_buildOptionCircle(icon));
+      }
+      tableRows.add(_buildRoundupRow('Sexual Activity', sexIcons));
+    }
+
+    if (categorySelections.containsKey('Social Bandwidth')) {
+      final option = categorySelections['Social Bandwidth']!.first;
+      final iconKey = 'Social Bandwidth: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.user();
+      tableRows.add(_buildRoundupRow('Social', [_buildOptionCircle(icon)]));
+    }
+
+    if (categorySelections.containsKey('Appetite')) {
+      final List<Widget> appetiteIcons = [];
+      for (final option in categorySelections['Appetite']!) {
+        final iconKey = 'Appetite: $option';
+        final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.cookie();
+        appetiteIcons.add(_buildOptionCircle(icon));
+      }
+      tableRows.add(_buildRoundupRow('Appetite', appetiteIcons));
+    }
+
+    if (categorySelections.containsKey('Alcohol')) {
+      final option = categorySelections['Alcohol']!.first;
+      final iconKey = 'Alcohol: $option';
+      final icon = AddLogView.symptomIcons[iconKey] ?? PhosphorIcons.beerBottle();
+      tableRows.add(_buildRoundupRow('Alcohol', [_buildOptionCircle(icon)]));
+    }
+
+    if (weightValue != null) {
+      tableRows.add(
+        _buildRoundupRowWidget(
+          'Weight',
+          Row(
+            children: [
+              _buildOptionCircle(PhosphorIcons.scales()),
+              const SizedBox(width: 8),
+              Text(
+                _formatWeight(weightValue, weightUnit, weightPounds),
+                style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown100),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (logData != null) {
+      tableRows.add(
+        _buildRoundupRowWidget(
+          'Water',
+          Row(
+            children: [
+              _buildOptionCircle(PhosphorIcons.drop()),
+              const SizedBox(width: 8),
+              Text(
+                '750 ml / 2000 ml',
+                style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown100),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (note.isNotEmpty) {
+      tableRows.add(
+        _buildRoundupRowWidget(
+          'Note',
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildOptionCircle(PhosphorIcons.note()),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  note,
+                  style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown100),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (logData == null) {
+      return Container(
+        width: double.infinity,
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _formatDateWithOrdinal(_selectedDate),
+                  style: IrmaTextStyles.headingSmBold.copyWith(
+                    color: IrmaColors.brown100,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: _openLogEntryEditor,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      color: IrmaColors.brown10,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.add_rounded,
+                        color: IrmaColors.brown80,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No daily log recorded for this day.',
+              style: IrmaTextStyles.paraSm.copyWith(
+                color: IrmaColors.gray50,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _formatDateWithOrdinal(_selectedDate),
+                style: IrmaTextStyles.headingSmBold.copyWith(
+                  color: IrmaColors.brown100,
+                ),
+              ),
+              GestureDetector(
+                onTap: _openLogEntryEditor,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: IrmaColors.brown10,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.edit_outlined,
+                      color: IrmaColors.brown80,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Table(
+            columnWidths: const {
+              0: FractionColumnWidth(0.3),
+              1: FractionColumnWidth(0.7),
+            },
+            children: tableRows,
+          ),
+        ],
+      ),
     );
   }
 }

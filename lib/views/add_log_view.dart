@@ -8,7 +8,15 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 class AddLogView extends StatefulWidget {
   final VoidCallback onLogSaved;
   final VoidCallback onBackPressed;
-  const AddLogView({super.key, required this.onLogSaved, required this.onBackPressed});
+  final DateTime? initialDate;
+  const AddLogView({
+    super.key,
+    required this.onLogSaved,
+    required this.onBackPressed,
+    this.initialDate,
+  });
+
+  static Map<String, IconData> get symptomIcons => _AddLogViewState.symptomIcons;
 
   @override
   State<AddLogView> createState() => _AddLogViewState();
@@ -57,7 +65,7 @@ class _AddLogViewState extends State<AddLogView> {
   final List<String> _alcohols = ['None', 'Light', 'Typical', 'Heavy'];
 
   // Icon Maps
-  static final Map<String, IconData> _symptomIcons = {
+  static final Map<String, IconData> symptomIcons = {
     // Mood
     'Mood: Happy': PhosphorIcons.smiley(),
     'Mood: Calm': PhosphorIcons.smileyMeh(),
@@ -157,6 +165,9 @@ class _AddLogViewState extends State<AddLogView> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialDate != null) {
+      _selectedDate = widget.initialDate!;
+    }
     _noteController = TextEditingController();
     _weightController = TextEditingController();
     _loadExistingLog();
@@ -418,8 +429,8 @@ class _AddLogViewState extends State<AddLogView> {
 
   IconData _getIconForOption(String opt, String category) {
     final key = '$category: $opt';
-    if (_symptomIcons.containsKey(key)) {
-      return _symptomIcons[key]!;
+    if (symptomIcons.containsKey(key)) {
+      return symptomIcons[key]!;
     }
     return PhosphorIcons.check();
   }

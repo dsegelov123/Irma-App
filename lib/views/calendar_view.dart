@@ -332,17 +332,47 @@ class _CalendarViewState extends State<CalendarView> {
       padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: 24),
       child: Row(
         children: [
-          Expanded(child: _buildScoreCard()),
+          Expanded(
+            child: _buildScoreCard(
+              backgroundColor: IrmaColors.green50,
+              trackColor: IrmaColors.green40,
+              activeColor: IrmaColors.green10,
+              statusColor: IrmaColors.green20,
+              shadowColor: IrmaColors.green50,
+            ),
+          ),
           const SizedBox(width: 16),
-          Expanded(child: _buildScoreCard()),
+          Expanded(
+            child: _buildScoreCard(
+              backgroundColor: IrmaColors.orange40,
+              trackColor: IrmaColors.orange30,
+              activeColor: IrmaColors.orange10,
+              statusColor: IrmaColors.orange20,
+              shadowColor: IrmaColors.orange40,
+            ),
+          ),
           const SizedBox(width: 16),
-          Expanded(child: _buildScoreCard()),
+          Expanded(
+            child: _buildScoreCard(
+              backgroundColor: IrmaColors.purple30,
+              trackColor: IrmaColors.purple20,
+              activeColor: IrmaColors.purple10,
+              statusColor: IrmaColors.purple20,
+              shadowColor: IrmaColors.purple30,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildScoreCard() {
+  Widget _buildScoreCard({
+    required Color backgroundColor,
+    required Color trackColor,
+    required Color activeColor,
+    required Color statusColor,
+    required Color shadowColor,
+  }) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double cardWidth = constraints.maxWidth;
@@ -376,11 +406,11 @@ class _CalendarViewState extends State<CalendarView> {
           width: cardWidth,
           height: cardHeight,
           decoration: BoxDecoration(
-            color: IrmaColors.green50,
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(cornerRadius),
             boxShadow: [
               BoxShadow(
-                color: IrmaColors.green50.withOpacity(0.15),
+                color: shadowColor.withOpacity(0.15),
                 blurRadius: shadowBlur,
                 offset: Offset(0, shadowOffsetY),
               ),
@@ -429,8 +459,8 @@ class _CalendarViewState extends State<CalendarView> {
                         painter: _SegmentedScorePainter(
                           radius: radius,
                           strokeWidth: strokeWidth,
-                          trackColor: IrmaColors.green40,
-                          progressColor: IrmaColors.green10,
+                          trackColor: trackColor,
+                          progressColor: activeColor,
                         ),
                       ),
                       Center(
@@ -442,7 +472,7 @@ class _CalendarViewState extends State<CalendarView> {
                             Text(
                               '80',
                               style: IrmaTextStyles.headingSmBold.copyWith(
-                                color: IrmaColors.green10,
+                                color: activeColor,
                                 fontSize: scoreFontSize,
                                 height: 1.0,
                               ),
@@ -451,7 +481,7 @@ class _CalendarViewState extends State<CalendarView> {
                             Text(
                               'Healthy',
                               style: IrmaTextStyles.labelXsBold.copyWith(
-                                color: IrmaColors.green20,
+                                color: statusColor,
                                 fontSize: statusFontSize,
                                 height: 1.0,
                               ),

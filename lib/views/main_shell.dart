@@ -9,10 +9,12 @@ import 'package:irma/views/history_view.dart';
 import 'package:irma/views/doctor_view.dart';
 import 'package:irma/views/settings_view.dart';
 import 'package:irma/views/privacy_policy_view.dart';
+import 'package:irma/views/settings_navigation_view.dart';
 import 'package:irma/widgets/theme.dart';
 
 class MainShell extends StatefulWidget {
   final Function(String route) onNavigation;
+  static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   const MainShell({super.key, required this.onNavigation});
 
   @override
@@ -44,6 +46,7 @@ class _MainShellState extends State<MainShell> {
           bodyContent = DashboardView(
             onLogSymptomsPressed: () => setState(() => _showLogView = true),
             onProfilePressed: () => setState(() => _activeTab = 3),
+            onNavigation: widget.onNavigation,
             onTabChanged: (index) {
               setState(() {
                 if (index == -1) {
@@ -67,12 +70,13 @@ class _MainShellState extends State<MainShell> {
           );
           break;
         case 3:
-          bodyContent = const ProfileView();
+          bodyContent = SettingsNavigationView(onNavigation: widget.onNavigation, showBackButton: false);
           break;
         default:
           bodyContent = DashboardView(
             onLogSymptomsPressed: () => setState(() => _showLogView = true),
             onProfilePressed: () => setState(() => _activeTab = 3),
+            onNavigation: widget.onNavigation,
             onTabChanged: (index) {
               setState(() {
                 if (index == -1) {
@@ -88,146 +92,10 @@ class _MainShellState extends State<MainShell> {
     }
 
     return Scaffold(
+      key: MainShell.scaffoldKey,
       backgroundColor: Colors.white,
       extendBody: true,
       body: bodyContent,
-
-      // ── Off-Canvas Drawer ────────────────────────────────────────
-      drawer: Drawer(
-        width: 300,
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(32),
-            bottomRight: Radius.circular(32),
-          ),
-        ),
-        child: Column(
-          children: [
-            // Header — Brown 80 → Brown 90 gradient
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(
-                IrmaSpacing.lg, IrmaSpacing.xxl, IrmaSpacing.lg, IrmaSpacing.lg,
-              ),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [IrmaColors.brown80, IrmaColors.brown90],
-                ),
-                borderRadius: BorderRadius.only(topRight: Radius.circular(32)),
-              ),
-              child: SafeArea(
-                bottom: false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Logo mark
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: IrmaColors.green50,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: IrmaColors.green40, width: 1),
-                      ),
-                      child: const Icon(Icons.spa_rounded, color: Colors.white, size: 28),
-                    ),
-                    const SizedBox(height: IrmaSpacing.md),
-                    Text(
-                      'Irma',
-                      style: IrmaTextStyles.label2xl.copyWith(color: Colors.white),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Your wellbeing companion',
-                      style: IrmaTextStyles.paraSm.copyWith(color: IrmaColors.brown30),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Divider
-            Container(height: 1, color: IrmaColors.brown20),
-
-            // Navigation items
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.sm, vertical: IrmaSpacing.sm),
-                children: [
-                  _buildDrawerTile(
-                    title: 'Cycle History',
-                    icon: Icons.history_rounded,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryView()));
-                    },
-                  ),
-                  Container(height: 1, margin: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md), color: IrmaColors.brown20),
-                  _buildDrawerTile(
-                    title: 'Doctor Consultation',
-                    icon: Icons.personal_injury_rounded,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const DoctorView()));
-                    },
-                  ),
-                  Container(height: 1, margin: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md), color: IrmaColors.brown20),
-                  _buildDrawerTile(
-                    title: 'Privacy Settings',
-                    icon: Icons.admin_panel_settings_rounded,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => SettingsView(onNavigation: widget.onNavigation),
-                      ));
-                    },
-                  ),
-                  Container(height: 1, margin: const EdgeInsets.symmetric(horizontal: IrmaSpacing.md), color: IrmaColors.brown20),
-                  _buildDrawerTile(
-                    title: 'Privacy Policy',
-                    icon: Icons.description_rounded,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const PrivacyPolicyView()));
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            // Footer — version + home indicator bar
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(IrmaSpacing.lg),
-              decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: IrmaColors.brown20)),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    'Irma v1.0.0  ·  Zero-telemetry health isolation',
-                    style: IrmaTextStyles.labelXs.copyWith(color: IrmaColors.gray50),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: IrmaSpacing.sm),
-                  // Home indicator bar (§9)
-                  Container(
-                    width: 134,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: IrmaColors.brown80,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
 
       // ── Bottom Tab Bar (§12) ─────────────────────────────────────
       bottomNavigationBar: _showLogView ? null : IrmaBottomTabBar(

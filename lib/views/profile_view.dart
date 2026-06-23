@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:irma/services/storage_service.dart';
 import 'package:irma/widgets/theme.dart';
+import 'package:irma/views/main_shell.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -54,7 +55,7 @@ class _ProfileViewState extends State<ProfileView> {
         leading: Builder(
           builder: (ctx) => IconButton(
             icon: Icon(Icons.menu_rounded, color: IrmaColors.brown80),
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
+            onPressed: () => MainShell.scaffoldKey.currentState?.openDrawer(),
           ),
         ),
         title: Text('My Profile', style: IrmaTextStyles.label2xl.copyWith(color: IrmaColors.brown100)),

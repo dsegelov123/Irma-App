@@ -9,16 +9,20 @@ import 'package:irma/widgets/cycle_circular_indicator.dart';
 import 'package:irma/widgets/irma_top_bar.dart';
 import 'package:irma/views/history_view.dart';
 import 'package:irma/views/calendar_view.dart';
+import 'package:irma/views/main_shell.dart';
+import 'package:irma/views/settings_navigation_view.dart';
 
 class DashboardView extends StatefulWidget {
   final VoidCallback onLogSymptomsPressed;
   final VoidCallback onProfilePressed;
   final ValueChanged<int> onTabChanged;
+  final Function(String route)? onNavigation;
   const DashboardView({
     super.key,
     required this.onLogSymptomsPressed,
     required this.onProfilePressed,
     required this.onTabChanged,
+    this.onNavigation,
   });
 
   @override
@@ -164,7 +168,15 @@ class _DashboardViewState extends State<DashboardView> {
               child: IrmaTopBar(
                 title: 'Hi, Shinomiya!',
                 leading: GestureDetector(
-                  onTap: widget.onProfilePressed,
+                  onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SettingsNavigationView(
+                      onNavigation: widget.onNavigation,
+                      showBackButton: true,
+                    ),
+                  ),
+                ),
                   child: Container(
                     width: 48,
                     height: 48,
@@ -523,7 +535,7 @@ class _DashboardViewState extends State<DashboardView> {
               ),
             ],
           ),
-          const SizedBox(height: IrmaSpacing.md),
+          const SizedBox(height: IrmaSpacing.xl),
           Align(
             alignment: Alignment.centerRight,
             child: SizedBox(
@@ -783,7 +795,15 @@ class _DashboardViewState extends State<DashboardView> {
                 ],
               ),
               GestureDetector(
-                onTap: () => Scaffold.of(context).openDrawer(),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SettingsNavigationView(
+                      onNavigation: widget.onNavigation,
+                      showBackButton: true,
+                    ),
+                  ),
+                ),
                 child: Container(
                   width: 48,
                   height: 48,
@@ -804,7 +824,15 @@ class _DashboardViewState extends State<DashboardView> {
           Row(
             children: [
               GestureDetector(
-                onTap: widget.onProfilePressed,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SettingsNavigationView(
+                      onNavigation: widget.onNavigation,
+                      showBackButton: true,
+                    ),
+                  ),
+                ),
                 child: Container(
                   width: 64,
                   height: 64,

@@ -523,6 +523,45 @@ class _DashboardViewState extends State<DashboardView> {
               ),
             ],
           ),
+          const SizedBox(height: IrmaSpacing.md),
+          Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              height: 40.0,
+              child: OutlinedButton(
+                onPressed: () {
+                  widget.onTabChanged(2);
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: IrmaColors.brown80,
+                  backgroundColor: Colors.transparent,
+                  side: const BorderSide(color: IrmaColors.brown80, width: 1.0),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'See more',
+                      style: IrmaTextStyles.labelMdBold.copyWith(
+                        color: IrmaColors.brown80,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 24.0,
+                      color: IrmaColors.brown80,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

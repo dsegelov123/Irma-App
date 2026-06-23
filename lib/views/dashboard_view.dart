@@ -98,21 +98,44 @@ class _DashboardViewState extends State<DashboardView> {
                           ),
                           child: Column(
                             children: [
-                              Text(
-                                isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                                style: IrmaTextStyles.labelXl.copyWith(
-                                  color: phaseStyle.color,
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(IrmaRadius.stat),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: IrmaColors.brown80.withValues(alpha: 0.05),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              Center(
-                                child: IrmaCycleCircularIndicator(
-                                  progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
-                                  currentDay: selectedCycleDay,
-                                  totalDays: avgLength,
-                                  periodDuration: periodDuration,
-                                  phaseName: selectedPhase,
-                                  phaseColor: phaseStyle.color,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: IrmaSpacing.lg,
+                                  vertical: IrmaSpacing.xl,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                                      style: IrmaTextStyles.labelXl.copyWith(
+                                        color: phaseStyle.color,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: IrmaSpacing.lg),
+                                    Center(
+                                      child: IrmaCycleCircularIndicator(
+                                        progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
+                                        currentDay: selectedCycleDay,
+                                        totalDays: avgLength,
+                                        periodDuration: periodDuration,
+                                        phaseName: selectedPhase,
+                                        phaseColor: phaseStyle.color,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               const SizedBox(height: IrmaSpacing.lg),
@@ -215,28 +238,49 @@ class _DashboardViewState extends State<DashboardView> {
                         ),
                         child: Column(
                           children: [
-                            // Centered prediction header
-                            Text(
-                              isLate ? 'Period is late!' : 'Next period in $daysUntil days',
-                              style: IrmaTextStyles.labelXl.copyWith(
-                                color: phaseStyle.color,
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(IrmaRadius.stat),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: IrmaColors.brown80.withValues(alpha: 0.05),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-
-                            // Centered circular cycle graphic
-                            Center(
-                              child: IrmaCycleCircularIndicator(
-                                progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
-                                currentDay: selectedCycleDay,
-                                totalDays: avgLength,
-                                periodDuration: periodDuration,
-                                phaseName: selectedPhase,
-                                phaseColor: phaseStyle.color,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: IrmaSpacing.lg,
+                                vertical: IrmaSpacing.xl,
+                              ),
+                              child: Column(
+                                children: [
+                                  // Centered prediction header
+                                  Text(
+                                    isLate ? 'Period is late!' : 'Next period in $daysUntil days',
+                                    style: IrmaTextStyles.labelXl.copyWith(
+                                      color: phaseStyle.color,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: IrmaSpacing.lg),
+                                  // Centered circular cycle graphic
+                                  Center(
+                                    child: IrmaCycleCircularIndicator(
+                                      progress: (selectedCycleDay / avgLength).clamp(0.0, 1.0),
+                                      currentDay: selectedCycleDay,
+                                      totalDays: avgLength,
+                                      periodDuration: periodDuration,
+                                      phaseName: selectedPhase,
+                                      phaseColor: phaseStyle.color,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: IrmaSpacing.lg),
-
                             // Horizontal weekly strip calendar centered around today
                             IrmaHorizontalWeekCalendar(
                               themeColor: IrmaColors.orange50,
@@ -422,50 +466,62 @@ class _DashboardViewState extends State<DashboardView> {
 
     return Container(
       width: double.infinity,
-      color: Colors.transparent,
-      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: 24),
-      child: Row(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: IrmaSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Card 1: Body Score
-          Expanded(
-            child: _buildScoreCard(
-              title: 'Body Score',
-              score: body,
-              status: bodyTier,
-              backgroundColor: IrmaColors.green50,
-              trackColor: IrmaColors.green40,
-              activeColor: IrmaColors.green10,
-              statusColor: IrmaColors.green20,
-              shadowColor: IrmaColors.green50,
+          Text(
+            'Body, Mind & Soul',
+            style: IrmaTextStyles.labelXl.copyWith(
+              color: IrmaColors.brown100,
             ),
           ),
-          const SizedBox(width: 16),
-          // Card 2: Mind Score
-          Expanded(
-            child: _buildScoreCard(
-              title: 'Mind Score',
-              score: mind,
-              status: mindTier,
-              backgroundColor: IrmaColors.orange40,
-              trackColor: IrmaColors.orange30,
-              activeColor: IrmaColors.orange10,
-              statusColor: IrmaColors.orange20,
-              shadowColor: IrmaColors.orange40,
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Card 3: Soul Score
-          Expanded(
-            child: _buildScoreCard(
-              title: 'Soul Score',
-              score: soul,
-              status: soulTier,
-              backgroundColor: IrmaColors.purple30,
-              trackColor: IrmaColors.purple20,
-              activeColor: IrmaColors.purple10,
-              statusColor: IrmaColors.purple20,
-              shadowColor: IrmaColors.purple30,
-            ),
+          const SizedBox(height: IrmaSpacing.md),
+          Row(
+            children: [
+              // Card 1: Body Score
+              Expanded(
+                child: _buildScoreCard(
+                  title: 'Body Score',
+                  score: body,
+                  status: bodyTier,
+                  backgroundColor: IrmaColors.green50,
+                  trackColor: IrmaColors.green40,
+                  activeColor: IrmaColors.green10,
+                  statusColor: IrmaColors.green20,
+                  shadowColor: IrmaColors.green50,
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Card 2: Mind Score
+              Expanded(
+                child: _buildScoreCard(
+                  title: 'Mind Score',
+                  score: mind,
+                  status: mindTier,
+                  backgroundColor: IrmaColors.orange40,
+                  trackColor: IrmaColors.orange30,
+                  activeColor: IrmaColors.orange10,
+                  statusColor: IrmaColors.orange20,
+                  shadowColor: IrmaColors.orange40,
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Card 3: Soul Score
+              Expanded(
+                child: _buildScoreCard(
+                  title: 'Soul Score',
+                  score: soul,
+                  status: soulTier,
+                  backgroundColor: IrmaColors.purple30,
+                  trackColor: IrmaColors.purple20,
+                  activeColor: IrmaColors.purple10,
+                  statusColor: IrmaColors.purple20,
+                  shadowColor: IrmaColors.purple30,
+                ),
+              ),
+            ],
           ),
         ],
       ),

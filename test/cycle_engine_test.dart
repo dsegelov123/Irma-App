@@ -142,10 +142,13 @@ void main() {
 
   group('Advice Service Character & Dialects', () {
     test('Ensures UK-English spelling and wise aunt persona in advice snippets', () {
-      final advice = AdviceService.generateDailyAdvice();
+      // Query Day 1 (Menstruation phase) by using the cycle start date (14 days ago in fallback)
+      final onset = DateTime.now().subtract(const Duration(days: 14));
+      final advice = AdviceService.generateDailyAdvice(targetDate: onset);
+      final lowercaseAdvice = advice.toLowerCase();
       
-      expect(advice.contains('oestrogen') || advice.contains('prioritise') || advice.contains('programme') || advice.contains('dysmenorrhoea') || advice.contains('equilibrium'), true);
-      expect(advice.contains('dear') || advice.contains('love') || advice.contains('poor little thing'), false);
+      expect(lowercaseAdvice.contains('oestrogen') || lowercaseAdvice.contains('prioritise') || lowercaseAdvice.contains('programme') || lowercaseAdvice.contains('dysmenorrhoea') || lowercaseAdvice.contains('equilibrium'), true);
+      expect(lowercaseAdvice.contains('dear') || lowercaseAdvice.contains('love') || lowercaseAdvice.contains('poor little thing'), false);
     });
 
     test('Crisis trigger replaces normal advice with NHS referral recommendations', () {

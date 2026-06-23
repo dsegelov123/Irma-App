@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:irma/services/cycle_engine.dart';
 import 'package:irma/services/advice_service.dart';
@@ -60,17 +61,7 @@ class _DashboardViewState extends State<DashboardView> {
     final int selectedCycleDay = CycleEngine.getCycleDay(targetDate: _selectedDate);
     final String selectedPhase = CycleEngine.getPhaseForDay(selectedCycleDay, avgLength, periodDuration);
 
-    final int relationshipsVal = _metrics['sub_metrics']?['SocialBandwidth'] as int? ?? 80;
-    final int stabilityVal = _metrics['sub_metrics']?['Stability'] as int? ?? 80;
-
-    final List<({int mood, String phase})> last12DaysData = List.generate(12, (index) {
-      final date = DateTime.now().subtract(Duration(days: 11 - index));
-      final dayMetrics = TriMetricEngine.calculateMetricsForDate(date);
-      final mood = dayMetrics['sub_metrics']?['Mood'] as int? ?? 80;
-      final cycleDay = CycleEngine.getCycleDay(targetDate: date);
-      final phase = CycleEngine.getPhaseForDay(cycleDay, avgLength, periodDuration);
-      return (mood: mood, phase: phase);
-    });
+    // Unused old card variables removed
 
     final ({Color color, Color tint, IconData icon}) phaseStyle = switch (selectedPhase) {
       'Menstruation'         => (color: IrmaColors.orange50, tint: IrmaColors.orange10, icon: Icons.water_drop_rounded),
@@ -136,7 +127,7 @@ class _DashboardViewState extends State<DashboardView> {
                             ],
                           ),
                         ),
-                        _buildMainDashboardContent(context, relationshipsVal, stabilityVal, last12DaysData),
+                        _buildMainDashboardContent(context),
                       ],
                     ),
                   ),
@@ -268,20 +259,16 @@ class _DashboardViewState extends State<DashboardView> {
               ],
             ),
 
-            // ── Main Dashboard Content ──────────────────────────
-            _buildMainDashboardContent(context, relationshipsVal, stabilityVal, last12DaysData),
+            // ── Main Dashboard Content ─────────────────
+            _buildMainDashboardContent(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMainDashboardContent(
-    BuildContext context,
-    int relationshipsVal,
-    int stabilityVal,
-    List<({int mood, String phase})> last12DaysData,
-  ) {
+  Widget _buildMainDashboardContent(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.only(
         top: IrmaSpacing.xl,
@@ -361,265 +348,8 @@ class _DashboardViewState extends State<DashboardView> {
           ),
           const SizedBox(height: IrmaSpacing.xl),
 
-          // ── Mental Health Metrics Section ─────────────────────
-          Container(
-            width: double.infinity,
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 32.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                  child: Text("Mental Health Metrics", style: IrmaTextStyles.labelXl.copyWith(color: IrmaColors.brown100)),
-                ),
-                const SizedBox(height: 12.0),
-
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Card 1: Relationships
-                        Container(
-                          width: 163,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: IrmaColors.green50,
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.favorite_border_rounded, color: Colors.white, size: 20),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    "Relationships",
-                                    style: IrmaTextStyles.labelMd.copyWith(color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Center(
-                                child: SizedBox(
-                                  width: 110,
-                                  height: 110,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      CustomPaint(
-                                        size: const Size(110, 110),
-                                        painter: _RadialProgressPainter(
-                                          progress: relationshipsVal / 100.0,
-                                          backgroundColor: IrmaColors.green10,
-                                          progressColor: IrmaColors.green40,
-                                        ),
-                                      ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            "$relationshipsVal%",
-                                            style: IrmaTextStyles.headingSmBold.copyWith(
-                                              color: IrmaColors.green10,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Healthy",
-                                            style: IrmaTextStyles.paragraphXsMedium.copyWith(
-                                              color: IrmaColors.green20,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-
-                        // Card 2: Mood
-                        Container(
-                          width: 163,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: IrmaColors.orange40,
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CustomPaint(
-                                    size: const Size(18, 18),
-                                    painter: _SmileyFacePainter(),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    "Mood",
-                                    style: IrmaTextStyles.labelMd.copyWith(color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Text(
-                                "Stable",
-                                style: IrmaTextStyles.headingSmBold.copyWith(
-                                  color: IrmaColors.orange10,
-                                ),
-                              ),
-                              const Spacer(),
-                              SizedBox(
-                                height: 91,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: List.generate(12, (index) {
-                                    final dayData = last12DaysData[index];
-                                    final double barHeight = (dayData.mood / 100.0) * 91.0;
-                                    final isPeak = dayData.phase == 'Ovulation' || dayData.phase == 'Follicular Phase';
-                                    final barColor = isPeak ? IrmaColors.orange10 : IrmaColors.orange30;
-                                    return Padding(
-                                      padding: EdgeInsets.only(right: index == 11 ? 0 : 3),
-                                      child: Container(
-                                        width: 8,
-                                        height: barHeight.clamp(8.0, 91.0),
-                                        decoration: BoxDecoration(
-                                          color: barColor,
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-
-                        // Card 3: Stability
-                        Container(
-                          width: 163,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: IrmaColors.purple30,
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.check_box_outlined, color: Colors.white, size: 20),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    "Stability",
-                                    style: IrmaTextStyles.labelMd.copyWith(color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                "${(stabilityVal / 100.0 * 35).round()}/35",
-                                style: IrmaTextStyles.headingSmBold.copyWith(
-                                  color: IrmaColors.purple10,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: List.generate(5, (index) {
-                                    final int activeCount = (stabilityVal / 100.0 * 5).round();
-                                    final bool isActive = index < activeCount;
-                                    return Container(
-                                      width: 16,
-                                      height: 16,
-                                      decoration: BoxDecoration(
-                                        color: isActive ? IrmaColors.purple20 : IrmaColors.purple10,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24.0),
-
-                // Pagination indicators
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: IrmaColors.brown80,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: IrmaColors.brown20,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: IrmaColors.brown20,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: IrmaColors.brown20,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: IrmaColors.brown20,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // ── Wellness Scores Section ─────────────────────
+          _buildScoreSection(context),
           const SizedBox(height: 32.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg),
@@ -678,6 +408,205 @@ class _DashboardViewState extends State<DashboardView> {
           const SizedBox(height: IrmaSpacing.lg),
         ],
       ),
+    );
+  }
+
+  Widget _buildScoreSection(BuildContext context) {
+    final metrics = TriMetricEngine.calculateMetricsForDate(_selectedDate);
+    final body = metrics['body'] as int? ?? 80;
+    final mind = metrics['mind'] as int? ?? 80;
+    final soul = metrics['soul'] as int? ?? 80;
+    final bodyTier = metrics['body_tier'] as String? ?? 'Moderate';
+    final mindTier = metrics['mind_tier'] as String? ?? 'Moderate';
+    final soulTier = metrics['soul_tier'] as String? ?? 'Moderate';
+
+    return Container(
+      width: double.infinity,
+      color: Colors.transparent,
+      padding: const EdgeInsets.symmetric(horizontal: IrmaSpacing.lg, vertical: 24),
+      child: Row(
+        children: [
+          // Card 1: Body Score
+          Expanded(
+            child: _buildScoreCard(
+              title: 'Body Score',
+              score: body,
+              status: bodyTier,
+              backgroundColor: IrmaColors.green50,
+              trackColor: IrmaColors.green40,
+              activeColor: IrmaColors.green10,
+              statusColor: IrmaColors.green20,
+              shadowColor: IrmaColors.green50,
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Card 2: Mind Score
+          Expanded(
+            child: _buildScoreCard(
+              title: 'Mind Score',
+              score: mind,
+              status: mindTier,
+              backgroundColor: IrmaColors.orange40,
+              trackColor: IrmaColors.orange30,
+              activeColor: IrmaColors.orange10,
+              statusColor: IrmaColors.orange20,
+              shadowColor: IrmaColors.orange40,
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Card 3: Soul Score
+          Expanded(
+            child: _buildScoreCard(
+              title: 'Soul Score',
+              score: soul,
+              status: soulTier,
+              backgroundColor: IrmaColors.purple30,
+              trackColor: IrmaColors.purple20,
+              activeColor: IrmaColors.purple10,
+              statusColor: IrmaColors.purple20,
+              shadowColor: IrmaColors.purple30,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScoreCard({
+    required String title,
+    required int score,
+    required String status,
+    required Color backgroundColor,
+    required Color trackColor,
+    required Color activeColor,
+    required Color statusColor,
+    required Color shadowColor,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double cardWidth = constraints.maxWidth;
+        final double scale = cardWidth / 163.0;
+        final double cardHeight = 200.0 * scale;
+
+        // Scaled layout dimensions
+        final double heartWidth = 17.0 * scale;
+        final double heartHeight = 16.0 * scale;
+        final double labelFontSize = 11.2 * scale;
+        final double labelGap = 12.0 * scale;
+
+        final double circleSize = 120.0 * scale;
+        final double strokeWidth = 10.0 * scale;
+        final double radius = 55.0 * scale;
+
+        final double scoreFontSize = 17.5 * scale;
+        final double scoreGap = 8.2 * scale;
+        final double statusFontSize = 10.5 * scale;
+
+        final double shadowBlur = 32.0 * scale;
+        final double shadowOffsetY = 16.0 * scale;
+        final double cornerRadius = 32.0 * scale;
+
+        final double paddingLeft = 20.5 * scale;
+        final double paddingTop = 20.5 * scale;
+        final double circleLeft = 21.5 * scale;
+        final double circleTop = 64.0 * scale;
+
+        return Container(
+          width: cardWidth,
+          height: cardHeight,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(cornerRadius),
+            boxShadow: [
+              BoxShadow(
+                color: shadowColor.withOpacity(0.15),
+                blurRadius: shadowBlur,
+                offset: Offset(0, shadowOffsetY),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              // Heart icon & label
+              Positioned(
+                left: paddingLeft,
+                top: paddingTop,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: heartWidth,
+                      height: heartHeight,
+                      child: CustomPaint(
+                        painter: _HeartPainter(scale: scale),
+                      ),
+                    ),
+                    SizedBox(width: labelGap),
+                    Text(
+                      title,
+                      style: IrmaTextStyles.labelXsBold.copyWith(
+                        color: Colors.white,
+                        fontSize: labelFontSize,
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Segmented score progress ring & content
+              Positioned(
+                left: circleLeft,
+                top: circleTop,
+                child: SizedBox(
+                  width: circleSize,
+                  height: circleSize,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CustomPaint(
+                        size: Size(circleSize, circleSize),
+                        painter: _SegmentedScorePainter(
+                          progress: score / 100.0,
+                          radius: radius,
+                          strokeWidth: strokeWidth,
+                          trackColor: trackColor,
+                          progressColor: activeColor,
+                        ),
+                      ),
+                      Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '$score',
+                              style: IrmaTextStyles.headingSmBold.copyWith(
+                                color: activeColor,
+                                fontSize: scoreFontSize,
+                                height: 1.0,
+                              ),
+                            ),
+                            SizedBox(height: scoreGap),
+                            Text(
+                              status,
+                              style: IrmaTextStyles.labelXsBold.copyWith(
+                                color: statusColor,
+                                fontSize: statusFontSize,
+                                height: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -910,74 +839,92 @@ class _BubbleTailPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class _SmileyFacePainter extends CustomPainter {
+class _HeartPainter extends CustomPainter {
+  final double scale;
+
+  _HeartPainter({required this.scale});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+      ..strokeWidth = 2.0 * scale
+      ..strokeJoin = StrokeJoin.round;
 
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 9, paint);
+    final heartPath = Path()
+      ..moveTo(15.0 * scale, 9.0 * scale)
+      ..lineTo(8.1471 * scale, 15.8529 * scale)
+      ..cubicTo(7.7897 * scale, 16.2103 * scale, 7.2103 * scale, 16.2103 * scale, 6.8529 * scale, 15.8529 * scale)
+      ..lineTo(0.0 * scale, 9.0 * scale)
+      ..cubicTo(-1.933 * scale, 7.067 * scale, -1.933 * scale, 3.933 * scale, 0.0 * scale, 2.0 * scale)
+      ..cubicTo(1.933 * scale, 0.067 * scale, 5.067 * scale, 0.067 * scale, 7.0 * scale, 2.0 * scale)
+      ..lineTo(7.5 * scale, 2.5 * scale)
+      ..lineTo(8.0 * scale, 2.0 * scale)
+      ..cubicTo(9.933 * scale, 0.067 * scale, 13.067 * scale, 0.067 * scale, 15.0 * scale, 2.0 * scale)
+      ..cubicTo(16.933 * scale, 3.933 * scale, 16.933 * scale, 7.067 * scale, 15.0 * scale, 9.0 * scale)
+      ..close();
 
-    final fillPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(Offset(size.width / 2 - 3.5, size.height / 2 - 2.5), 1.5, fillPaint);
-    canvas.drawCircle(Offset(size.width / 2 + 3.5, size.height / 2 - 2.5), 1.5, fillPaint);
-
-    final path = Path()
-      ..moveTo(size.width / 2 + 4.33, size.height / 2 + 4.5)
-      ..quadraticBezierTo(
-        size.width / 2, size.height / 2 + 2.0,
-        size.width / 2 - 4.33, size.height / 2 + 4.5,
-      );
-    canvas.drawPath(path, paint);
+    canvas.translate((size.width - 17.0 * scale) / 2, (size.height - 16.0 * scale) / 2);
+    canvas.drawPath(heartPath, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _HeartPainter oldDelegate) => oldDelegate.scale != scale;
 }
 
-class _RadialProgressPainter extends CustomPainter {
+class _SegmentedScorePainter extends CustomPainter {
   final double progress;
-  final Color backgroundColor;
+  final double radius;
+  final double strokeWidth;
+  final Color trackColor;
   final Color progressColor;
 
-  _RadialProgressPainter({
+  _SegmentedScorePainter({
     required this.progress,
-    required this.backgroundColor,
+    required this.radius,
+    required this.strokeWidth,
+    required this.trackColor,
     required this.progressColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
+    final Offset center = Offset(size.width / 2, size.height / 2);
+    final Rect rect = Rect.fromCircle(center: center, radius: radius);
 
-    final bgPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 10.0
-      ..strokeCap = StrokeCap.round;
-
-    final progressPaint = Paint()
+    final activePaint = Paint()
       ..color = progressColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 10.0
+      ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    canvas.drawCircle(center, radius, bgPaint);
+    final inactivePaint = Paint()
+      ..color = trackColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
 
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawArc(rect, -3.141592653589793 / 2, 2 * 3.141592653589793 * progress, false, progressPaint);
+    const double degToRad = math.pi / 180.0;
+    const double segmentSweep = 60.0 * degToRad; // 60 degrees sweep
+    const double gapSweep = 12.0 * degToRad;    // 12 degrees gap
+    const double totalSegmentAngle = segmentSweep + gapSweep; // 72 degrees total step
+
+    final int totalSegments = 5;
+    final int activeSegments = (progress * totalSegments).round();
+
+    for (int i = 0; i < totalSegments; i++) {
+      final double startAngle = -90.0 * degToRad + i * totalSegmentAngle;
+      final Paint paint = (i < activeSegments) ? activePaint : inactivePaint;
+      canvas.drawArc(rect, startAngle, segmentSweep, false, paint);
+    }
   }
 
   @override
-  bool shouldRepaint(covariant _RadialProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.backgroundColor != backgroundColor ||
+  bool shouldRepaint(covariant _SegmentedScorePainter oldDelegate) {
+    return oldDelegate.radius != radius ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.trackColor != trackColor ||
         oldDelegate.progressColor != progressColor;
   }
 }

@@ -363,9 +363,10 @@ class IrmaHorizontalWeekCalendar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected ? themeColor : Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: isToday && !isSelected
-                      ? Border.all(color: themeColor, width: 1.5)
-                      : null,
+                  border: Border.all(
+                    color: isToday && !isSelected ? themeColor : Colors.transparent,
+                    width: 1.5,
+                  ),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

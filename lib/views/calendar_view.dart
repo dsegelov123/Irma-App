@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:irma/services/cycle_engine.dart';
+import 'package:irma/services/tri_metric_engine.dart';
 import 'package:irma/services/storage_service.dart';
 import 'package:irma/widgets/theme.dart';
 import 'package:irma/widgets/irma_top_bar.dart';
@@ -415,6 +416,14 @@ class _CalendarViewState extends State<CalendarView> {
   }
 
   Widget _buildScoreSection(BuildContext context) {
+    final metrics = TriMetricEngine.calculateMetricsForDate(_selectedDate);
+    final body = metrics['body'] as int? ?? 80;
+    final mind = metrics['mind'] as int? ?? 80;
+    final soul = metrics['soul'] as int? ?? 80;
+    final bodyTier = metrics['body_tier'] as String? ?? 'Moderate';
+    final mindTier = metrics['mind_tier'] as String? ?? 'Moderate';
+    final soulTier = metrics['soul_tier'] as String? ?? 'Moderate';
+
     return Container(
       width: double.infinity,
       color: Colors.transparent,
@@ -425,6 +434,8 @@ class _CalendarViewState extends State<CalendarView> {
           Expanded(
             child: _buildScoreCard(
               title: 'Body Score',
+              score: body,
+              status: bodyTier,
               backgroundColor: IrmaColors.green50,
               trackColor: IrmaColors.green40,
               activeColor: IrmaColors.green10,
@@ -437,6 +448,8 @@ class _CalendarViewState extends State<CalendarView> {
           Expanded(
             child: _buildScoreCard(
               title: 'Mind Score',
+              score: mind,
+              status: mindTier,
               backgroundColor: IrmaColors.orange40,
               trackColor: IrmaColors.orange30,
               activeColor: IrmaColors.orange10,
@@ -449,6 +462,8 @@ class _CalendarViewState extends State<CalendarView> {
           Expanded(
             child: _buildScoreCard(
               title: 'Soul Score',
+              score: soul,
+              status: soulTier,
               backgroundColor: IrmaColors.purple30,
               trackColor: IrmaColors.purple20,
               activeColor: IrmaColors.purple10,
@@ -463,6 +478,8 @@ class _CalendarViewState extends State<CalendarView> {
 
   Widget _buildScoreCard({
     required String title,
+    required int score,
+    required String status,
     required Color backgroundColor,
     required Color trackColor,
     required Color activeColor,
@@ -553,7 +570,7 @@ class _CalendarViewState extends State<CalendarView> {
                       CustomPaint(
                         size: Size(circleSize, circleSize),
                         painter: _SegmentedScorePainter(
-                          progress: 0.80,
+                          progress: score / 100.0,
                           radius: radius,
                           strokeWidth: strokeWidth,
                           trackColor: trackColor,
@@ -567,7 +584,7 @@ class _CalendarViewState extends State<CalendarView> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              '80',
+                              '$score',
                               style: IrmaTextStyles.headingSmBold.copyWith(
                                 color: activeColor,
                                 fontSize: scoreFontSize,
@@ -576,7 +593,7 @@ class _CalendarViewState extends State<CalendarView> {
                             ),
                             SizedBox(height: scoreGap),
                             Text(
-                              'Healthy',
+                              status,
                               style: IrmaTextStyles.labelXsBold.copyWith(
                                 color: statusColor,
                                 fontSize: statusFontSize,

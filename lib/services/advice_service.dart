@@ -88,6 +88,40 @@ class AdviceService {
     return advice;
   }
 
+  /// Generates detailed, wise aunt style advice focusing on the body, mind, and soul metrics.
+  static String generateMetricsAdvice(int body, int mind, int soul) {
+    final List<String> feedback = [];
+
+    // Body advice
+    if (body < 45) {
+      feedback.add("Your Body score is low ($body%). Prioritise physical recovery: rest, stay hydrated, and stick to gentle movements like light walking. Keep meals nourishing and slow-release.");
+    } else if (body <= 75) {
+      feedback.add("Your Body score is moderate ($body%). Listen to your physical signals. Balanced activity mixed with scheduled recovery will help maintain your physical resilience.");
+    } else {
+      feedback.add("Your Body score is high ($body%). You have strong physical energy today! Capitalize on this with active workouts or projects, but stay mindful of hydration.");
+    }
+
+    // Mind advice
+    if (mind < 45) {
+      feedback.add("Your Mind score is low ($mind%). Focus and motivation may feel elusive. Break large tasks into small, manageable steps, and give yourself grace today.");
+    } else if (mind <= 75) {
+      feedback.add("Your Mind score is moderate ($mind%). Motivation is steady. Focus on deep-work windows while taking regular breaks to sustain your cognitive endurance.");
+    } else {
+      feedback.add("Your Mind score is high ($mind%). Your cognitive focus and motivation are peaking. This is a great window for complex problem solving and creative brainstorming.");
+    }
+
+    // Soul advice
+    if (soul < 45) {
+      feedback.add("Your Soul score is low ($soul%). Emotional stability or social bandwidth is tender. Take a step back from busy commitments. Protecting your boundaries is true self-care.");
+    } else if (soul <= 75) {
+      feedback.add("Your Soul score is moderate ($soul%). Your emotional equilibrium is stable. Spend time in warm, low-pressure social environments that recharge you.");
+    } else {
+      feedback.add("Your Soul score is high ($soul%). Your social energy and emotional outlook are bright and resilient. Share this positive energy with friends or family.");
+    }
+
+    return feedback.join("\n\n");
+  }
+
   /// Dispatches a notification alert payload based on privacy configuration (Section 4.3).
   static Map<String, String> generateNotificationPayload() {
     final box = StorageService.settingsBox;

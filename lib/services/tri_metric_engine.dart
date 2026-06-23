@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:irma/services/storage_service.dart';
 import 'package:irma/services/cycle_engine.dart';
 
@@ -11,101 +12,163 @@ class TriMetricEngine {
   static Map<String, int> calculateSubMetrics(
       int day, int cycleLength, int periodDuration, List<String> loggedSymptoms) {
     // 1. Calculate Baselines based on the phase progression
-    Map<String, double> baselines = {};
-    
+    double body = 0.0;
+    double mind = 0.0;
+    double soul = 0.0;
+
+    int ovulationDay = cycleLength - 14;
+    if (ovulationDay <= periodDuration) {
+      ovulationDay = periodDuration + 2;
+    }
+
+    int preMenstrualStart = cycleLength - 4;
+    if (preMenstrualStart <= ovulationDay) {
+      preMenstrualStart = cycleLength - 2;
+    }
+
+    // Offsets for sub-metrics relative to the parent metrics (guaranteed sum = 0)
+    double energyOffset = 0.0;
+    double wakefulnessOffset = 0.0;
+    double recoveryOffset = 0.0;
+
+    double focusOffset = 0.0;
+    double creativityOffset = 0.0;
+    double motivationOffset = 0.0;
+
+    double moodOffset = 0.0;
+    double socialOffset = 0.0;
+    double stabilityOffset = 0.0;
+
     if (day <= periodDuration) {
       // Phase 1: Menstruation
       double progress = day / periodDuration;
-      baselines['Energy'] = 40.0 + (progress * 15);
-      baselines['Wakefulness'] = 45.0 + (progress * 15);
-      baselines['Recovery'] = 40.0 + (progress * 20);
-      
-      baselines['Focus'] = 55.0 + (progress * 10);
-      baselines['Creativity'] = 50.0 + (progress * 15);
-      baselines['Motivation'] = 40.0 + (progress * 20);
-      
-      baselines['Mood'] = 45.0 + (progress * 20);
-      baselines['SocialBandwidth'] = 30.0 + (progress * 25);
-      baselines['Stability'] = 40.0 + (progress * 25);
-    } else {
-      int ovulationDay = cycleLength - 14;
-      if (ovulationDay <= periodDuration) {
-        ovulationDay = periodDuration + 2;
-      }
-      
-      if (day < ovulationDay) {
-        // Phase 2: Follicular Phase
-        int follicularLength = ovulationDay - periodDuration - 1;
-        double progress = follicularLength > 0 ? (day - periodDuration - 1) / follicularLength : 0.5;
-        progress = progress.clamp(0.0, 1.0);
-        
-        baselines['Energy'] = 55.0 + (progress * 30);
-        baselines['Wakefulness'] = 60.0 + (progress * 25);
-        baselines['Recovery'] = 60.0 + (progress * 20);
-        
-        baselines['Focus'] = 65.0 + (progress * 20);
-        baselines['Creativity'] = 65.0 + (progress * 25);
-        baselines['Motivation'] = 60.0 + (progress * 25);
-        
-        baselines['Mood'] = 65.0 + (progress * 25);
-        baselines['SocialBandwidth'] = 55.0 + (progress * 35);
-        baselines['Stability'] = 65.0 + (progress * 20);
-      } else if (day == ovulationDay) {
-        // Phase 3: Ovulation (Peak)
-        baselines['Energy'] = 90.0;
-        baselines['Wakefulness'] = 85.0;
-        baselines['Recovery'] = 80.0;
-        
-        baselines['Focus'] = 88.0;
-        baselines['Creativity'] = 90.0;
-        baselines['Motivation'] = 90.0;
-        
-        baselines['Mood'] = 92.0;
-        baselines['SocialBandwidth'] = 95.0;
-        baselines['Stability'] = 85.0;
+      body = 35.0 + progress * 10.0;
+      mind = 50.0 + progress * 10.0;
+      soul = 30.0 + progress * 15.0;
+
+      energyOffset = -4.0;
+      recoveryOffset = 2.0;
+      wakefulnessOffset = 2.0;
+
+      focusOffset = 5.0;
+      creativityOffset = 0.0;
+      motivationOffset = -5.0;
+
+      moodOffset = 0.0;
+      socialOffset = -10.0;
+      stabilityOffset = 10.0;
+    } else if (day < ovulationDay) {
+      // Phase 2: Follicular Phase
+      int follicularLength = ovulationDay - periodDuration;
+      double progress = (day - periodDuration) / follicularLength;
+      progress = progress.clamp(0.0, 1.0);
+
+      body = 45.0 + progress * 43.0;
+
+      double focusDay = periodDuration + (follicularLength * 0.6).roundToDouble();
+      if (day <= focusDay) {
+        double p = (focusDay - periodDuration) > 0 
+            ? (day - periodDuration) / (focusDay - periodDuration) 
+            : 0.5;
+        mind = 60.0 + p * 30.0;
       } else {
-        int preMenstrualStart = cycleLength - 4;
-        if (preMenstrualStart <= ovulationDay) {
-          preMenstrualStart = cycleLength - 2;
-        }
-        
-        if (day < preMenstrualStart) {
-          // Phase 4: Luteal Phase
-          int lutealLength = preMenstrualStart - ovulationDay - 1;
-          double progress = lutealLength > 0 ? (day - ovulationDay - 1) / lutealLength : 0.5;
-          progress = progress.clamp(0.0, 1.0);
-          
-          baselines['Energy'] = 85.0 - (progress * 15);
-          baselines['Wakefulness'] = 80.0 - (progress * 10);
-          baselines['Recovery'] = 80.0 - (progress * 5);
-          
-          baselines['Focus'] = 85.0 - (progress * 15);
-          baselines['Creativity'] = 85.0 - (progress * 20);
-          baselines['Motivation'] = 85.0 - (progress * 20);
-          
-          baselines['Mood'] = 88.0 - (progress * 20);
-          baselines['SocialBandwidth'] = 85.0 - (progress * 30);
-          baselines['Stability'] = 80.0 - (progress * 15);
-        } else {
-          // Phase 5: Pre-menstrual Phase
-          int pmLength = cycleLength - preMenstrualStart + 1;
-          double progress = pmLength > 0 ? (day - preMenstrualStart) / pmLength : 0.5;
-          progress = progress.clamp(0.0, 1.0);
-          
-          baselines['Energy'] = 70.0 - (progress * 25);
-          baselines['Wakefulness'] = 70.0 - (progress * 20);
-          baselines['Recovery'] = 75.0 - (progress * 25);
-          
-          baselines['Focus'] = 70.0 - (progress * 25);
-          baselines['Creativity'] = 65.0 - (progress * 15);
-          baselines['Motivation'] = 65.0 - (progress * 25);
-          
-          baselines['Mood'] = 68.0 - (progress * 28);
-          baselines['SocialBandwidth'] = 55.0 - (progress * 25);
-          baselines['Stability'] = 65.0 - (progress * 30);
-        }
+        double p = (ovulationDay - focusDay) > 0 
+            ? (day - focusDay) / (ovulationDay - focusDay) 
+            : 0.5;
+        mind = 90.0 - p * 12.0;
       }
+
+      soul = 45.0 + progress * 40.0;
+
+      energyOffset = 3.0 + progress * 7.0;
+      recoveryOffset = -3.0 - progress * 9.0;
+      wakefulnessOffset = -(energyOffset + recoveryOffset);
+
+      focusOffset = 5.0 - progress * 10.0;
+      creativityOffset = 2.0 + progress * 8.0;
+      motivationOffset = -(focusOffset + creativityOffset);
+
+      moodOffset = 0.0;
+      socialOffset = -10.0 + progress * 15.0;
+      stabilityOffset = 10.0 - progress * 15.0;
+    } else if (day == ovulationDay) {
+      // Phase 3: Ovulation
+      body = 90.0;
+      mind = 75.0;
+      soul = 95.0;
+
+      energyOffset = 10.0;
+      recoveryOffset = -15.0;
+      wakefulnessOffset = 5.0;
+
+      focusOffset = -5.0;
+      creativityOffset = 10.0;
+      motivationOffset = -5.0;
+
+      moodOffset = 5.0;
+      socialOffset = 10.0;
+      stabilityOffset = -15.0;
+    } else if (day < preMenstrualStart) {
+      // Phase 4: Luteal Phase
+      int lutealLength = preMenstrualStart - ovulationDay;
+      double progress = (day - ovulationDay) / lutealLength;
+      progress = progress.clamp(0.0, 1.0);
+
+      double lutealDrop = progress * 20.0;
+      double progesteroneBump = math.sin(progress * math.pi) * 12.0;
+      body = 90.0 - lutealDrop + progesteroneBump;
+
+      double mindProgress = 1.0 - (progress - 0.5).abs() * 2.0;
+      mindProgress = mindProgress.clamp(0.0, 1.0);
+      mind = 75.0 + mindProgress * 9.0;
+
+      soul = 95.0 - progress * 37.0;
+
+      energyOffset = 10.0 - progress * 20.0;
+      recoveryOffset = -15.0 + progress * 25.0;
+      wakefulnessOffset = -(energyOffset + recoveryOffset);
+
+      focusOffset = -5.0 + progress * 15.0;
+      creativityOffset = 10.0 - progress * 15.0;
+      motivationOffset = -(focusOffset + creativityOffset);
+
+      moodOffset = 5.0 - progress * 5.0;
+      socialOffset = 10.0 - progress * 30.0;
+      stabilityOffset = -(moodOffset + socialOffset);
+    } else {
+      // Phase 5: Pre-menstrual Phase (PMS)
+      int pmLength = cycleLength - preMenstrualStart + 1;
+      double progress = (day - preMenstrualStart) / pmLength;
+      progress = progress.clamp(0.0, 1.0);
+
+      body = 70.0 - progress * 35.0;
+      mind = 75.0 - progress * 25.0;
+      soul = 58.0 - progress * 28.0;
+
+      energyOffset = -10.0;
+      recoveryOffset = 10.0 - progress * 8.0;
+      wakefulnessOffset = -(energyOffset + recoveryOffset);
+
+      focusOffset = 10.0 - progress * 5.0;
+      creativityOffset = -5.0;
+      motivationOffset = -(focusOffset + creativityOffset);
+
+      moodOffset = 0.0;
+      stabilityOffset = 20.0 - progress * 20.0;
+      socialOffset = -20.0 + progress * 20.0;
     }
+
+    Map<String, double> baselines = {
+      'Energy': body + energyOffset,
+      'Wakefulness': body + wakefulnessOffset,
+      'Recovery': body + recoveryOffset,
+      'Focus': mind + focusOffset,
+      'Creativity': mind + creativityOffset,
+      'Motivation': mind + motivationOffset,
+      'Mood': soul + moodOffset,
+      'SocialBandwidth': soul + socialOffset,
+      'Stability': soul + stabilityOffset,
+    };
     
     // 2. Adjust for Logged Symptoms
     Map<String, double> adjustments = {
@@ -142,11 +205,18 @@ class TriMetricEngine {
       }
     }
     
+    // Deterministic daily noise to add micro-fluctuations (prevents perfectly parallel lines)
+    double getNoise(String metric, int dayNum) {
+      final double angle = (dayNum * 47.0 + metric.hashCode % 100) * (math.pi / 180.0);
+      return math.sin(angle) * 3.5;
+    }
+    
     // Compile adjusted scores (cap between 5 and 100)
     Map<String, int> finalScores = {};
     baselines.forEach((key, val) {
       double adj = adjustments[key] ?? 0.0;
-      double finalVal = (val + adj).clamp(5.0, 100.0);
+      double noiseVal = getNoise(key, day);
+      double finalVal = (val + adj + noiseVal).clamp(5.0, 100.0);
       finalScores[key] = finalVal.round();
     });
     
@@ -198,10 +268,10 @@ class TriMetricEngine {
 
   /// Classifies a score into Low, Medium, or High (Section 10.2).
   static String getTierForScore(int score) {
-    if (score < 45) {
+    if (score <= 45) {
       return 'Low';
     } else if (score <= 75) {
-      return 'Medium';
+      return 'Moderate';
     } else {
       return 'High';
     }

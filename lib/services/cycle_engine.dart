@@ -8,18 +8,22 @@ class CycleEngine {
     final box = StorageService.settingsBox;
     final List<dynamic>? startsList = box.get('cycle_starts') as List<dynamic>?;
     
+    List<DateTime> rawDates;
     if (startsList == null || startsList.isEmpty) {
       // Fallback to the date captured during onboarding
       final onsetStr = box.get('last_period_start_date') as String?;
       if (onsetStr != null) {
-        return [DateTime.parse(onsetStr)];
+        rawDates = [DateTime.parse(onsetStr)];
+      } else {
+        rawDates = [DateTime.now().subtract(const Duration(days: 14))];
       }
-      return [DateTime.now().subtract(const Duration(days: 14))];
+    } else {
+      rawDates = startsList.map((e) => DateTime.parse(e as String)).toList();
     }
     
-    final dates = startsList.map((e) => DateTime.parse(e as String)).toList();
-    dates.sort();
-    return dates;
+    final normalized = rawDates.map((d) => DateTime(d.year, d.month, d.day)).toList();
+    normalized.sort();
+    return normalized;
   }
 
   /// Logs a new period onset date, resetting active cycle to Day 1.
@@ -128,7 +132,6 @@ class CycleEngine {
     return false;
   }
 
-  /// Calculates the active day in the cycle relative to the most recent onset.
   static int getCycleDay({DateTime? targetDate}) {
     final queryDate = targetDate ?? DateTime.now();
     final normalizedQuery = DateTime(queryDate.year, queryDate.month, queryDate.day);
@@ -150,7 +153,9 @@ class CycleEngine {
     // Fallback if query date precedes all recorded starts
     activeAnchor ??= starts.first;
     
-    return normalizedQuery.difference(activeAnchor).inDays + 1;
+    final normalizedAnchor = DateTime(activeAnchor.year, activeAnchor.month, activeAnchor.day);
+    final diff = normalizedQuery.difference(normalizedAnchor);
+    return (diff + const Duration(hours: 12)).inDays + 1;
   }
 
   /// Maps a specific cycle day number to one of the 5 physiological states (Section 7.1).
